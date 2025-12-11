@@ -5,7 +5,7 @@
 /* Arabic Title Font */
 @font-face {
     font-family: 'Zarid Display';
-    src: url('../fonts/AR Fonts/AR Title font/29LT-Zarid-Display-Regular.ttf') format('truetype');
+    src: url('../fonts/AR Fonts/AR Title font/DINNextLTArabic-Bold.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -14,7 +14,7 @@
 /* Arabic Body Fonts */
 @font-face {
     font-family: 'Bukra';
-    src: url('../fonts/AR Fonts/AR Body fonts/29lt-bukra.ttf') format('truetype');
+    src: url('../fonts/AR Fonts/AR Body fonts/DINNextLTArabic-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -22,7 +22,7 @@
 
 @font-face {
     font-family: 'Bukra';
-    src: url('../fonts/AR Fonts/AR Body fonts/29LT Bukra SmBd.ttf') format('truetype');
+    src: url('../fonts/AR Fonts/AR Body fonts/DINNextLTArabic-Regular.ttf') format('truetype');
     font-weight: 600;
     font-style: normal;
     font-display: swap;
@@ -31,7 +31,7 @@
 /* English Title Font */
 @font-face {
     font-family: 'Editor Condensed';
-    src: url('../fonts/EN Titles/EditorCondensed-Medium.ttf') format('truetype');
+    src: url('../fonts/EN Body Text/Helvetica LT Condensed Bold.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
     font-display: swap;
@@ -256,7 +256,7 @@ img {
 
 /* Header */
 .header {
-    background-color: var(--color-bg-primary);
+    background-color: var(--color-bg-secondary);
     border-bottom: 1px solid var(--color-border);
     padding-block: var(--spacing-md);
     position: sticky;
@@ -273,7 +273,7 @@ img {
 }
 
 .header__logo {
-    height: 120px;
+    height: 150px;
     width: auto;
 }
 
@@ -312,8 +312,8 @@ img {
 .footer {
     background-color: var(--color-bg-secondary);
     border-top: 1px solid var(--color-border);
-    padding-block: var(--spacing-3xl);
-    margin-block-start: var(--spacing-4xl);
+    padding-block: var(--spacing-xl);
+    margin-block-start: var(--spacing-xl);
 }
 
 .footer__container {
@@ -361,16 +361,57 @@ img {
 /* ============================================
    BUTTON COMPONENTS
    ============================================ */
+.btn-bubble-wrapper {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    transition: transform var(--transition-base);
+}
+
+.btn-bubble-wrapper:hover {
+    transform: translateY(-5px);
+}
+
+.btn-bubble-bg {
+    display: block;
+    width: 170px;  /* Adjust to your desired size */
+    height: auto;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    transition: filter var(--transition-base);
+}
+
+
+
+.btn-bubble-text {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--color-secondary);
+    font-family: var(--font-arabic-body);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+    pointer-events: none;
+}
+.btn-bubble-wrapper:hover .btn-bubble-text {
+    color: var(--color-text-inverse);
+    
+}
+.btn-bubble-wrapper:hover .btn-bubble-bg {
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
+    
+}
 
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-    padding: var(--spacing-md) var(--spacing-xl);
+    padding: var(--spacing-xs) var(--spacing-lg);
     font-family: var(--font-arabic-body);
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-bold);
     line-height: 1;
     text-align: center;
     text-decoration: none;
@@ -403,6 +444,7 @@ img {
     border-color: var(--color-primary-dark);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+    color: var(--color-secondary);
 }
 
 .btn--secondary {
@@ -414,7 +456,7 @@ img {
 .btn--secondary:hover:not(:disabled) {
     background-color: #c4ccc0;
     border-color: #c4ccc0;
-    color: var(--color-text-primary);
+    color: var(--color-text-light);
 }
 
 .btn--success {
@@ -436,9 +478,15 @@ img {
     box-shadow: var(--shadow-md);
 }
 
+
+.btn--mid {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-xl);
+}
+
 .btn--large {
     padding: var(--spacing-lg) var(--spacing-2xl);
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-xl);
 }
 
 @media (max-width: 767px) {
@@ -449,14 +497,16 @@ img {
 }
 
 .btn--small {
-    padding: var(--spacing-sm) var(--spacing-md);
-    font-size: var(--font-size-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-md);
 }
 
 .btn--bubble {
     border-radius: var(--radius-lg);
     position: relative;
-    padding-bottom: calc(var(--spacing-lg) + 12px);
+    padding-bottom: calc(var(--spacing-lg) + 5px);
+    
+
 }
 
 .btn--bubble::after {
@@ -499,7 +549,7 @@ img {
 }
 
 .card__title {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-md);
     margin-block-end: 0;
 }
 
@@ -617,7 +667,7 @@ img {
 }
 
 .hero__title {
-    font-size: var(--font-size-5xl);
+    font-size: var(--font-size-3xl);
     margin-block-end: var(--spacing-lg);
     color: var(--color-text-primary);
 }
@@ -633,6 +683,15 @@ img {
 
 .hero__cta {
     margin-block-start: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+.btn-arrow-animation {
+    width: 80px;  
+    height: auto;
+    display: block;
 }
 
 @media (max-width: 767px) {

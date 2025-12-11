@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}التسجيل الصوتي - مشروع جمع البيانات الصوتية{% endblock %}
+{% block title %}التسجيل الصوتي{% endblock %}
 
 {% block head_extra %}
 <style>
@@ -263,7 +263,7 @@
 
 {% block content %}
 <div class="container record-container" style="padding-block: var(--spacing-2xl);">
-    <h1 style="text-align: center; margin-block-end: var(--spacing-lg);">التسجيل الصوتي</h1>
+    <!-- <h1 style="text-align: center; margin-block-end: var(--spacing-lg);">التسجيل الصوتي</h1> -->
     
     <div class="card">
         <div class="card__body">
@@ -274,7 +274,7 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="question_id" value="{{ question_id }}">
                     <input type="hidden" name="survey_id" value="{{ survey_id }}">
-                    <button type="submit" class="btn btn--secondary btn-change-question">
+                    <button type="submit" class="btn btn--secondary btn--small btn-change-question">
                         تغيير السؤال
                     </button>
                 </form>
@@ -283,10 +283,10 @@
             
             <!-- Prompt Display (integrated into card) -->
             <div style="margin-block-end: var(--spacing-xl); text-align: center;">
-                <div class="prompt-display__text" id="currentPrompt" style="font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); color: var(--color-text-primary);">
-                    {{ prompt_text|default('يرجى قراءة النص التالي بصوت واضح...', true) }}
+                <div class="prompt-display__text" id="currentPrompt" style="font-size: var(--font-size-xl); line-height: var(--line-height-relaxed); color: var(--color-text-primary);">
+                   <h4> {{ prompt_text|default('يرجى قراءة النص التالي بصوت واضح...', true) }} </h4>
                 </div>
-                <div class="prompt-display__label" style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-block-end: var(--spacing-sm); font-weight: var(--font-weight-semibold);">تكلم بلهجتك وبالطريقة اللي تريحك، وبإمكانك التسجل لأي مدة.</div>
+                <div class="prompt-display__label" style="font-size: var(--font-size-base); color: var(--color-text-secondary); margin-block-end: var(--spacing-sm); font-weight: var(--font-weight-bold);">تكلم بلهجتك وبالطريقة اللي تريحك، وبإمكانك التسجل لأي مدة.</div>
 
             </div>
             
@@ -353,15 +353,15 @@
         </div>
         
         <div class="card__footer" style="display: flex; gap: var(--spacing-md); justify-content: space-between; flex-wrap: wrap;">
-            <a href="{{ url_for('routes.select_theme') }}" class="btn btn--secondary" style="order: 1;">
+            <a href="{{ url_for('routes.select_theme') }}" class="btn btn--secondary btn--large" style="order: 1;">
                 → رجوع
             </a>
             {% if question_id and survey_id %}
-            <button type="button" id="submitAudioBtn" class="btn btn--primary" style="order: 2;" disabled>
+            <button type="button" id="submitAudioBtn" class="btn btn--primary btn--mid" style="order: 2;" disabled>
                 إرسال ←
             </button>
             {% else %}
-            <a href="{{ url_for('routes.thanks') }}" class="btn btn--primary" style="order: 2;">
+            <a href="{{ url_for('routes.thanks') }}" class="btn btn--primary btn--mid" style="order: 2;">
                 إنهاء ←
             </a>
             {% endif %}

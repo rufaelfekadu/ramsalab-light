@@ -5,45 +5,53 @@
 {% block content %}
 <section class="hero">
     <div class="container">
-        <h1 class="hero__title">مرحباً بك في مشروع جمع البيانات الصوتية</h1>
+        <h1 class="hero__title">شارك بصوتك وساهم في ترميز اللهجة الإماراتية</h1>
         <p class="hero__subtitle">
-            نحن نعمل على توثيق اللهجات العربية الإماراتية واستكشاف ثرائها وميزاتها اللغوية 
-            والحفاظ على التراث الإماراتي. نقدّر مشاركتك ونتطلع إلى جمع ملاحظاتك القيّمة.
+            لهجتك جزء ثمين من الهوية والثقافة الإماراتية. بمشاركتك في هذا المشروع، ستساهم في بناء أرشيف لغوي يحفظ جمال اللهجات الإماراتية وتنوعها، ويدعم تطوير التقنيات اللغوية الحديثة
         </p>
-        <div class="hero__cta">
+        <!-- <div class="hero__cta">
             <a href="{{ url_for('routes.consent_form') }}" class="btn btn--primary btn--large btn--bubble">
-                ابدأ الآن
+                ابدأ هنا
+            </a>
+        </div> -->
+        <div class="hero__cta">
+            <img src="{{ url_for('static', filename='../static/img/arrow.gif') }}" 
+                alt="" 
+                class="btn-arrow-animation">
+            <a href="{{ url_for('routes.consent_form') }}" class="btn-bubble-wrapper">
+                <img src="{{ url_for('static', filename='../static/img/bubble.svg') }}" 
+                    alt="" 
+                    class="btn-bubble-bg">
+                <span class="btn-bubble-text">ابدأ هنا</span>
             </a>
         </div>
     </div>
 </section>
 
-<section class="container" style="padding-block-start: 0; padding-block-end: var(--spacing-4xl);">
+<section class="container" style="padding-block-start: 0; padding-block-end: var(--spacing-sm);">
     <div style="max-width: 800px; margin-inline: auto;">
         <div class="card" style="background-color: var(--color-bg-secondary);">
             <div class="card__body">
-                <h2 style="text-align: right; margin-block-end: var(--spacing-sm);">نبذة عن مختبر رمسة</h2>
-                <p style="line-height: var(--line-height-relaxed); margin-block-end: var(--spacing-md);">
+                <h3 style="text-align: right; margin-block-end: var(--spacing-sm);">نبذة عن مختبر رمسة</h3><br>
+                <p style="text-align: justify;line-height: var(--line-height-relaxed); margin-block-end: var(--spacing-2xl);">
                     نحن فريق بحثي من جامعة محمد بن زايد للذكاء الاصطناعي، بإشراف الدكتورة حنان الدرمكي، نعمل على جمع وتوثيق اللهجات الإماراتية المحكية في جميع أنحاء الدولة. يهدف المشروع إلى ترميز ودعم التراث اللغوي الإماراتي وفهم تنوع لهجاته من خلال جمع تسجيلات صوتية طبيعية وتحليلها علميًا. نعمل على بناء قاموس ضخم للهجات الإماراتية وتطوير تقنيات الذكاء الاصطناعي لمعالجة اللغة المحلية. بدعم ومشاركة المجتمع الإماراتي، نهدف إلى أرشفة تاريخنا الشفهي  وتطوير تكنولوجيا متقدمة تخدم لهجتنا وتمثل ثقافتنا.
-                </p>
-                <p style="line-height: var(--line-height-relaxed); margin-block-end: var(--spacing-2xl);">
                     مشاركتكم معنا تساعد في الحفاظ على إرثنا اللغوي والثقافي للأجيال القادمة.
                 </p>
                 
-                <h2 style="text-align: left; margin-block-end: var(--spacing-sm); margin-block-start: var(--spacing-2xl);">About Ramsa Lab</h2>
-                <p style="line-height: var(--line-height-relaxed); text-align: left; direction: ltr;">
+                <h3 style="text-align: left; margin-block-end: var(--spacing-sm); margin-block-start: var(--spacing-2xl);">About Ramsa Lab</h3><br>
+                <p style="text-align: justify;line-height: var(--line-height-relaxed); direction: ltr;">
                     We are a research team at Mohamed Bin Zayed University of Artificial Intelligence, under the supervision of Dr. Hanan Aldarmaki, working towards documenting the spoken Emirati dialects across the entire country. The project aims to capture the Emirati linguistic heritage and understand the diversity of its dialects by collecting and analyzing natural audio recordings. Using these recordings, we are building a dictionary and developing speech and language technologies for Emirati dialects. With the support and participation of the Emirati community, we aim to archive our oral history and develop advanced technology that serves our language and represents our culture.
                 </p>
             </div>
         </div>
         
         <div style="text-align: center; margin-block-start: var(--spacing-2xl);">
-            <h2 style="margin-block-end: var(--spacing-md);">تواصل معنا</h2>
-            <p style="line-height: var(--line-height-relaxed);">
+            <h3 style="margin-block-end: var(--spacing-xs);">تواصل معنا</h3>
+            <p style="line-height: var(--line-height-relaxed);margin-block-end: var(--spacing-xs);">
                 نرحّب بملاحظاتك وأفكارك حول المشروع، وسنحرص على الرد بأقرب وقت ممكن.
             </p>
-            <p style="margin-block-start: var(--spacing-md);">
-                <a href="mailto:info@ramsalab.ae" style="color: var(--color-primary); font-weight: var(--font-weight-semibold);">info@ramsalab.ae</a>
+            <p style="margin-block-start: var(--spacing-xs);">
+                <a href="mailto:info@ramsalab.ae" style="color: var(--color-primary); font-weight: var(--font-weight-bold);font-size: var(--font-size-xl);">info@ramsalab.ae</a>
             </p>
         </div>
     </div>

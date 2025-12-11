@@ -9,7 +9,7 @@
         max-width: 700px;
         margin-inline: auto;
         text-align: center;
-        padding-block: var(--spacing-4xl);
+        padding-block: var(--spacing-xl);
     }
     
     .thanks-icon {
@@ -75,10 +75,10 @@
     
     .registration-section {
         background-color: var(--color-bg-secondary);
-        border: 2px solid var(--color-border);
+        /* border: 2px solid var(--color-border); */
         border-radius: var(--radius-lg);
-        padding: var(--spacing-lg);
-        margin-block: var(--spacing-xl);
+        padding: var(--spacing-sm);
+        margin-block: var(--spacing-sm);
         text-align: center;
     }
     
@@ -104,17 +104,17 @@
     </div>
     
     <p class="thanks-message">
-        شكرًا لمساهمتكم في ترميز اللهجة الإماراتية!
+       <h4> شكرًا لمساهمتكم في ترميز اللهجة الإماراتية! </h4>
     </p>
     
     {% if token_6_digits %}
     <div class="registration-section">
         <div class="registration-number">
-            رقم التسجيل {{ token_6_digits }}
+            <h3> رقم التسجيل {{ token_6_digits }} </h3>
         </div>
         <p style="color: #868874;">
-            يمكنكم طلب حذف بياناتكم خلال ٣٠ يوم باستخدام رقم التسجيل ومراسلتنا على
-            <a href="mailto:help@ramsalab.ae" style="color: #383c2a; text-decoration: none;">help@ramsalab.ae</a>
+            يمكنكم طلب حذف بياناتكم خلال ٣٠ يوم باستخدام رقم التسجيل ومراسلتنا على <br>
+            <a href="mailto:help@ramsalab.ae" style="color: #9b2f28; text-decoration: none;">help@ramsalab.ae</a>
         </p>
 
     </div>
@@ -123,16 +123,16 @@
         <p style="font-weight: var(--font-weight-semibold); margin-block-end: var(--spacing-md);">
             هل ترغب بالمشاركة بصورة أكبر؟
         </p>
-        <p style="color: #383c2a;">
+        <p style="color: #383c2a; font-size: var(--font-size-base)">
             يمكنكم التسجيل مرة أخرى أو مراسلتنا لتسجيل محادثة أطول مع أحد أعضاء فريق العمل: 
-            <a href="mailto:info@ramsalab.ae" style="color: #383c2a; text-decoration: none;">info@ramsalab.ae</a>
+            <a href="mailto:info@ramsalab.ae" style="color: #383c2a; text-decoration: none; font-size: var(--font-size-lg);">info@ramsalab.ae</a>
         </p>
     </div>
     {% endif %}
     
     <div style="margin-block-start: var(--spacing-2xl);">
         <a href="{{ url_for('routes.select_theme') }}" class="btn btn--primary btn--large">
-            تقديم إدخال آخر
+            التسجيل مرة أخرى
         </a>
     </div>
 </div>

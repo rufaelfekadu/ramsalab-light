@@ -1,22 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}نموذج الموافقة - مشروع جمع البيانات الصوتية{% endblock %}
+{% block title %}نموذج الموافقة{% endblock %}
 
 {% block content %}
 <div class="container" style="max-width: 900px; padding-block: var(--spacing-2xl);">
-    <h1 style="text-align: center; margin-block-end: var(--spacing-xl);">نموذج الموافقة</h1>
+    <h2 style="text-align: center; margin-block-end: var(--spacing-xl);">مرحبا الساع</h2>
     
     <div class="card" style="background-color: var(--color-bg-secondary);">
-        <!-- <div class="card__header">
-            <h2 class="card__title">معلومات المشارك</h2>
-        </div> -->
+        <div class="card__header">
+            <h2 class="card__title" style="text-align: justify">أنت مدعو للمشاركة في دراسة بحثية تهدف إلى أرشفة وترميز اللهجات الإماراتية المحكية. يرجى قراءة المعلومات التالية 
+                بعناية قبل اتخاذ قرار المشاركة. مشاركتك طوعية تماماً، ويمكنك الانسحاب في أي وقت.
+            </h2>
+        </div>
         
         <div class="card__body">
-            <p style="margin-block-end: var(--spacing-lg); line-height: var(--line-height-relaxed);">
-                أنت مدعو للمشاركة في دراسة بحثية تهدف إلى توثيق اللهجات العربية الإماراتية المنطوقة، 
-                واستكشاف ثرائها وميزاتها اللغوية والحفاظ على التراث الإماراتي. يرجى قراءة المعلومات التالية 
+            <!-- <p style="margin-block-end: var(--spacing-lg); line-height: var(--line-height-relaxed);">
+                أنت مدعو للمشاركة في دراسة بحثية تهدف إلى أرشفة وترميز اللهجات الإماراتية المحكية. يرجى قراءة المعلومات التالية 
                 بعناية قبل اتخاذ قرار المشاركة. مشاركتك طوعية تماماً، ويمكنك الانسحاب في أي وقت.
-            </p>
+            </p> -->
             
             <!-- Accordion Section -->
             <div class="accordion-container" style="margin-block-end: var(--spacing-xl);">
@@ -135,11 +136,11 @@
     </div>
     
     <div style="margin-block-start: var(--spacing-xl); display: flex; gap: var(--spacing-md); justify-content: space-between; flex-wrap: wrap;">
-        <a href="{{ url_for('routes.index') }}" class="btn btn--secondary btn--large" style="order: 1;">
-            → إلغاء
+        <a href="{{ url_for('routes.index') }}" class="btn btn--secondary btn--mid" style="order: 1;">
+            → رجوع
         </a>
-        <button type="submit" form="consentForm" class="btn btn--primary btn--large" style="order: 2;">
-            موافق ومتابعة ←
+        <button type="submit" form="consentForm" class="btn btn--primary btn--mid " style="order: 2;">
+             متابعة ←
         </button>
     </div>
 </div>

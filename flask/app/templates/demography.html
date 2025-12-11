@@ -4,11 +4,11 @@
 
 {% block content %}
 <div class="container" style="max-width: 900px; padding-block: var(--spacing-2xl);">
-    <h1 style="text-align: center; margin-block-end: var(--spacing-xl);">المعلومات الديموغرافية</h1>
+    <h2 style="text-align: center; margin-block-end: var(--spacing-xl);">الاستبيان</h2>
     
     <div class="card" style="background-color: var(--color-bg-secondary);">
         <div class="card__header">
-            <h2 class="card__title">يرجى ملء المعلومات التالية</h2>
+            <h4 class="card__title">املأ البيانات التالية والتي ستساعدنا في دراسة العوامل الديموغرافية للهجات</h4>
         </div>
         
         <div class="card__body">
@@ -99,11 +99,11 @@
     </div>
     
     <div style="margin-block-start: var(--spacing-xl); display: flex; gap: var(--spacing-md); justify-content: space-between; flex-wrap: wrap;">
-        <a href="{{ url_for('routes.consent_form') }}" class="btn btn--secondary btn--large" style="order: 1;">
+        <a href="{{ url_for('routes.consent_form') }}" class="btn btn--secondary btn--mid" style="order: 1;">
             → رجوع
         </a>
-        <button type="submit" form="demographyForm" class="btn btn--primary btn--large" style="order: 2;">
-            حفظ ومتابعة ←
+        <button type="submit" form="demographyForm" class="btn btn--primary btn--mid" style="order: 2;">
+            متابعة  ←
         </button>
     </div>
 </div>
