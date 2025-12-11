@@ -1,0 +1,154 @@
+[
+  {
+    "prompt_number": 0,
+    "text": "Welcome! Thank you for participating in our learning preferences survey. We'll ask you a few questions to better understand your educational needs. Click 'Start Survey' to begin.",
+    "question_type": "interactive",
+    "options": [
+      {
+        "interactive_type": "button",
+        "buttons": [
+          "Start Survey"
+        ]
+      }
+    ],
+    "survey_name": "learning_preferences_survey",
+    "survey_logic": [
+      {
+        "response_option_id": "Start Survey",
+        "next_prompt_number": 1
+      }
+    ]
+  },
+  {
+    "prompt_number": 1,
+    "text": "What is your preferred method of learning?",
+    "question_type": "interactive",
+    "options": [
+      {
+        "interactive_type": "button",
+        "buttons": [
+          "Reading books",
+          "Watching videos",
+          "Hands-on practice"
+        ]
+      }
+    ],
+    "survey_name": "learning_preferences_survey",
+    "survey_logic": [
+      {
+        "response_option_id": "Reading books",
+        "next_prompt_number": 2
+      },
+      {
+        "response_option_id": "Watching videos",
+        "next_prompt_number": 2
+      },
+      {
+        "response_option_id": "Hands-on practice",
+        "next_prompt_number": 2
+      },
+      {
+        "response_option_id": "Group discussions",
+        "next_prompt_number": 2
+      },
+      {
+        "response_option_id": "Online courses",
+        "next_prompt_number": 2
+      }
+    ]
+  },
+  {
+    "prompt_number": 2,
+    "text": "Which of the following skills would you like to develop? (Select all that apply)",
+    "question_type": "interactive",
+    "options": [
+      {
+        "interactive_type": "list",
+        "sections": [
+          {
+            "title": "Programming",
+            "rows": [
+              {
+                "id": "Programming",
+                "title": "Programming"
+              },
+              {
+                "id": "Data Analysis",
+                "title": "Data Analysis"
+              },
+              {
+                "id": "Machine Learning",
+                "title": "Machine Learning"
+              },
+              {
+                "id": "Communication",
+                "title": "Communication"
+              },
+              {
+                "id": "Leadership",
+                "title": "Leadership"
+              },
+              {
+                "id": "Problem Solving",
+                "title": "Problem Solving"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "survey_name": "learning_preferences_survey",
+    "survey_logic": [
+      {
+        "response_option_id": "Programming",
+        "next_prompt_number": 3
+      },
+      {
+        "response_option_id": "Data Analysis",
+        "next_prompt_number": 3
+      },
+      {
+        "response_option_id": "Machine Learning",
+        "next_prompt_number": 3
+      },
+      {
+        "response_option_id": "Communication",
+        "next_prompt_number": 3
+      },
+      {
+        "response_option_id": "Leadership",
+        "next_prompt_number": 3
+      },
+      {
+        "response_option_id": "Problem Solving",
+        "next_prompt_number": 3
+      }
+    ]
+  },
+  {
+    "prompt_number": 3,
+    "text": "Describe your ideal work environment in 2-3 sentences.",
+    "question_type": "text",
+    "options": null,
+    "survey_name": "learning_preferences_survey",
+    "survey_logic": [
+      {
+        "response_option_id": "text_response",
+        "next_prompt_number": 4
+      }
+    ]
+  },
+  {
+    "prompt_number": 4,
+    "text": "Tell us about a challenging project you worked on and how you overcame the difficulties.",
+    "question_type": "audio",
+    "options": null,
+    "survey_name": "learning_preferences_survey",
+    "survey_logic": [
+      {
+        "response_option_id": "audio_response",
+        "next_prompt_number": null
+      }
+    ]
+  }
+]

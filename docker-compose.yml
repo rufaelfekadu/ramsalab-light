@@ -1,0 +1,116 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - mbzuai-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    expose:
+      - "${POSTGRES_PORT:-5432}"
+    security_opt:
+      - no-new-privileges:true
+
+  flask:
+    build:
+      context: ./flask
+      dockerfile: Dockerfile
+    container_name: ${FLASK_CONTAINER_NAME}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # Application settings
+      FLASK_ENV: ${FLASK_ENV:-production}
+      PORT: ${FLASK_PORT}
+      WTF_CSRF_ENABLED: ${FLASK_WTF_CSRF_ENABLED:-true}
+      SECRET_KEY: ${FLASK_SECRET_KEY}
+      # Database reset flag (set to "true" or "1" to clear and repopulate database)
+      RESET_DB: true
+    expose:
+      - "${FLASK_PORT}"
+    volumes:
+      # Only mount data directories, not source code (for production)
+      - ./flask/_uploads:/app/_uploads
+      - ./flask/logs:/app/logs
+    networks:
+      - mbzuai-network
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import socket; s = socket.socket(); s.settimeout(1); result = s.connect_ex((\"localhost\", ${FLASK_PORT:-5000})); s.close(); exit(0 if result == 0 else 1)'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    security_opt:
+      - no-new-privileges:true
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ${GRAFANA_CONTAINER_NAME}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    expose:
+      - "${GRAFANA_PORT}"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+    networks:
+      - mbzuai-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    security_opt:
+      - no-new-privileges:true
+
+  nginx:
+    image: nginx:1.29
+    networks:
+      - mbzuai-network
+    env_file:
+      - .env
+    environment:
+      NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".template"
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates/
+      - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      flask:
+        condition: service_healthy
+      grafana:
+        condition: service_healthy
+
+volumes:
+  db_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  mbzuai-network:
+    driver: bridge

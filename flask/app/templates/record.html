@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block title %}التسجيل الصوتي - مشروع جمع البيانات الصوتية{% endblock %}
+
+{% block head_extra %}
+<style>
+    .record-container {
+        max-width: 800px;
+        margin-inline: auto;
+    }
+    
+    .prompt-display {
+        background-color: var(--color-bg-secondary);
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        margin-block-end: var(--spacing-xl);
+        text-align: center;
+    }
+    
+    .prompt-display__label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        margin-block-end: var(--spacing-sm);
+        font-weight: var(--font-weight-semibold);
+    }
+    
+    .prompt-display__text {
+        font-size: var(--font-size-lg);
+        line-height: var(--line-height-relaxed);
+        color: var(--color-text-primary);
+    }
+    
+    .recording-controls {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: center;
+        margin-block: var(--spacing-xl);
+    }
+    
+    .recording-controls__buttons {
+        display: flex;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .btn-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        padding: 0;
+        border-radius: 50%;
+    }
+    
+    .btn-icon svg {
+        width: 32px;
+        height: 32px;
+        fill: currentColor;
+    }
+    
+    .btn-icon--large {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .btn-icon--large svg {
+        width: 40px;
+        height: 40px;
+    }
+    
+    #startRecordingBtn {
+        display: inline-flex;
+    }
+    
+    #stopRecordingBtn {
+        display: none;
+    }
+    
+    #stopRecordingBtn:not([disabled]) {
+        display: inline-flex;
+    }
+    
+    .file-upload-area .btn-icon {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .file-upload-area .btn-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .status-display {
+        text-align: center;
+        padding: var(--spacing-md);
+        border-radius: var(--radius-md);
+        margin-block-start: var(--spacing-lg);
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .status-display--idle {
+        background-color: var(--color-bg-secondary);
+        color: var(--color-text-secondary);
+    }
+    
+    .status-display--recording {
+        background-color: #fee;
+        color: var(--color-error);
+        animation: pulse 2s infinite;
+    }
+    
+    .status-display--success {
+        background-color: #efe;
+        color: var(--color-success);
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    .file-upload-area {
+        border: 2px dashed var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        text-align: center;
+        margin-block-start: var(--spacing-xl);
+        transition: border-color var(--transition-base);
+    }
+    
+    .file-upload-area:hover {
+        border-color: var(--color-primary);
+    }
+    
+    .file-upload-area input[type="file"] {
+        display: none;
+    }
+    
+    .file-upload-area label {
+        cursor: pointer;
+        display: inline-block;
+    }
+    
+    .recording-indicator {
+        display: none;
+        align-items: center;
+        gap: var(--spacing-sm);
+        color: var(--color-error);
+        font-weight: var(--font-weight-semibold);
+    }
+    
+    .recording-indicator--active {
+        display: flex;
+    }
+    
+    .recording-dot {
+        width: 12px;
+        height: 12px;
+        background-color: var(--color-error);
+        border-radius: 50%;
+        animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+    
+    .btn-change-question {
+        background-color: #868874;
+        border-color: #868874;
+        color: white;
+    }
+    
+    .btn-change-question:hover {
+        background-color: #6d6d5c;
+        border-color: #6d6d5c;
+        color: white;
+    }
+    
+    /* Permission Modal */
+    .permission-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .permission-modal--active {
+        display: flex;
+    }
+    
+    .permission-modal__content {
+        background-color: var(--color-bg-primary);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-2xl);
+        max-width: 500px;
+        width: 90%;
+        box-shadow: var(--shadow-lg);
+        text-align: center;
+    }
+    
+    .permission-modal__title {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
+        margin-block-end: var(--spacing-md);
+        color: var(--color-text-primary);
+    }
+    
+    .permission-modal__message {
+        font-size: var(--font-size-base);
+        color: var(--color-text-secondary);
+        margin-block-end: var(--spacing-xl);
+        line-height: var(--line-height-relaxed);
+    }
+    
+    .permission-modal__buttons {
+        display: flex;
+        gap: var(--spacing-md);
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    /* Audio Preview */
+    .audio-preview {
+        display: none;
+        margin-block-start: var(--spacing-xl);
+        text-align: center;
+    }
+    
+    .audio-preview--active {
+        display: block;
+    }
+    
+    .audio-preview__player {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .audio-preview__controls {
+        display: flex;
+        gap: var(--spacing-md);
+        justify-content: center;
+        margin-block-start: var(--spacing-md);
+        flex-wrap: wrap;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container record-container" style="padding-block: var(--spacing-2xl);">
+    <h1 style="text-align: center; margin-block-end: var(--spacing-lg);">التسجيل الصوتي</h1>
+    
+    <div class="card">
+        <div class="card__body">
+            <!-- Change Question Button -->
+            {% if question_id and survey_id %}
+            <div style="margin-block-end: var(--spacing-lg); text-align: center;">
+                <form method="POST" action="{{ url_for('routes.change_question') }}" style="margin: 0; display: inline-block;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="question_id" value="{{ question_id }}">
+                    <input type="hidden" name="survey_id" value="{{ survey_id }}">
+                    <button type="submit" class="btn btn--secondary btn-change-question">
+                        تغيير السؤال
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+            
+            <!-- Prompt Display (integrated into card) -->
+            <div style="margin-block-end: var(--spacing-xl); text-align: center;">
+                <div class="prompt-display__text" id="currentPrompt" style="font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); color: var(--color-text-primary);">
+                    {{ prompt_text|default('يرجى قراءة النص التالي بصوت واضح...', true) }}
+                </div>
+                <div class="prompt-display__label" style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-block-end: var(--spacing-sm); font-weight: var(--font-weight-semibold);">تكلم بلهجتك وبالطريقة اللي تريحك، وبإمكانك التسجل لأي مدة.</div>
+
+            </div>
+            
+            <!-- Recording Controls -->
+            <div class="recording-controls">
+                <div class="recording-controls__buttons">
+                    <button id="startRecordingBtn" class="btn btn--primary btn--large btn-icon btn-icon--large" aria-label="ابدأ التسجيل" title="ابدأ التسجيل">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" fill="currentColor"/>
+                            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button id="stopRecordingBtn" class="btn btn--error btn--large btn-icon btn-icon--large" disabled aria-label="إيقاف التسجيل" title="إيقاف التسجيل" style="display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="recording-indicator" id="recordingIndicator">
+                    <div class="recording-dot"></div>
+                    <span>جاري التسجيل...</span>
+                </div>
+            </div>
+            
+            <!-- Status Display -->
+            <!-- <div class="status-display status-display--idle" id="statusDisplay">
+                لا يوجد تسجيل حاليًا
+            </div> -->
+            
+            <!-- Audio Preview -->
+            <div class="audio-preview" id="audioPreview" >
+                <audio class="audio-preview__player" id="audioPreviewPlayer" controls></audio>
+                <div class="audio-preview__controls">
+                    <button type="button" class="btn btn--secondary" id="recordAgainBtn">
+                        تسجيل جديد
+                    </button>
+                </div>
+            </div>
+            
+            <!-- File Upload -->
+            <!-- <div class="file-upload-area">
+                <label for="audioFileInput" class="btn btn--secondary btn-icon" aria-label="رفع ملف صوتي" title="رفع ملف صوتي">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" fill="currentColor"/>
+                    </svg>
+                </label>
+                <input type="file" 
+                       id="audioFileInput" 
+                       name="audio" 
+                       accept="audio/wav,audio/mp3,audio/webm,audio/*">
+                <p style="margin-block-start: var(--spacing-md); color: var(--color-text-secondary); font-size: var(--font-size-sm);">
+                    أو قم برفع ملف صوتي بدلاً من التسجيل المباشر
+                </p>
+            </div> -->
+            
+            <!-- Hidden form for submitting audio -->
+            <form id="audioSubmitForm" method="POST" action="{{ url_for('routes.submit_audio') }}" style="display: none;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="question_id" id="formQuestionId" value="{{ question_id }}">
+                <input type="hidden" name="survey_id" id="formSurveyId" value="{{ survey_id }}">
+                <input type="file" name="audio" id="formAudioInput">
+            </form>
+        </div>
+        
+        <div class="card__footer" style="display: flex; gap: var(--spacing-md); justify-content: space-between; flex-wrap: wrap;">
+            <a href="{{ url_for('routes.select_theme') }}" class="btn btn--secondary" style="order: 1;">
+                → رجوع
+            </a>
+            {% if question_id and survey_id %}
+            <button type="button" id="submitAudioBtn" class="btn btn--primary" style="order: 2;" disabled>
+                إرسال ←
+            </button>
+            {% else %}
+            <a href="{{ url_for('routes.thanks') }}" class="btn btn--primary" style="order: 2;">
+                إنهاء ←
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Permission Modal -->
+    <div class="permission-modal" id="permissionModal">
+        <div class="permission-modal__content">
+            <h2 class="permission-modal__title">إذن استخدام الميكروفون</h2>
+            <p class="permission-modal__message">
+                لبدء التسجيل، نحتاج إلى إذن استخدام الميكروفون. سيظهر لك طلب من المتصفح - يرجى النقر على "السماح" أو "Allow" لتفعيل الميكروفون.
+            </p>
+            <div class="permission-modal__buttons">
+                <button type="button" class="btn btn--primary" id="allowPermissionBtn">
+                    ابدأ التسجيل
+                </button>
+                <button type="button" class="btn btn--secondary" id="closeModalBtn">
+                    إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal for Record Again -->
+    <div class="permission-modal" id="confirmDeleteModal">
+        <div class="permission-modal__content">
+            <h2 class="permission-modal__title">تأكيد حذف التسجيل</h2>
+            <p class="permission-modal__message">
+                هل أنت متأكد أنك تريد حذف التسجيل الحالي وتسجيل جديد؟ سيتم حذف التسجيل الحالي ولن تتمكن من استعادته.
+            </p>
+            <div class="permission-modal__buttons">
+                <button type="button" class="btn btn--error" id="confirmDeleteBtn">
+                    نعم، احذف التسجيل
+                </button>
+                <button type="button" class="btn btn--secondary" id="cancelDeleteBtn">
+                    إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/audio.js') }}"></script>
+<script>
+    // Store question_id and survey_id for audio submission
+    const questionId = {{ question_id|default('null', true) }};
+    const surveyId = {{ survey_id|default('null', true) }};
+    const csrfToken = '{{ csrf_token() }}';
+    
+    // Initialize audio recording when page loads
+    let audioRecorder;
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof AudioRecorder !== 'undefined') {
+            audioRecorder = new AudioRecorder({
+                startBtn: document.getElementById('startRecordingBtn'),
+                stopBtn: document.getElementById('stopRecordingBtn'),
+                uploadInput: document.getElementById('audioFileInput'),
+                statusDisplay: document.getElementById('statusDisplay'),
+                recordingIndicator: document.getElementById('recordingIndicator'),
+                questionId: questionId,
+                surveyId: surveyId,
+                submitBtn: document.getElementById('submitAudioBtn'),
+                submitForm: document.getElementById('audioSubmitForm'),
+                csrfToken: csrfToken
+            });
+        }
+        
+        // Handle submit button click
+        const submitBtn = document.getElementById('submitAudioBtn');
+        if (submitBtn && audioRecorder) {
+            submitBtn.addEventListener('click', function() {
+                audioRecorder.submitAudio();
+            });
+        }
+    });
+</script>
+{% endblock %}

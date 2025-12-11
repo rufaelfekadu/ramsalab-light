@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage My Data - MBZUAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        .manage-data-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .manage-data-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .manage-data-header h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .manage-data-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        .alert {
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .alert-error {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+        .alert-success {
+            background-color: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+        .back-to-main-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .back-to-main-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+        .back-to-main-btn i {
+            margin-right: 8px;
+        }
+        
+        .custom-alert-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .custom-alert-overlay.show {
+            display: flex;
+        }
+        
+        .custom-alert {
+            background: white;
+            border-radius: 10px;
+            padding: 0;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .custom-alert-header {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .custom-alert-body {
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .custom-alert-footer {
+            padding: 15px 20px;
+            text-align: right;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .custom-alert-button {
+            padding: 10px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-left: 10px;
+        }
+        
+        .custom-alert-button:hover {
+            background: #5568d3;
+        }
+        
+        .custom-alert-button.cancel {
+            background: #6c757d;
+        }
+        
+        .custom-alert-button.cancel:hover {
+            background: #5a6268;
+        }
+        
+        .custom-alert-button.delete {
+            background: #dc3545;
+        }
+        
+        .custom-alert-button.delete:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Confirmation Dialog -->
+    <div id="confirmDialogOverlay" class="custom-alert-overlay">
+        <div class="custom-alert">
+            <div class="custom-alert-header">
+                Confirm Deletion
+            </div>
+            <div class="custom-alert-body" id="confirmDialogBody">
+                Are you sure you want to delete all your data? This action cannot be undone.
+            </div>
+            <div class="custom-alert-footer">
+                <button type="button" class="custom-alert-button cancel" id="confirmCancelBtn">Cancel</button>
+                <button type="button" class="custom-alert-button delete" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Alert Dialog -->
+    {% if deletion_success %}
+    <div id="customAlertOverlay" class="custom-alert-overlay">
+        <div class="custom-alert">
+            <div class="custom-alert-header">
+                Thank You!
+            </div>
+            <div class="custom-alert-body">
+                Thank you for helping us keep your data safe! Your data has been deleted.<br><br>
+                Click the button below to be redirected to the main page.
+            </div>
+            <div class="custom-alert-footer">
+                <button type="button" class="custom-alert-button" id="alertRedirectBtn">OK</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="{{ url_for('routes.index') }}" class="back-to-main-btn">
+                <i class="fas fa-arrow-left"></i> Back to Main Page
+            </a>
+        </div>
+        <div class="manage-data-card">
+            <div class="manage-data-header">
+                <h1><i class="fas fa-user-shield"></i> Manage My Data</h1>
+                <p>Enter your User ID and User Token to delete your data</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="post" action="{{ url_for('routes.manage_data') }}" id="deleteDataForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <div class="form-group">
+                    <label for="user_id">User ID</label>
+                    <input type="text" id="user_id" name="user_id" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="user_token">User Token</label>
+                    <input type="text" id="user_token" name="user_token" required>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-trash-alt"></i> Delete My Data
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('deleteDataForm');
+            const confirmDialog = document.getElementById('confirmDialogOverlay');
+            const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            
+            // Handle form submission - show confirmation dialog
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Show confirmation dialog
+                    if (confirmDialog) {
+                        confirmDialog.classList.add('show');
+                    }
+                });
+            }
+            
+            // Handle confirmation dialog buttons
+            if (confirmCancelBtn) {
+                confirmCancelBtn.addEventListener('click', function() {
+                    if (confirmDialog) {
+                        confirmDialog.classList.remove('show');
+                    }
+                });
+            }
+            
+            if (confirmDeleteBtn) {
+                confirmDeleteBtn.addEventListener('click', function() {
+                    if (confirmDialog) {
+                        confirmDialog.classList.remove('show');
+                    }
+                    
+                    // Submit the form
+                    if (form) {
+                        form.submit();
+                    }
+                });
+            }
+            
+            {% if deletion_success %}
+            // Show success alert if deletion was successful
+            const alertOverlay = document.getElementById('customAlertOverlay');
+            const redirectBtn = document.getElementById('alertRedirectBtn');
+            
+            if (alertOverlay && redirectBtn) {
+                // Show alert immediately
+                alertOverlay.classList.add('show');
+                
+                // Handle redirect button click
+                redirectBtn.addEventListener('click', function() {
+                    window.location.href = '{{ url_for("routes.index") }}';
+                });
+            }
+            {% endif %}
+        });
+    </script>
+</body>
+</html>
+

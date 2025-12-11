@@ -1,0 +1,167 @@
+[
+  {
+    "text": "مرحباً! أهلاً وسهلاً بك في استطلاع تفضيلات التعلم. سنطرح عليك بضعة أسئلة لفهم احتياجاتك التعليمية بشكل أفضل. اضغط على 'بدء الاستطلاع' للمتابعة.",
+    "question_type": "interactive",
+    "options": [
+      {
+        "interactive_type": "button",
+        "buttons": [
+          "بدء الاستطلاع"
+        ]
+      }
+    ],
+    "prompt_number": 0,
+    "survey_name": "learning_preferences_survey",
+    "survey_logic": [
+      {
+        "response_option_id": "بدء الاستطلاع",
+        "next_prompt_number": 1
+      }
+    ]
+  },
+  {
+    "text": "ما هي طريقة التعلم المفضلة لديك؟",
+    "question_type": "interactive",
+    "options": [
+      {
+        "interactive_type": "button",
+        "buttons": [
+          "قراءة الكتب",
+          "مشاهدة الفيديوهات"
+        ]
+      }
+    ],  
+    "prompt_number": 1,
+    "survey_name": "learning_preferences_survey",
+    "survey_logic": [
+      {
+        "response_option_id": "قراءة الكتب",
+        "next_prompt_number": 2
+      },
+      {
+        "response_option_id": "مشاهدة الفيديوهات",
+        "next_prompt_number": 2
+      }
+      
+    ]
+  },
+  {
+    "text": "أي من المهارات التالية تود تطويرها؟ (اختر جميع ما ينطبق)",
+    "question_type": "interactive",
+    "options": [
+      {
+        "interactive_type": "list",
+        "sections": [
+          {
+            "title": "البرمجة",
+            "rows": [
+              {
+                "id": "البرمجة",
+                "title": "البرمجة"
+              }
+            ]
+          },
+          {
+            "title": "تحليل البيانات",
+            "rows": [
+              {
+                "id": "تحليل البيانات",
+                "title": "تحليل البيانات"
+              }
+            ]
+          },
+          {
+            "title": "التعلم الآلي",
+            "rows": [
+              {
+                "id": "التعلم الآلي",
+                "title": "التعلم الآلي"
+              }
+            ]
+          },
+          {
+            "title": "التواصل",
+            "rows": [
+              {
+                "id": "التواصل",
+                "title": "التواصل"
+              }
+            ]
+          },
+          {
+            "title": "القيادة",
+            "rows": [
+              {
+                "id": "القيادة",
+                "title": "القيادة"
+              }
+            ]
+          },
+          {
+            "title": "حل المشكلات",
+            "rows": [
+              {
+                "id": "حل المشكلات",
+                "title": "حل المشكلات"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "prompt_number": 2,
+    "survey_name": "learning_preferences_survey",
+    "survey_logic": [
+      {
+        "response_option_id": "البرمجة",
+        "next_prompt_number": 3
+      },
+      {
+        "response_option_id": "تحليل البيانات",
+        "next_prompt_number": 3
+      },
+      {
+        "response_option_id": "التعلم الآلي",
+        "next_prompt_number": 3
+      },
+      {
+        "response_option_id": "التواصل",
+        "next_prompt_number": 3
+      },
+      {
+        "response_option_id": "القيادة",
+        "next_prompt_number": 3
+      },
+      {
+        "response_option_id": "حل المشكلات",
+        "next_prompt_number": 3
+      }
+    ]
+  },
+  {
+    "text": "اوصف بيئة العمل المثالية بالنسبة لك في 2-3 جمل.",
+    "question_type": "text",
+    "options": null,
+    "prompt_number": 3,
+    "survey_name": "learning_preferences_survey",
+    "survey_logic": [
+      {
+        "response_option_id": "text_response",
+        "next_prompt_number": 4
+      }
+    ]
+  },
+  {
+    "text": "أخبرنا عن مشروع صعب عملت عليه وكيف تخطيت الصعوبات.",
+    "question_type": "text",
+    "options": null,
+    "prompt_number": 4,
+    "survey_name": "learning_preferences_survey",
+    "survey_logic": [
+      {
+        "response_option_id": "audio_response",
+        "next_prompt_number": null
+      }
+    ]
+  }
+]

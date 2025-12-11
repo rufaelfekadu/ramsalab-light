@@ -1,0 +1,94 @@
+[
+    {
+        "survey_name": "استبيان_تفضيلات_التعلم",
+        "description": "استبيان تفضيلات التعلم - مسح لفهم احتياجات التعلم المفضلة لدى الطلاب الإماراتيين",
+        "consent_form": {
+            "title": "نموذج الموافقة",
+            "file_path": "assets/consent_forms/english_consent_form.docx"
+        },
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+
+                    {
+                        "prompt_number": 0,
+                        "prompt": "حدثنا عن مشروع صعب عملت عليه وكيف تغلبت على الصعوبات.",
+                        "question_type": "audio",
+                        "options": null,
+                        "survey_logic": [
+                            {
+                                "response_option_id": "audio_response",
+                                "next_prompt_number": null
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "test_random_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 1,
+                        "prompt": "سؤال عشوائي #1",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "سؤال عشوائي #2",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "سؤال عشوائي #3",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ],
+                "survey_logic": {
+                    "response_option_id": null,
+                    "next_prompt_number": 3
+                }
+            },
+            {
+                "name": "test_select_group",
+                "group_type": "select",
+                "questions": [
+                    {
+                        "prompt_number": 2,
+                        "prompt": "أجب على أحد الأسئلة التالية: #1",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "أجب على أحد الأسئلة التالية: #2",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "أجب على أحد الأسئلة التالية: #3",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+
+                ],
+                "survey_logic": {
+                    "response_option_id": null,
+                    "next_prompt_number": null
+                }
+            }
+        ]
+    }
+]

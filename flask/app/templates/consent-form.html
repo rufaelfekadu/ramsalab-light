@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}نموذج الموافقة - مشروع جمع البيانات الصوتية{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; padding-block: var(--spacing-2xl);">
+    <h1 style="text-align: center; margin-block-end: var(--spacing-xl);">نموذج الموافقة</h1>
+    
+    <div class="card" style="background-color: var(--color-bg-secondary);">
+        <!-- <div class="card__header">
+            <h2 class="card__title">معلومات المشارك</h2>
+        </div> -->
+        
+        <div class="card__body">
+            <p style="margin-block-end: var(--spacing-lg); line-height: var(--line-height-relaxed);">
+                أنت مدعو للمشاركة في دراسة بحثية تهدف إلى توثيق اللهجات العربية الإماراتية المنطوقة، 
+                واستكشاف ثرائها وميزاتها اللغوية والحفاظ على التراث الإماراتي. يرجى قراءة المعلومات التالية 
+                بعناية قبل اتخاذ قرار المشاركة. مشاركتك طوعية تماماً، ويمكنك الانسحاب في أي وقت.
+            </p>
+            
+            <!-- Accordion Section -->
+            <div class="accordion-container" style="margin-block-end: var(--spacing-xl);">
+                <div class="accordion-item">
+                    <button class="accordion-header" type="button" aria-expanded="false">
+                        <span class="accordion-title"> ما البيانات التي سنجمعها؟</span>
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>١. تسجيلات صوتية قصيرة باللهجة الإماراتية حول مواضيع ومحاور وفرعية محددة.</p>
+                            <p>٢. معلومات ديموغرافية عامة (الفئة العمرية، جنس المشارك، المنطقة، …).</p>
+                            <p style="margin-block-start: var(--spacing-md);"><strong>تنبيه خصوصية:</strong> يُرجى عدم ذكر الاسم أو أي معلومات شخصية لا ترغب بمشاركتها أثناء التسجيل. سيقوم فريق البحث بحذف أي بيانات شخصية إن وجدت في التسجيل، ولكن الأفضل أن تتجنب تسجيل معلومات لا ترغب بمشاركتها بصورة علنية.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <button class="accordion-header" type="button" aria-expanded="false">
+                        <span class="accordion-title"> كيف سيتم استخدام بياناتكم؟</span>
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>١. استخراج المفردات والتعابير لبناء قاموس ضخم ومفتوح المصدر للهجة الإماراتية لحفظ الإرث اللغوي والهوية الثقافية.</p>
+                            <p>٢. الأرشفة لاستخدامها في أغراض البحث العلمي والتراث الثقافي.</p>
+                            <p>٣. تدريب نماذج الذكاء الاصطناعي (مثل نماذج التعرف على الكلام والترجمة، وغيرها).</p>
+                            <p>٤. سنقوم بإنتاج نصوص منقولة من التسجيلات الصوتية (استخلاص/نسخ) وقد نشاركها بموجب موافقتكم.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <button class="accordion-header" type="button" aria-expanded="false">
+                        <span class="accordion-title"> المخاطر والمزايا بإيجاز</span>
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>١. <strong>خصوصية:</strong> قد يُصنَّف الصوت كمعرّف شخصي؛ لذلك نتخذ تدابير أمنية وتقنية للحد من تحديد الهوية، ونقوم بمراجعة المحتوى يدويًا لإزالة الإفصاحات العرضية وغير المقصودة حيثما أمكن. إذا لم تكن ترغب بالمشاركة بصوتك، يمكنك اختيار المشاركة بالنصوص المستخلصة من التسجيل، وسيقوم فريق العمل بحذف التسجيل الخاص بك تماماً بعد استخلاص النصوص منه.</p>
+                            <p>٢. <strong>إزعاج طفيف محتمل:</strong> تقضي الضرورة بتسجيل الإجابات تسجيلًا صوتيًّا واضحًا.</p>
+                            <p>٣. <strong>الفائدة المباشرة:</strong> القيمة المرجوّة من مشاركتك هي مجتمعية/علمية تتمثل في حفظ الموروث اللغوي والثقافي، وتطوير تقنيات الذكاء الاصطناعي لمعالجة اللهجات الإماراتية</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <button class="accordion-header" type="button" aria-expanded="false">
+                        <span class="accordion-title"> السرية وحماية البيانات</span>
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>١. يتم حفظ البيانات بطريقة آمنة ومشفَّرة، مع تقييد الوصول للبيانات ليقتصر على أعضاء فريق البحث. في حال موافقتكم على جميع بنود الأرشفة، سنقوم بأرشفة البيانات والتسجيلات، وستكون قابلة للاستخدام لأي أغراض أخرى في المستقبل. إذا لم تكن ترغب بأرشفة صوتك، يمكنك اختيار المشاركة بالنصوص المستخلصة من التسجيل، وسيقوم فريق العمل بحذف التسجيل الخاص بك تماماً بعد استخلاص النصوص منه.</p>
+                            <p>٢. يحق لكم طلب الحصول على نسخة من تسجيلاتكم أو النصوص المستخلصة منها في حال شاركتم بالاسم وبيانات التواصل حتى تاريخ ٣١ أغسطس ٢٠٢٧، مع إمكانية السماح بإعادة الاتصال بكم إن رغبتم في ذلك. في أغلب الحالات، لن نقوم بجمع بيانات شخصية كالاسم ورقم الهاتف، لذلك لا يمكن في أغلب الحالات الحصول على نسخة من تسجيلاتكم الخاصة.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <button class="accordion-header" type="button" aria-expanded="false">
+                        <span class="accordion-title"> المدة وطريقة المشاركة</span>
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p>١. المشاركة طوعية تمامًا، ويحق لكم الانسحاب في أي وقت دون إبداء سبب.</p>
+                            <p>٢. بعد الإرسال، يمكن طلب الحذف باستخدام رقم هوية المشاركة الذي يظهر بعد الإتمام (ويُرسل عبر البريد إن تم تزويدنا به).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="consentForm" method="POST" action="{{ url_for('routes.update_consent') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group">
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="consent_read_form" name="consent_read_form" required>
+                        <label for="consent_read_form">
+                            أُقرُّ بأنني قرأتُ وفهمتُ المعلومات المذكورة أعلاه
+                            <span style="color: var(--color-error); font-weight: var(--font-weight-bold);"> *</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="consent_required" name="consent_required" required>
+                        <label for="consent_required">
+                            أوافق على استخدام بياناتي في أغراض البحث والتطوير (ويشمل ذلك استخراج البيانات اللازمة لبناء القاموس وتدريب نماذج الذكاء الاصطناعي)
+                            <span style="color: var(--color-error); font-weight: var(--font-weight-bold);"> *</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="consent_optional" name="consent_optional">
+                        <label for="consent_optional">
+                            أوافق على أرشفة تسجيلاتي الصوتية ومشاركتها مع الباحثين، و/أو نشرها على منصّات عامة.
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="consent_optional_alternative" name="consent_optional_alternative">
+                        <label for="consent_optional_alternative">
+                            أوافق على أرشفة ومشاركة النصوص الكتابية المستخلصة من تسجيلي الصوتي (مع عدم مشاركة الصوت)
+                            <span style="color: var(--color-error); font-weight: var(--font-weight-bold);"> *</span>
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div style="margin-block-start: var(--spacing-xl); display: flex; gap: var(--spacing-md); justify-content: space-between; flex-wrap: wrap;">
+        <a href="{{ url_for('routes.index') }}" class="btn btn--secondary btn--large" style="order: 1;">
+            → إلغاء
+        </a>
+        <button type="submit" form="consentForm" class="btn btn--primary btn--large" style="order: 2;">
+            موافق ومتابعة ←
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Accordion functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        
+        accordionHeaders.forEach(function(header) {
+            header.addEventListener('click', function() {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                const content = this.nextElementSibling;
+                
+                // Close all other accordion items
+                accordionHeaders.forEach(function(otherHeader) {
+                    if (otherHeader !== header) {
+                        otherHeader.setAttribute('aria-expanded', 'false');
+                        const otherContent = otherHeader.nextElementSibling;
+                        otherContent.classList.remove('is-open');
+                    }
+                });
+                
+                // Toggle current item
+                if (isExpanded) {
+                    this.setAttribute('aria-expanded', 'false');
+                    content.classList.remove('is-open');
+                } else {
+                    this.setAttribute('aria-expanded', 'true');
+                    content.classList.add('is-open');
+                }
+            });
+        });
+        
+        // Make consent_optional and consent_optional_alternative mutually exclusive
+        const consentOptional = document.getElementById('consent_optional');
+        const consentOptionalAlternative = document.getElementById('consent_optional_alternative');
+        
+        if (consentOptional && consentOptionalAlternative) {
+            consentOptional.addEventListener('change', function() {
+                if (this.checked) {
+                    consentOptionalAlternative.checked = false;
+                    consentOptionalAlternative.disabled = true;
+                } else {
+                    consentOptionalAlternative.disabled = false;
+                }
+            });
+            
+            consentOptionalAlternative.addEventListener('change', function() {
+                if (this.checked) {
+                    consentOptional.checked = false;
+                    consentOptional.disabled = true;
+                } else {
+                    consentOptional.disabled = false;
+                }
+            });
+        }
+    });
+    
+    // Form validation will be handled by main.js
+    document.getElementById('consentForm').addEventListener('submit', function(e) {
+        const consentReadForm = document.getElementById('consent_read_form');
+        const consentRequired = document.getElementById('consent_required');
+        const consentOptional = document.getElementById('consent_optional');
+        const consentOptionalAlternative = document.getElementById('consent_optional_alternative');
+        
+        // Check required fields
+        if (!consentReadForm.checked || !consentRequired.checked) {
+            e.preventDefault();
+            alert('يرجى الموافقة على جميع الحقول المطلوبة');
+            return false;
+        }
+        
+        // Check that at least one of the mutually exclusive options is selected
+        // Either consent_optional OR consent_optional_alternative must be checked (but not both)
+        if (!consentOptional.checked && !consentOptionalAlternative.checked) {
+            e.preventDefault();
+            alert('يرجى الموافقة على أرشفة التسجيلات الصوتية أو النصوص الكتابية');
+            return false;
+        }
+        
+        // Ensure they are not both checked (safety check)
+        if (consentOptional.checked && consentOptionalAlternative.checked) {
+            e.preventDefault();
+            alert('لا يمكن الموافقة على كلا الخيارين في نفس الوقت. يرجى اختيار واحد فقط');
+            return false;
+        }
+        
+        return true;
+    });
+</script>
+{% endblock %}

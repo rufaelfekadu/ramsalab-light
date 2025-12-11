@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Participant Information Sheet - MBZUAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            text-align: left;
+        }
+        h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        h3 {
+            color: #667eea;
+            font-size: 1.4rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        p {
+            color: #333;
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        ul {
+            color: #333;
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .back-link:hover {
+            color: #5568d3;
+        }
+        .back-link i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('routes.index') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Main Page
+        </a>
+        
+        <h2>Participant Information Sheet</h2>
+        <p>You are invited to take part in a research study that aims to document spoken Emirati Arabic dialects, explore their richness and linguistic features and preserve the Emirati heritage. Please read the following information carefully before deciding whether to participate or not. Your participation is entirely voluntary, and you are free to withdraw at any time.</p>
+        
+        <h3>1) What data will we collect?</h3>
+        <ul>
+            <li>Short audio recordings in Emirati Arabic about specific topics, themes and sub-themes.</li>
+            <li>General demographic information (age range, participant's gender, region, …).</li>
+        </ul>
+        <p><strong>Privacy note:</strong> Please do not mention your name or any personal information during the recording. The research team will remove any personal data that may appear in the recording; however, it is preferable to avoid including any information you do not wish to make public.</p>
+        
+        <h3>2) How will your data be used?</h3>
+        <ul>
+            <li>To extract words and expressions for building a large, open-source dictionary of Emirati Arabic that preserves linguistic heritage and cultural identity.</li>
+            <li>Archiving for cultural heritage and future research purposes.</li>
+            <li>Training AI models (e.g., speech recognition, machine-translation, etc.).</li>
+            <li>We will produce transcribed texts from the audio recordings (extraction/transcription), which may be shared with your consent.</li>
+        </ul>
+        
+        <h3>3) Duration and How to Participate</h3>
+        <ul>
+            <li>There are no strict time requirements. You may record anywhere from 5–25 minutes. This will be facilitated through a secure web application that we provide, which you can access via your personal device.</li>
+            <li>You may see simple prompts (images/questions) to help elicit natural speech.</li>
+            <li>If you would like to participate more actively in this project, we would be delighted to record a longer conversation with you. You may contact us to arrange this.</li>
+        </ul>
+        
+        <h3>4) Risks and Benefits</h3>
+        <ul>
+            <li><strong>Privacy:</strong> Your voice may be considered personally identifiable information; therefore, we implement technical and security measures to minimize the risk of identification. The content is also reviewed manually to remove any accidental or unintended disclosures wherever possible. If you prefer not to participate using your voice, you may choose to contribute only through the transcribed texts extracted from the recordings. In such cases, the research team will permanently delete your audio recordings after transcription.</li>
+            <li><strong>Possible Minor Discomfort:</strong> Clear audio recording of responses is required for research purposes.</li>
+            <li><strong>Direct benefit:</strong> There are no personal gains. Rather, the intended value is cultural/linguistic/scientific (preserving linguistic heritage and developing AI technologies that process Emirati dialects).</li>
+        </ul>
+        
+        <h3>5) Confidentiality and Data Protection</h3>
+        <ul>
+            <li><strong>Data Storage and Access:</strong> All data are securely stored and encrypted, with access strictly limited to members of the research team. If you consent to the archiving terms, your data and recordings will be archived and may be used for future research and cultural purposes. If you prefer not to have your voice archived, you may choose to participate through the transcribed texts extracted from your recordings. In that case, the research team will permanently delete your audio recordings after transcription.</li>
+            <li><strong>Right to Access:</strong> You have the right to request a copy of your recordings or their transcribed texts if you provided your name and contact information, up until August 31, 2027. You may also choose to allow future follow-up contact if you wish. In most cases, however, no personal data; such as, names or phone numbers are collected; therefore, it may not be possible to retrieve or provide copies of individual recordings.</li>
+        </ul>
+        
+        <h3>6) Voluntary Participation and Withdrawal Right</h3>
+        <ul>
+            <li>Your participation is entirely voluntary. You are free to withdraw at any time, without providing a reason and without facing any penalty or disadvantage.</li>
+            <li>After submission, you may request the deletion of your contribution using your participation ID that is shown after completion (and sent to your email if provided) within 30 days of submission.</li>
+        </ul>
+        
+        <h3>Contact</h3>
+        <p>For questions about the study: we will provide a special email for the project</p>
+        <p>For ethical concerns/complaints: irb.submissions@mbzuai.ac.ae</p>
+    </div>
+</body>
+</html>
+

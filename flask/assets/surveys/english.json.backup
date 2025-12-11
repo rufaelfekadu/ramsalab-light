@@ -1,0 +1,230 @@
+[
+    {
+        "survey_name": "learning_preferences_survey",
+        "consent_form": {
+            "title": "Consent form",
+            "file_path": "assets/consent_forms/english_consent_form.docx"
+        },
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "sequential",
+                "questions": [
+
+                    {
+                        "prompt_number": 0,
+                        "prompt": "Describe your ideal work environment in 2-3 sentences.",
+                        "question_type": "text",
+                        "options": null,
+                        "survey_logic": [
+                            {
+                                "response_option_id": "text_response",
+                                "next_prompt_number": 4
+                            }
+                        ]
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "Tell us about a challenging project you worked on and how you overcame the difficulties.",
+                        "question_type": "audio",
+                        "options": null,
+                        "survey_logic": [
+                            {
+                                "response_option_id": "audio_response",
+                                "next_prompt_number": null
+                            }
+                        ]
+                    },
+                    {   
+                        "prompt_number": 2,
+                        "prompt": "What is your preferred way of learning?",
+                        "question_type": "interactive",
+                        "options": [
+                            {
+                                "interactive_type": "button",
+                                "buttons": [
+                                    {
+                                        "id": 0,
+                                        "title": "Reading books"
+                                    },
+                                    {
+                                        "id": 1,
+                                        "title": "Watching videos"
+                                    }
+                                ]
+                            }
+                        ],
+                        "survey_logic": [
+                            {
+                                "response_option_id": 0,
+                                "next_prompt_number": 3
+                            },
+                            {
+                                "response_option_id": 1,
+                                "next_prompt_number": 3
+                            }
+                        ]
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "Which of the following skills would you like to develop? (Select all that apply)",
+                        "question_type": "interactive",
+                        "options": [
+                            {
+                                "interactive_type": "list",
+                                "sections": [
+                                    {
+                                        "title": "Programming",
+                                        "rows": [
+                                            {
+                                                "id": 0,
+                                                "title": "Programming"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "title": "Data Analysis",
+                                        "rows": [
+                                            {
+                                                "id": 1,
+                                                "title": "Data Analysis"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "title": "Machine Learning",
+                                        "rows": [
+                                            {
+                                                "id": 2,
+                                                "title": "Machine Learning"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "title": "Communication",
+                                        "rows": [
+                                            {
+                                                "id": 3,
+                                                "title": "Communication"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "title": "Leadership",
+                                        "rows": [
+                                            {
+                                                "id": 4,
+                                                "title": "Leadership"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "title": "Problem Solving",
+                                        "rows": [
+                                            {
+                                                "id": 5,
+                                                "title": "Problem Solving"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+
+                        ],
+                        "survey_logic": [
+                            {
+                                "response_option_id": 0,
+                                "next_prompt_number": 3
+                            },
+                            {
+                                "response_option_id": 1,
+                                "next_prompt_number": 3
+                            },
+                            {
+                                "response_option_id": 2,
+                                "next_prompt_number": 3
+                            },
+                            {
+                                "response_option_id": 3,
+                                "next_prompt_number": 3
+                            },
+                            {
+                                "response_option_id": 4,
+                                "next_prompt_number": 3
+                            },
+                            {
+                                "response_option_id": 5,
+                                "next_prompt_number": 3
+                            }
+                        ]
+                    }
+
+                ]
+                    
+            },
+            {
+                "name": "test_random_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 4,
+                        "prompt": "randomly-assigned question #1",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "randomly-assigned question #2",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "randomly-assigned question #3",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ],
+                "survey_logic": {
+                    "response_option_id": null,
+                    "next_prompt_number": 3
+                }
+            },
+            {
+                "name": "test_select_group",
+                "group_type": "select",
+                "questions": [
+                    {
+                        "prompt_number": 5,
+                        "prompt": "answer one of the following: #1",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "answero one of the following: #2",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "answer one of the following: #3",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+
+                ],
+                "survey_logic": {
+                    "response_option_id": null,
+                    "next_prompt_number": null
+                }
+            }
+        ]
+    }
+]

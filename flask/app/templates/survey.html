@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Data Collection - MBZUAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Consent Popup Modal -->
+    <div id="consentPopup" class="consent-popup">
+        <div class="consent-popup-content">
+            <div id="consentFirstScreen" class="consent-popup-first-screen">
+                <div class="consent-popup-body">
+                    <h2>Participant Information Sheet</h2>
+                <p>You are invited to take part in a research study that aims to document spoken Emirati Arabic dialects, explore their richness and linguistic features and preserve the Emirati heritage. Please read the following information carefully before deciding whether to participate or not. Your participation is entirely voluntary, and you are free to withdraw at any time.</p>
+                
+                <h3>1) What data will we collect?</h3>
+                <ul>
+                    <li>Short audio recordings in Emirati Arabic about specific topics, themes and sub-themes.</li>
+                    <li>General demographic information (age range, participant's gender, region, …).</li>
+                </ul>
+                <p><strong>Privacy note:</strong> Please do not mention your name or any personal information during the recording. The research team will remove any personal data that may appear in the recording; however, it is preferable to avoid including any information you do not wish to make public.</p>
+                
+                <h3>2) How will your data be used?</h3>
+                <ul>
+                    <li>To extract words and expressions for building a large, open-source dictionary of Emirati Arabic that preserves linguistic heritage and cultural identity.</li>
+                    <li>Archiving for cultural heritage and future research purposes.</li>
+                    <li>Training AI models (e.g., speech recognition, machine-translation, etc.).</li>
+                    <li>We will produce transcribed texts from the audio recordings (extraction/transcription), which may be shared with your consent.</li>
+                </ul>
+                
+                <h3>3) Duration and How to Participate</h3>
+                <ul>
+                    <li>There are no strict time requirements. You may record anywhere from 5–25 minutes. This will be facilitated through a secure web application that we provide, which you can access via your personal device.</li>
+                    <li>You may see simple prompts (images/questions) to help elicit natural speech.</li>
+                    <li>If you would like to participate more actively in this project, we would be delighted to record a longer conversation with you. You may contact us to arrange this.</li>
+                </ul>
+                
+                <h3>4) Risks and Benefits</h3>
+                <ul>
+                    <li><strong>Privacy:</strong> Your voice may be considered personally identifiable information; therefore, we implement technical and security measures to minimize the risk of identification. The content is also reviewed manually to remove any accidental or unintended disclosures wherever possible. If you prefer not to participate using your voice, you may choose to contribute only through the transcribed texts extracted from the recordings. In such cases, the research team will permanently delete your audio recordings after transcription.</li>
+                    <li><strong>Possible Minor Discomfort:</strong> Clear audio recording of responses is required for research purposes.</li>
+                    <li><strong>Direct benefit:</strong> There are no personal gains. Rather, the intended value is cultural/linguistic/scientific (preserving linguistic heritage and developing AI technologies that process Emirati dialects).</li>
+                </ul>
+                
+                <h3>5) Confidentiality and Data Protection</h3>
+                <ul>
+                    <li><strong>Data Storage and Access:</strong> All data are securely stored and encrypted, with access strictly limited to members of the research team. If you consent to the archiving terms, your data and recordings will be archived and may be used for future research and cultural purposes. If you prefer not to have your voice archived, you may choose to participate through the transcribed texts extracted from your recordings. In that case, the research team will permanently delete your audio recordings after transcription.</li>
+                    <li><strong>Right to Access:</strong> You have the right to request a copy of your recordings or their transcribed texts if you provided your name and contact information, up until August 31, 2027. You may also choose to allow future follow-up contact if you wish. In most cases, however, no personal data; such as, names or phone numbers are collected; therefore, it may not be possible to retrieve or provide copies of individual recordings.</li>
+                </ul>
+                
+                <h3>6) Voluntary Participation and Withdrawal Right</h3>
+                <ul>
+                    <li>Your participation is entirely voluntary. You are free to withdraw at any time, without providing a reason and without facing any penalty or disadvantage.</li>
+                    <li>After submission, you may request the deletion of your contribution using your participation ID that is shown after completion (and sent to your email if provided) within 30 days of submission.</li>
+                </ul>
+                
+                <h3>Contact</h3>
+                <p>For questions about the study: we will provide a special email for the project</p>
+                <p>For ethical concerns/complaints: irb.submissions@mbzuai.ac.ae</p>
+                </div>
+                <div class="consent-popup-footer">
+                    <button type="button" id="consentConfirmBtn" class="consent-confirm-btn" disabled>Continue</button>
+                </div>
+            </div>
+            
+            <!-- Second Screen -->
+            <div id="consentSecondScreen" class="consent-popup-second-screen" style="display: none;">
+                <div class="consent-popup-body">
+                    <h2>Survey and Consent Form</h2>
+                    <h3>(A) Survey Questions</h3>
+                    <h4>Emirati Citizenship</h4>
+                    <p>Are you an Emirati citizen?</p>
+                    <div class="citizenship-options">
+                        <label class="radio-option">
+                            <input type="radio" name="emirati_citizenship" id="citizenship_yes" value="yes" required>
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="emirati_citizenship" id="citizenship_no" value="no" required>
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="consent-popup-footer">
+                    <button type="button" id="citizenshipBackBtn" class="consent-back-btn">Back</button>
+                    <button type="button" id="citizenshipContinueBtn" class="consent-confirm-btn" disabled>Continue</button>
+                </div>
+            </div>
+            
+            <!-- Third Screen -->
+            <div id="consentThirdScreen" class="consent-popup-second-screen" style="display: none;">
+                <div class="consent-popup-body">
+                    <h2>Survey and Consent Form</h2>
+                    <h3>(A) Survey Questions</h3>
+                    <h4>Age</h4>
+                    <p>What is your age group?</p>
+                    <div class="citizenship-options">
+                        <label class="radio-option">
+                            <input type="radio" name="age_group" id="age_1" value="1" required>
+                            <span>18 to 25 years</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="age_group" id="age_2" value="2" required>
+                            <span>26 to 35 years</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="age_group" id="age_3" value="3" required>
+                            <span>36 to 45 years</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="age_group" id="age_4" value="4" required>
+                            <span>46 to 55 years</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="age_group" id="age_5" value="5" required>
+                            <span>56 to 65 years</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="age_group" id="age_6" value="6" required>
+                            <span>65 years and above</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="consent-popup-footer">
+                    <button type="button" id="ageGroupBackBtn" class="consent-back-btn">Back</button>
+                    <button type="button" id="ageGroupContinueBtn" class="consent-confirm-btn" disabled>Continue</button>
+                </div>
+            </div>
+            
+            <!-- Fourth Screen -->
+            <div id="consentFourthScreen" class="consent-popup-second-screen" style="display: none;">
+                <div class="consent-popup-body">
+                    <h2>Survey and Consent Form</h2>
+                    <h3>(A) Survey Questions</h3>
+                    <h4>Place of Birth</h4>
+                    <p>From which Emirate are you? Please select one.</p>
+                    <p><strong>Geographical region (choose one):</strong></p>
+                    <div class="citizenship-options">
+                        <label class="radio-option">
+                            <input type="radio" name="place_of_birth" id="place_abu_dhabi" value="Abu Dhabi" required>
+                            <span>Abu Dhabi</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="place_of_birth" id="place_dubai" value="Dubai" required>
+                            <span>Dubai</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="place_of_birth" id="place_sharjah" value="Sharjah" required>
+                            <span>Sharjah</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="place_of_birth" id="place_ajman" value="Ajman" required>
+                            <span>Ajman</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="place_of_birth" id="place_umm_al_quwain" value="Umm Al Quwain" required>
+                            <span>Umm Al Quwain</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="place_of_birth" id="place_ras_al_khaimah" value="Ras Al Khaimah" required>
+                            <span>Ras Al Khaimah</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="place_of_birth" id="place_fujairah" value="Fujairah" required>
+                            <span>Fujairah</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="place_of_birth" id="place_other" value="other" required>
+                            <span>Other (please specify)</span>
+                        </label>
+                    </div>
+                    <div id="placeOfBirthOtherInput" class="other-input-container" style="display: none; margin-top: 20px;">
+                        <input type="text" id="placeOfBirthOtherText" class="other-text-input" placeholder="Please specify...">
+                    </div>
+                </div>
+                <div class="consent-popup-footer">
+                    <button type="button" id="placeOfBirthBackBtn" class="consent-back-btn">Back</button>
+                    <button type="button" id="placeOfBirthContinueBtn" class="consent-confirm-btn" disabled>Continue</button>
+                </div>
+            </div>
+            
+            <!-- Fifth Screen -->
+            <div id="consentFifthScreen" class="consent-popup-second-screen" style="display: none;">
+                <div class="consent-popup-body">
+                    <h2>Survey and Consent Form</h2>
+                    <h3>(A) Survey Questions</h3>
+                    <h4>Current Residence</h4>
+                    <p>In which Emirate do you currently reside? (for scheduling and distribution purposes)</p>
+                    <div class="citizenship-options">
+                        <label class="radio-option">
+                            <input type="radio" name="current_residence" id="residence_abu_dhabi" value="Abu Dhabi" required>
+                            <span>Abu Dhabi</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="current_residence" id="residence_dubai" value="Dubai" required>
+                            <span>Dubai</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="current_residence" id="residence_sharjah" value="Sharjah" required>
+                            <span>Sharjah</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="current_residence" id="residence_ajman" value="Ajman" required>
+                            <span>Ajman</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="current_residence" id="residence_umm_al_quwain" value="Umm Al Quwain" required>
+                            <span>Umm Al Quwain</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="current_residence" id="residence_ras_al_khaimah" value="Ras Al Khaimah" required>
+                            <span>Ras Al Khaimah</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="current_residence" id="residence_fujairah" value="Fujairah" required>
+                            <span>Fujairah</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="current_residence" id="residence_other" value="other" required>
+                            <span>Other (please specify)</span>
+                        </label>
+                    </div>
+                    <div id="currentResidenceOtherInput" class="other-input-container" style="display: none; margin-top: 20px;">
+                        <input type="text" id="currentResidenceOtherText" class="other-text-input" placeholder="Please specify...">
+                    </div>
+                </div>
+                <div class="consent-popup-footer">
+                    <button type="button" id="currentResidenceBackBtn" class="consent-back-btn">Back</button>
+                    <button type="button" id="currentResidenceContinueBtn" class="consent-confirm-btn" disabled>Continue</button>
+                </div>
+            </div>
+            
+            <!-- Sixth Screen -->
+            <div id="consentSixthScreen" class="consent-popup-second-screen" style="display: none;">
+                <div class="consent-popup-body">
+                    <h2>Survey and Consent Form</h2>
+                    <h3>(A) Survey Questions</h3>
+                    <div class="optional-info-form">
+                        <div class="form-field-group">
+                            <label for="optionalName" class="form-label">[Optional] Name:</label>
+                            <input type="text" id="optionalName" name="optional_name" class="optional-input" placeholder="Enter your name">
+                        </div>
+                        <div class="form-field-group">
+                            <label for="optionalContact" class="form-label">[Optional] Contact number:</label>
+                            <input type="text" id="optionalContact" name="optional_contact" class="optional-input" placeholder="Enter your contact number">
+                        </div>
+                        <p class="optional-note">Note: Your name and contact number, if provided, will be stored with your data until August 31, 2027. After that, this information will be permanently deleted, and you won't be able to access your specific data by request.</p>
+                    </div>
+                </div>
+                <div class="consent-popup-footer">
+                    <button type="button" id="optionalInfoBackBtn" class="consent-back-btn">Back</button>
+                    <button type="button" id="optionalInfoContinueBtn" class="consent-confirm-btn">Continue</button>
+                </div>
+            </div>
+            
+            <!-- Seventh Screen -->
+            <div id="consentSeventhScreen" class="consent-popup-second-screen" style="display: none;">
+                <div class="consent-popup-body">
+                    <h2>Survey and Consent Form</h2>
+                    <h3>(B) Consent Options (please read and check each box)</h3>
+                    
+                    <h4>Participant Declarations:</h4>
+                    <div class="consent-checkbox-item">
+                        <label class="consent-checkbox-label">
+                            <input type="checkbox" id="consentReadForm" name="consent_read_form">
+                            <span>I confirm that I have read and understood the Participant Information Sheet and the Consent Form.</span>
+                        </label>
+                    </div>
+                    
+                    <h4>Consent Options (Please read and indicate your choices):</h4>
+                    
+                    <h5>Required Consent for Participation:</h5>
+                    <div class="consent-checkbox-item">
+                        <label class="consent-checkbox-label">
+                            <input type="checkbox" id="consentRequired" name="consent_required">
+                            <span>I agree to the use of my data for research and development purposes (including the extraction of linguistic features for building the dictionary and training AI models).</span>
+                        </label>
+                    </div>
+                    
+                    <h5>Optional Consent:</h5>
+                    <div class="consent-checkbox-item">
+                        <label class="consent-checkbox-label">
+                            <input type="checkbox" id="consentOptional" name="consent_optional">
+                            <span>I agree to the archiving and sharing of my audio recordings with researchers and/or their release on public platforms.</span>
+                        </label>
+                    </div>
+                    
+                    <p class="consent-alternative-note">If you do not agree to the above optional consent, the following becomes required:</p>
+                    
+                    <div class="consent-checkbox-item">
+                        <label class="consent-checkbox-label">
+                            <input type="checkbox" id="consentOptionalAlternative" name="consent_optional_alternative">
+                            <span>I agree to the archiving the text transcripts derived from my audio recordings and sharing them with researchers and/or public platforms (with the audio itself not being shared).</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="consent-popup-footer">
+                    <button type="button" id="consentOptionsBackBtn" class="consent-back-btn">Back</button>
+                    <button type="button" id="consentOptionsConfirmBtn" class="consent-confirm-btn">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login/Logout Button -->
+    <div class="auth-button-container">
+        <a href="{{ url_for('routes.manage_data') }}" class="auth-btn manage-data-btn" title="Manage My Data">
+            <i class="fas fa-user-shield"></i>
+            <span>Manage My Data</span>
+        </a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('routes.dashboard') }}" class="auth-btn dashboard-btn" title="Dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('routes.logout') }}" class="auth-btn logout-btn" title="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        {% endif %}
+    </div>
+    
+    <div class="container">
+        <div class="survey-card">
+            <form id="questionForm" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <!-- Loop through questions and render each question -->
+                {% for question in questions %}
+                    {% set question_type = question.question_type %}
+                    {% set options = question.options[0] %}
+                    {% set q_id = question.id %}
+                    {% set q_idx = loop.index %}
+                    
+                    <div class="question-container" 
+                         data-question-id="{{ q_id }}" 
+                         data-question-type="{{ question_type }}"
+                         data-group-type="{{ group_type|default('none') }}"
+                         data-required="{{ question.required|lower }}">
+                        <h2 class="question-title">Question {{ q_idx }}: {{ question.prompt }}</h2>
+                        
+                        {% if question_type == 'interactive' %}
+                            {% if options.interactive_type == 'button' %}
+                                <div class="question">
+                                    <div class="options">
+                                        {% for option in options.buttons %}
+                
+                                            <div class="option">
+                                                <input type="radio" 
+                                                       id="question_{{ q_id }}_option_{{ loop.index }}" 
+                                                       name="question_{{ q_id }}_selected_option" 
+                                                       value="{{ option.id }}" 
+                                                       {% if question.required %}required{% endif %}>
+                                                <label for="question_{{ q_id }}_option_{{ loop.index }}">{{ option.title }}</label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% elif options.interactive_type == 'list' %}
+                                <div class="question">
+                                    <div class="options">
+                                        {% for option in options.sections %}
+                                            <div class="option">
+                                                <input type="checkbox" 
+                                                       id="question_{{ q_id }}_option_{{ loop.index }}" 
+                                                       name="question_{{ q_id }}_selected_options" 
+                                                       value="{{ option.rows[0].id }}">
+                                                <label for="question_{{ q_id }}_option_{{ loop.index }}">{{ option.rows[0].title }}</label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        
+                        {% elif question_type == 'text' %}
+                            <div class="question">
+                                <textarea name="question_{{ q_id }}_response_text" 
+                                          class="text-input" 
+                                          placeholder="Please write your answer here..." 
+                                          {% if question.required %}required{% endif %}></textarea>
+                            </div>
+                        
+                        {% elif question_type == 'audio' %}
+                            <div class="question">
+                                <div class="audio-controls">
+                                    <input type="file" 
+                                           id="question_{{ q_id }}_audioFile" 
+                                           name="question_{{ q_id }}_audio" 
+                                           accept="audio/*" 
+                                           {% if question.required %}required{% endif %}
+                                           style="display:none">
+                                    <button type="button" class="record-btn" data-question-id="{{ q_id }}">Record</button>
+                                    <button type="button" class="stop-btn" data-question-id="{{ q_id }}" disabled>Stop</button>
+                                    <audio class="audio-playback" data-question-id="{{ q_id }}" controls style="display:none"></audio>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                
+                <!-- Single submit button for all questions -->
+                <div class="form-actions">
+                    <div class="loading" id="loading" style="display:none;">
+                        <div class="spinner"></div>
+                        <p>Sending response...</p>
+                    </div>
+                    
+                    <div class="button-group">
+                        {% if group_type == 'random' %}
+                            <button type="submit" name="skip_question" value="true" class="skip-btn" id="skipBtn">
+                                <i class="fas fa-forward"></i>
+                                Different Question
+                            </button>
+                        {% endif %}
+                        
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Answer
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // ============================================
+        // Consent Popup Handler
+        // ============================================
+        (function() {
+            // Cookie helper functions
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+                return null;
+            }
+
+            function setCookie(name, value, days = 365) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                const expires = `expires=${date.toUTCString()}`;
+                document.cookie = `${name}=${value};${expires};path=/`;
+            }
+
+            // Check if user is logged in and has consent
+            const userIsAuthenticated = {% if current_user.is_authenticated %}true{% else %}false{% endif %};
+            const userHasConsent = {% if current_user.is_authenticated and current_user.consent %}true{% else %}false{% endif %};
+            const csrfToken = '{{ csrf_token() }}';
+            
+            // Get user_id from URL parameter or template
+            function getUrlParameter(name) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
+            const templateUserId = {% if user_id %}'{{ user_id }}'{% else %}null{% endif %};
+            const urlUserId = getUrlParameter('user_id') || templateUserId;
+            
+            console.log("userIsAuthenticated: " + userIsAuthenticated);
+            console.log("userHasConsent: " + userHasConsent);
+            console.log("csrfToken: " + csrfToken);
+            console.log("urlUserId: " + urlUserId);
+
+            // Popup functionality - named functions for better maintainability
+            
+            // Helper function to update consent in database
+            function updateConsentInDatabase() {
+                if (userIsAuthenticated) {
+                    const formData = new FormData();
+                    formData.append('csrf_token', csrfToken);
+                    
+                    fetch('{{ url_for("routes.update_consent") }}', {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            console.log('Consent updated in database');
+                        } else {
+                            console.error('Failed to update consent:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating consent:', error);
+                    });
+                }
+            }
+            
+            // Helper functions for browser storage
+            const STORAGE_KEY = 'consent_popup_data';
+            
+            function saveToStorage(data) {
+                try {
+                    const existing = loadFromStorage();
+                    const updated = { ...existing, ...data };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+                    console.log('Data saved to browser storage:', updated);
+                } catch (error) {
+                    console.error('Error saving to storage:', error);
+                }
+            }
+            
+            function loadFromStorage() {
+                try {
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    return stored ? JSON.parse(stored) : {};
+                } catch (error) {
+                    console.error('Error loading from storage:', error);
+                    return {};
+                }
+            }
+            
+            function clearStorage() {
+                try {
+                    localStorage.removeItem(STORAGE_KEY);
+                    console.log('Browser storage cleared');
+                } catch (error) {
+                    console.error('Error clearing storage:', error);
+                }
+            }
+            
+            // Helper function to make batch API call with all stored data
+            function submitAllDataToDatabase() {
+                const allData = loadFromStorage();
+                
+                if (Object.keys(allData).length === 0) {
+                    console.log('No data to submit');
+                    return Promise.resolve({ status: 'success' });
+                }
+                
+                const formData = new FormData();
+                for (const [key, value] of Object.entries(allData)) {
+                    if (value !== null && value !== undefined && value !== '') {
+                        formData.append(key, value);
+                    }
+                }
+                formData.append('csrf_token', csrfToken);
+                
+                if (!userIsAuthenticated && urlUserId) {
+                    formData.append('user_id', urlUserId);
+                }
+                
+                return fetch('{{ url_for("routes.update_all_consent_data") }}', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        console.log('All consent data updated in database');
+                        clearStorage();
+                    } else {
+                        console.error('Failed to update data:', result.message);
+                    }
+                    return result;
+                })
+                .catch(error => {
+                    console.error('Error updating data:', error);
+                    throw error;
+                });
+            }
+            
+            // Helper function to update radio button styling
+            function updateRadioStyling(radios) {
+                radios.forEach(function(radio) {
+                    const option = radio.closest('.radio-option');
+                    if (option) {
+                        if (radio.checked) {
+                            option.style.borderColor = '#667eea';
+                            option.style.background = '#e0e7ff';
+                        } else {
+                            option.style.borderColor = '#e0e0e0';
+                            option.style.background = '#f8f9fa';
+                        }
+                    }
+                });
+            }
+            
+            // Setup first screen scroll detection
+            function setupFirstScreenScroll(firstScreenBody, confirmBtn) {
+                // Prevent duplicate listeners
+                if (firstScreenBody.hasAttribute('data-scroll-listener-setup')) {
+                    // Just check the current scroll position
+                    const scrollTop = firstScreenBody.scrollTop;
+                    const scrollHeight = firstScreenBody.scrollHeight;
+                    const clientHeight = firstScreenBody.clientHeight;
+                    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+                    confirmBtn.disabled = !isAtBottom;
+                    return;
+                }
+                
+                firstScreenBody.setAttribute('data-scroll-listener-setup', 'true');
+                
+                function checkScrollPosition() {
+                    if (firstScreenBody) {
+                        const scrollTop = firstScreenBody.scrollTop;
+                        const scrollHeight = firstScreenBody.scrollHeight;
+                        const clientHeight = firstScreenBody.clientHeight;
+                        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+                        confirmBtn.disabled = !isAtBottom;
+                    }
+                }
+                
+                if (firstScreenBody) {
+                    firstScreenBody.addEventListener('scroll', checkScrollPosition);
+                    checkScrollPosition();
+                }
+            }
+            
+            // Handle first screen continue button
+            function handleFirstScreenContinue() {
+                updateConsentInDatabase();
+                showSecondScreen();
+            }
+            
+            // Show first screen (from back button)
+            function showFirstScreen() {
+                const firstScreen = document.getElementById('consentFirstScreen');
+                const secondScreen = document.getElementById('consentSecondScreen');
+                
+                if (firstScreen && secondScreen) {
+                    secondScreen.style.display = 'none';
+                    firstScreen.style.display = 'flex';
+                    
+                    // Restore scroll detection for first screen
+                    const firstScreenBody = firstScreen.querySelector('.consent-popup-body');
+                    const confirmBtn = document.getElementById('consentConfirmBtn');
+                    if (firstScreenBody && confirmBtn) {
+                        setupFirstScreenScroll(firstScreenBody, confirmBtn);
+                    }
+                }
+            }
+            
+            // Show second screen (citizenship)
+            function showSecondScreen() {
+                const firstScreen = document.getElementById('consentFirstScreen');
+                const secondScreen = document.getElementById('consentSecondScreen');
+                
+                if (firstScreen && secondScreen) {
+                    firstScreen.style.display = 'none';
+                    secondScreen.style.display = 'flex';
+                    setupCitizenshipScreen();
+                }
+            }
+            
+            // Setup citizenship screen
+            function setupCitizenshipScreen() {
+                const citizenshipRadios = document.querySelectorAll('input[name="emirati_citizenship"]');
+                const citizenshipContinueBtn = document.getElementById('citizenshipContinueBtn');
+                const citizenshipBackBtn = document.getElementById('citizenshipBackBtn');
+                
+                // Restore from storage
+                const stored = loadFromStorage();
+                if (stored.emirati_citizenship) {
+                    const isEmirati = stored.emirati_citizenship === 'true';
+                    const radioToCheck = isEmirati ? document.getElementById('citizenship_yes') : document.getElementById('citizenship_no');
+                    if (radioToCheck) {
+                        radioToCheck.checked = true;
+                    }
+                }
+                
+                if (citizenshipRadios.length > 0 && citizenshipContinueBtn) {
+                    // Check if listeners are already set up (prevent duplicates)
+                    if (!citizenshipContinueBtn.hasAttribute('data-listener-setup')) {
+                        citizenshipContinueBtn.setAttribute('data-listener-setup', 'true');
+                        
+                        citizenshipRadios.forEach(function(radio) {
+                            radio.addEventListener('change', function() {
+                                citizenshipContinueBtn.disabled = false;
+                                updateRadioStyling(citizenshipRadios);
+                            });
+                        });
+                        
+                        citizenshipContinueBtn.addEventListener('click', function() {
+                            const selectedValue = document.querySelector('input[name="emirati_citizenship"]:checked');
+                            if (selectedValue) {
+                                const isEmirati = selectedValue.value === 'yes';
+                                saveToStorage({ emirati_citizenship: isEmirati ? 'true' : 'false' });
+                                showThirdScreen();
+                            }
+                        });
+                    }
+                    
+                    // Check if a selection was already made and restore state
+                    const selectedRadio = document.querySelector('input[name="emirati_citizenship"]:checked');
+                    if (selectedRadio) {
+                        citizenshipContinueBtn.disabled = false;
+                    } else {
+                        citizenshipContinueBtn.disabled = true;
+                    }
+                    
+                    updateRadioStyling(citizenshipRadios);
+                }
+                
+                if (citizenshipBackBtn) {
+                    citizenshipBackBtn.addEventListener('click', showFirstScreen);
+                }
+            }
+            
+            function showSecondScreenFromBack() {
+                const secondScreen = document.getElementById('consentSecondScreen');
+                const thirdScreen = document.getElementById('consentThirdScreen');
+                
+                if (secondScreen && thirdScreen) {
+                    thirdScreen.style.display = 'none';
+                    secondScreen.style.display = 'flex';
+                    setupCitizenshipScreen();
+                }
+            }
+            
+            // Show third screen (age)
+            function showThirdScreen() {
+                const secondScreen = document.getElementById('consentSecondScreen');
+                const thirdScreen = document.getElementById('consentThirdScreen');
+                
+                if (secondScreen && thirdScreen) {
+                    secondScreen.style.display = 'none';
+                    thirdScreen.style.display = 'flex';
+                    setupAgeScreen();
+                }
+            }
+            
+            function showThirdScreenFromBack() {
+                const thirdScreen = document.getElementById('consentThirdScreen');
+                const fourthScreen = document.getElementById('consentFourthScreen');
+                
+                if (thirdScreen && fourthScreen) {
+                    fourthScreen.style.display = 'none';
+                    thirdScreen.style.display = 'flex';
+                    setupAgeScreen();
+                }
+            }
+            
+            // Setup age screen
+            function setupAgeScreen() {
+                const ageGroupRadios = document.querySelectorAll('input[name="age_group"]');
+                const ageGroupContinueBtn = document.getElementById('ageGroupContinueBtn');
+                const ageGroupBackBtn = document.getElementById('ageGroupBackBtn');
+                
+                // Restore from storage
+                const stored = loadFromStorage();
+                if (stored.age_group) {
+                    const ageGroup = parseInt(stored.age_group);
+                    const radioToCheck = document.getElementById('age_' + ageGroup);
+                    if (radioToCheck) {
+                        radioToCheck.checked = true;
+                    }
+                }
+                
+                if (ageGroupRadios.length > 0 && ageGroupContinueBtn) {
+                    // Check if listeners are already set up (prevent duplicates)
+                    if (!ageGroupContinueBtn.hasAttribute('data-listener-setup')) {
+                        ageGroupContinueBtn.setAttribute('data-listener-setup', 'true');
+                        
+                        ageGroupRadios.forEach(function(radio) {
+                            radio.addEventListener('change', function() {
+                                ageGroupContinueBtn.disabled = false;
+                                updateRadioStyling(ageGroupRadios);
+                            });
+                        });
+                        
+                        ageGroupContinueBtn.addEventListener('click', function() {
+                            const selectedValue = document.querySelector('input[name="age_group"]:checked');
+                            if (selectedValue) {
+                                const ageGroup = parseInt(selectedValue.value);
+                                saveToStorage({ age_group: ageGroup });
+                                showFourthScreen();
+                            }
+                        });
+                    }
+                    
+                    // Check if a selection was already made and restore state
+                    const selectedRadio = document.querySelector('input[name="age_group"]:checked');
+                    if (selectedRadio) {
+                        ageGroupContinueBtn.disabled = false;
+                    } else {
+                        ageGroupContinueBtn.disabled = true;
+                    }
+                    
+                    updateRadioStyling(ageGroupRadios);
+                }
+                
+                if (ageGroupBackBtn) {
+                    ageGroupBackBtn.addEventListener('click', showSecondScreenFromBack);
+                }
+            }
+            
+            // Show fourth screen (place of birth)
+            function showFourthScreen() {
+                const thirdScreen = document.getElementById('consentThirdScreen');
+                const fourthScreen = document.getElementById('consentFourthScreen');
+                
+                if (thirdScreen && fourthScreen) {
+                    thirdScreen.style.display = 'none';
+                    fourthScreen.style.display = 'flex';
+                    setupPlaceOfBirthScreen();
+                }
+            }
+            
+            function showFourthScreenFromBack() {
+                const fourthScreen = document.getElementById('consentFourthScreen');
+                const fifthScreen = document.getElementById('consentFifthScreen');
+                
+                if (fourthScreen && fifthScreen) {
+                    fifthScreen.style.display = 'none';
+                    fourthScreen.style.display = 'flex';
+                    setupPlaceOfBirthScreen();
+                }
+            }
+            
+            // Setup place of birth screen
+            function setupPlaceOfBirthScreen() {
+                const placeOfBirthRadios = document.querySelectorAll('input[name="place_of_birth"]');
+                const placeOfBirthContinueBtn = document.getElementById('placeOfBirthContinueBtn');
+                const placeOfBirthBackBtn = document.getElementById('placeOfBirthBackBtn');
+                const otherInputContainer = document.getElementById('placeOfBirthOtherInput');
+                const otherTextInput = document.getElementById('placeOfBirthOtherText');
+                
+                // Restore from storage
+                const stored = loadFromStorage();
+                if (stored.place_of_birth) {
+                    const storedValue = stored.place_of_birth;
+                    // Check if it's one of the standard options
+                    const standardOptions = ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'];
+                    if (standardOptions.includes(storedValue)) {
+                        const radioToCheck = document.querySelector(`input[name="place_of_birth"][value="${storedValue}"]`);
+                        if (radioToCheck) {
+                            radioToCheck.checked = true;
+                        }
+                    } else {
+                        // It's an "other" value
+                        const otherRadio = document.getElementById('place_other');
+                        if (otherRadio && otherTextInput) {
+                            otherRadio.checked = true;
+                            otherTextInput.value = storedValue;
+                        }
+                    }
+                }
+                
+                if (placeOfBirthRadios.length > 0 && placeOfBirthContinueBtn) {
+                    function updateOtherInput() {
+                        const otherRadio = document.getElementById('place_other');
+                        if (otherRadio && otherRadio.checked) {
+                            otherInputContainer.style.display = 'block';
+                            otherTextInput.required = true;
+                        } else {
+                            otherInputContainer.style.display = 'none';
+                            otherTextInput.required = false;
+                            // Only clear if not an "other" value from storage
+                            const storedValue = stored.place_of_birth;
+                            const standardOptions = ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'];
+                            if (!storedValue || standardOptions.includes(storedValue)) {
+                                otherTextInput.value = '';
+                            }
+                        }
+                    }
+                    
+                    function updateContinueButton() {
+                        const selectedRadio = document.querySelector('input[name="place_of_birth"]:checked');
+                        if (selectedRadio) {
+                            if (selectedRadio.value === 'other') {
+                                placeOfBirthContinueBtn.disabled = !otherTextInput.value.trim();
+                            } else {
+                                placeOfBirthContinueBtn.disabled = false;
+                            }
+                        } else {
+                            placeOfBirthContinueBtn.disabled = true;
+                        }
+                    }
+                    
+                    placeOfBirthRadios.forEach(function(radio) {
+                        radio.addEventListener('change', function() {
+                            updateRadioStyling(placeOfBirthRadios);
+                            updateOtherInput();
+                            updateContinueButton();
+                        });
+                    });
+                    
+                    if (otherTextInput) {
+                        otherTextInput.addEventListener('input', updateContinueButton);
+                    }
+                    
+                    // Call update functions after restoration to ensure UI state is correct
+                    updateRadioStyling(placeOfBirthRadios);
+                    updateOtherInput();
+                    updateContinueButton();
+                    
+                    placeOfBirthContinueBtn.addEventListener('click', function() {
+                        const selectedRadio = document.querySelector('input[name="place_of_birth"]:checked');
+                        if (selectedRadio) {
+                            let placeOfBirthValue = selectedRadio.value;
+                            
+                            if (placeOfBirthValue === 'other' && otherTextInput) {
+                                placeOfBirthValue = otherTextInput.value.trim();
+                                if (!placeOfBirthValue) {
+                                    alert('Please specify your place of birth.');
+                                    return;
+                                }
+                            }
+                            
+                            saveToStorage({ place_of_birth: placeOfBirthValue });
+                            showFifthScreen();
+                        }
+                    });
+                }
+                
+                if (placeOfBirthBackBtn) {
+                    placeOfBirthBackBtn.addEventListener('click', showThirdScreenFromBack);
+                }
+            }
+            
+            // Show fifth screen (current residence)
+            function showFifthScreen() {
+                const fourthScreen = document.getElementById('consentFourthScreen');
+                const fifthScreen = document.getElementById('consentFifthScreen');
+                
+                if (fourthScreen && fifthScreen) {
+                    fourthScreen.style.display = 'none';
+                    fifthScreen.style.display = 'flex';
+                    setupCurrentResidenceScreen();
+                }
+            }
+            
+            function showFifthScreenFromBack() {
+                const fifthScreen = document.getElementById('consentFifthScreen');
+                const sixthScreen = document.getElementById('consentSixthScreen');
+                
+                if (fifthScreen && sixthScreen) {
+                    sixthScreen.style.display = 'none';
+                    fifthScreen.style.display = 'flex';
+                    setupCurrentResidenceScreen();
+                }
+            }
+            
+            // Setup current residence screen
+            function setupCurrentResidenceScreen() {
+                const currentResidenceRadios = document.querySelectorAll('input[name="current_residence"]');
+                const currentResidenceContinueBtn = document.getElementById('currentResidenceContinueBtn');
+                const currentResidenceBackBtn = document.getElementById('currentResidenceBackBtn');
+                const residenceOtherInputContainer = document.getElementById('currentResidenceOtherInput');
+                const residenceOtherTextInput = document.getElementById('currentResidenceOtherText');
+                
+                // Restore from storage
+                const stored = loadFromStorage();
+                if (stored.current_residence) {
+                    const storedValue = stored.current_residence;
+                    // Check if it's one of the standard options
+                    const standardOptions = ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'];
+                    if (standardOptions.includes(storedValue)) {
+                        const radioToCheck = document.querySelector(`input[name="current_residence"][value="${storedValue}"]`);
+                        if (radioToCheck) {
+                            radioToCheck.checked = true;
+                        }
+                    } else {
+                        // It's an "other" value
+                        const otherRadio = document.getElementById('residence_other');
+                        if (otherRadio && residenceOtherTextInput) {
+                            otherRadio.checked = true;
+                            residenceOtherTextInput.value = storedValue;
+                        }
+                    }
+                }
+                
+                if (currentResidenceRadios.length > 0 && currentResidenceContinueBtn) {
+                    function updateResidenceOtherInput() {
+                        const otherRadio = document.getElementById('residence_other');
+                        if (otherRadio && otherRadio.checked) {
+                            residenceOtherInputContainer.style.display = 'block';
+                            residenceOtherTextInput.required = true;
+                        } else {
+                            residenceOtherInputContainer.style.display = 'none';
+                            residenceOtherTextInput.required = false;
+                            // Only clear if not an "other" value from storage
+                            const storedValue = stored.current_residence;
+                            const standardOptions = ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'];
+                            if (!storedValue || standardOptions.includes(storedValue)) {
+                                residenceOtherTextInput.value = '';
+                            }
+                        }
+                    }
+                    
+                    function updateResidenceContinueButton() {
+                        const selectedRadio = document.querySelector('input[name="current_residence"]:checked');
+                        if (selectedRadio) {
+                            if (selectedRadio.value === 'other') {
+                                currentResidenceContinueBtn.disabled = !residenceOtherTextInput.value.trim();
+                            } else {
+                                currentResidenceContinueBtn.disabled = false;
+                            }
+                        } else {
+                            currentResidenceContinueBtn.disabled = true;
+                        }
+                    }
+                    
+                    currentResidenceRadios.forEach(function(radio) {
+                        radio.addEventListener('change', function() {
+                            updateRadioStyling(currentResidenceRadios);
+                            updateResidenceOtherInput();
+                            updateResidenceContinueButton();
+                        });
+                    });
+                    
+                    if (residenceOtherTextInput) {
+                        residenceOtherTextInput.addEventListener('input', updateResidenceContinueButton);
+                    }
+                    
+                    updateRadioStyling(currentResidenceRadios);
+                    updateResidenceOtherInput();
+                    updateResidenceContinueButton();
+                    
+                    currentResidenceContinueBtn.addEventListener('click', function() {
+                        const selectedRadio = document.querySelector('input[name="current_residence"]:checked');
+                        if (selectedRadio) {
+                            let currentResidenceValue = selectedRadio.value;
+                            
+                            if (currentResidenceValue === 'other' && residenceOtherTextInput) {
+                                currentResidenceValue = residenceOtherTextInput.value.trim();
+                                if (!currentResidenceValue) {
+                                    alert('Please specify your current residence.');
+                                    return;
+                                }
+                            }
+                            
+                            saveToStorage({ current_residence: currentResidenceValue });
+                            showSixthScreen();
+                        }
+                    });
+                }
+                
+                if (currentResidenceBackBtn) {
+                    currentResidenceBackBtn.addEventListener('click', showFourthScreenFromBack);
+                }
+            }
+            
+            // Show sixth screen (optional info)
+            function showSixthScreen() {
+                const fifthScreen = document.getElementById('consentFifthScreen');
+                const sixthScreen = document.getElementById('consentSixthScreen');
+                
+                if (fifthScreen && sixthScreen) {
+                    fifthScreen.style.display = 'none';
+                    sixthScreen.style.display = 'flex';
+                    setupOptionalInfoScreen();
+                }
+            }
+            
+            function showSixthScreenFromBack() {
+                const sixthScreen = document.getElementById('consentSixthScreen');
+                const seventhScreen = document.getElementById('consentSeventhScreen');
+                
+                if (sixthScreen && seventhScreen) {
+                    seventhScreen.style.display = 'none';
+                    sixthScreen.style.display = 'flex';
+                    setupOptionalInfoScreen();
+                }
+            }
+            
+            // Setup optional info screen
+            function setupOptionalInfoScreen() {
+                const optionalInfoContinueBtn = document.getElementById('optionalInfoContinueBtn');
+                const optionalNameInput = document.getElementById('optionalName');
+                const optionalContactInput = document.getElementById('optionalContact');
+                
+                // Restore from storage
+                const stored = loadFromStorage();
+                if (stored.real_name_optional_input && optionalNameInput) {
+                    optionalNameInput.value = stored.real_name_optional_input;
+                }
+                if (stored.phone_number_optional_input && optionalContactInput) {
+                    optionalContactInput.value = stored.phone_number_optional_input;
+                }
+                
+                if (optionalInfoContinueBtn) {
+                    optionalInfoContinueBtn.addEventListener('click', function() {
+                        const nameValue = optionalNameInput ? optionalNameInput.value.trim() : '';
+                        const contactValue = optionalContactInput ? optionalContactInput.value.trim() : '';
+                        
+                        const data = {};
+                        if (nameValue) {
+                            data.real_name_optional_input = nameValue;
+                        }
+                        if (contactValue) {
+                            data.phone_number_optional_input = contactValue;
+                        }
+                        
+                        if (Object.keys(data).length > 0) {
+                            saveToStorage(data);
+                        }
+                        
+                        showSeventhScreen();
+                    });
+                }
+                
+                if (optionalInfoBackBtn) {
+                    optionalInfoBackBtn.addEventListener('click', showFifthScreenFromBack);
+                }
+            }
+            
+            // Show seventh screen (consent options)
+            function showSeventhScreen() {
+                const sixthScreen = document.getElementById('consentSixthScreen');
+                const seventhScreen = document.getElementById('consentSeventhScreen');
+                
+                if (sixthScreen && seventhScreen) {
+                    sixthScreen.style.display = 'none';
+                    seventhScreen.style.display = 'flex';
+                    setupConsentOptionsScreen();
+                }
+            }
+            
+            // Setup consent options screen
+            function setupConsentOptionsScreen() {
+                const consentOptionsConfirmBtn = document.getElementById('consentOptionsConfirmBtn');
+                const consentOptionsBackBtn = document.getElementById('consentOptionsBackBtn');
+                const consentReadForm = document.getElementById('consentReadForm');
+                const consentRequired = document.getElementById('consentRequired');
+                const consentOptional = document.getElementById('consentOptional');
+                const consentOptionalAlternative = document.getElementById('consentOptionalAlternative');
+                
+                // Restore from storage
+                const stored = loadFromStorage();
+                if (consentReadForm && stored.consent_read_form) {
+                    consentReadForm.checked = stored.consent_read_form === 'true';
+                }
+                if (consentRequired && stored.consent_required) {
+                    consentRequired.checked = stored.consent_required === 'true';
+                }
+                if (consentOptional && stored.consent_optional) {
+                    consentOptional.checked = stored.consent_optional === 'true';
+                }
+                if (consentOptionalAlternative && stored.consent_optional_alternative) {
+                    consentOptionalAlternative.checked = stored.consent_optional_alternative === 'true';
+                }
+                
+                if (consentOptionsConfirmBtn && !consentOptionsConfirmBtn.hasAttribute('data-listener-added')) {
+                    consentOptionsConfirmBtn.setAttribute('data-listener-added', 'true');
+                    
+                    consentOptionsConfirmBtn.addEventListener('click', function() {
+                        const readFormValue = consentReadForm ? consentReadForm.checked : false;
+                        const requiredValue = consentRequired ? consentRequired.checked : false;
+                        const optionalValue = consentOptional ? consentOptional.checked : false;
+                        const optionalAlternativeValue = consentOptionalAlternative ? consentOptionalAlternative.checked : false;
+                        
+                        // Save consent options to storage
+                        saveToStorage({
+                            consent_read_form: readFormValue ? 'true' : 'false',
+                            consent_required: requiredValue ? 'true' : 'false',
+                            consent_optional: optionalValue ? 'true' : 'false',
+                            consent_optional_alternative: optionalAlternativeValue ? 'true' : 'false'
+                        });
+                        
+                        // Set consent_confirmation cookie only if the second checkbox (consent_required) is checked
+                        if (requiredValue) {
+                            setCookie('consent_confirmation', 'true');
+                        }
+                        
+                        // Submit all data to database
+                        submitAllDataToDatabase().then(() => {
+                            hidePopup();
+                        }).catch(error => {
+                            console.error('Error submitting data:', error);
+                            alert('There was an error saving your data. Please try again.');
+                        });
+                    });
+                }
+                
+                if (consentOptionsBackBtn) {
+                    consentOptionsBackBtn.addEventListener('click', showSixthScreenFromBack);
+                }
+            }
+            
+            // Hide popup with fade-out animation
+            function hidePopup() {
+                const popupElement = document.getElementById('consentPopup');
+                if (popupElement) {
+                    popupElement.classList.remove('show');
+                    setTimeout(function() {
+                        popupElement.style.display = 'none';
+                    }, 500);
+                }
+            }
+            
+            // Initialize popup
+            function initializePopup() {
+                const popup = document.getElementById('consentPopup');
+                const confirmBtn = document.getElementById('consentConfirmBtn');
+                
+                if (popup && confirmBtn) {
+                    popup.classList.add('show');
+                    
+                    const firstScreen = document.getElementById('consentFirstScreen');
+                    const firstScreenBody = firstScreen ? firstScreen.querySelector('.consent-popup-body') : null;
+                    
+                    setupFirstScreenScroll(firstScreenBody, confirmBtn);
+                    confirmBtn.addEventListener('click', handleFirstScreenContinue);
+                }
+            }
+            
+            // Only show popup if user doesn't have consent in database
+            if (!userHasConsent) {
+                const consentCookie = getCookie('consent_confirmation');
+                
+                if (!consentCookie) {
+                    window.addEventListener('load', function() {
+                        setTimeout(initializePopup, 100);
+                    });
+                }
+            }
+        })();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}شكراً لك - مشروع جمع البيانات الصوتية{% endblock %}
+
+{% block head_extra %}
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+    .thanks-container {
+        max-width: 700px;
+        margin-inline: auto;
+        text-align: center;
+        padding-block: var(--spacing-4xl);
+    }
+    
+    .thanks-icon {
+        font-size: 5rem;
+        margin-block-end: var(--spacing-xl);
+        color: var(--color-primary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .thanks-icon svg {
+        width: 5rem;
+        height: 5rem;
+        stroke: currentColor;
+        fill: none;
+    }
+    
+    .thanks-message {
+        font-size: var(--font-size-xl);
+        line-height: var(--line-height-relaxed);
+        color: #000000;
+        margin-block: var(--spacing-xl);
+        font-weight: var(--font-weight-bold);
+    }
+    
+    .token-display {
+        background-color: var(--color-bg-secondary);
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-lg);
+        margin-block: var(--spacing-xl);
+        font-family: monospace;
+        font-size: var(--font-size-lg);
+        word-break: break-all;
+        text-align: center;
+    }
+    
+    .token-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        margin-block-end: var(--spacing-sm);
+        font-weight: var(--font-weight-semibold);
+    }
+    
+    .contact-info {
+        background-color: var(--color-bg-secondary);
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-lg);
+        margin-block: var(--spacing-xl);
+    }
+    
+    .contact-info h3 {
+        margin-block-end: var(--spacing-md);
+        font-size: var(--font-size-lg);
+    }
+    
+    .contact-info p {
+        line-height: var(--line-height-relaxed);
+        color: var(--color-text-secondary);
+    }
+    
+    .registration-section {
+        background-color: var(--color-bg-secondary);
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-lg);
+        margin-block: var(--spacing-xl);
+        text-align: center;
+    }
+    
+    .registration-section p {
+        color: #000000;
+        line-height: var(--line-height-relaxed);
+        margin-block: var(--spacing-sm);
+    }
+    
+    .registration-number {
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-xl);
+        color: #383c2a;
+        margin-block-end: var(--spacing-md);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container thanks-container">
+    <div class="thanks-icon">
+        <i data-lucide="party-popper"></i>
+    </div>
+    
+    <p class="thanks-message">
+        شكرًا لمساهمتكم في ترميز اللهجة الإماراتية!
+    </p>
+    
+    {% if token_6_digits %}
+    <div class="registration-section">
+        <div class="registration-number">
+            رقم التسجيل {{ token_6_digits }}
+        </div>
+        <p style="color: #868874;">
+            يمكنكم طلب حذف بياناتكم خلال ٣٠ يوم باستخدام رقم التسجيل ومراسلتنا على
+            <a href="mailto:help@ramsalab.ae" style="color: #383c2a; text-decoration: none;">help@ramsalab.ae</a>
+        </p>
+
+    </div>
+    
+    <div class="thanks-message" style="margin-block-start: var(--spacing-xl);">
+        <p style="font-weight: var(--font-weight-semibold); margin-block-end: var(--spacing-md);">
+            هل ترغب بالمشاركة بصورة أكبر؟
+        </p>
+        <p style="color: #383c2a;">
+            يمكنكم التسجيل مرة أخرى أو مراسلتنا لتسجيل محادثة أطول مع أحد أعضاء فريق العمل: 
+            <a href="mailto:info@ramsalab.ae" style="color: #383c2a; text-decoration: none;">info@ramsalab.ae</a>
+        </p>
+    </div>
+    {% endif %}
+    
+    <div style="margin-block-start: var(--spacing-2xl);">
+        <a href="{{ url_for('routes.select_theme') }}" class="btn btn--primary btn--large">
+            تقديم إدخال آخر
+        </a>
+    </div>
+</div>
+<script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+</script>
+{% endblock %}

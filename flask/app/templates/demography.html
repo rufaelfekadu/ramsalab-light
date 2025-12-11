@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}المعلومات الديموغرافية - مشروع جمع البيانات الصوتية{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; padding-block: var(--spacing-2xl);">
+    <h1 style="text-align: center; margin-block-end: var(--spacing-xl);">المعلومات الديموغرافية</h1>
+    
+    <div class="card" style="background-color: var(--color-bg-secondary);">
+        <div class="card__header">
+            <h2 class="card__title">يرجى ملء المعلومات التالية</h2>
+        </div>
+        
+        <div class="card__body">
+            <form id="demographyForm" method="POST" action="{{ url_for('routes.update_demography') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <!-- Emirati Citizenship -->
+                <div class="form-group">
+                    <label class="form-label" for="emirati_citizenship">هل أنت مواطن إماراتي؟</label>
+                    <div class="form-radio">
+                        <input type="radio" id="citizen_yes" name="emirati_citizenship" value="yes" required>
+                        <label for="citizen_yes">نعم</label>
+                    </div>
+                    <div class="form-radio">
+                        <input type="radio" id="citizen_no" name="emirati_citizenship" value="no" required>
+                        <label for="citizen_no">لا</label>
+                    </div>
+                </div>
+                
+                <!-- Age Group -->
+                <div class="form-group">
+                    <label class="form-label" for="age_group">الفئة العمرية</label>
+                    <select class="form-select" id="age_group" name="age_group" required>
+                        <option value="">اختر الفئة العمرية</option>
+                        <option value="18-25">18-25</option>
+                        <option value="26-35">26-35</option>
+                        <option value="36-45">36-45</option>
+                        <option value="46-55">46-55</option>
+                        <option value="56-65">56-65</option>
+                        <option value="65+">65+</option>
+                    </select>
+                </div>
+                
+                <!-- Gender -->
+                <div class="form-group">
+                    <label class="form-label" for="gender">الجنس</label>
+                    <div class="form-radio">
+                        <input type="radio" id="gender_male" name="gender" value="male" required>
+                        <label for="gender_male">ذكر</label>
+                    </div>
+                    <div class="form-radio">
+                        <input type="radio" id="gender_female" name="gender" value="female" required>
+                        <label for="gender_female">أنثى</label>
+                    </div>
+                    <!-- <div class="form-radio">
+                        <input type="radio" id="gender_other" name="gender" value="other" required>
+                        <label for="gender_other">أخرى</label>
+                    </div> -->
+                </div>
+                
+                <!-- Place of Birth -->
+                <div class="form-group">
+                    <label class="form-label" for="place_of_birth">من أي إمارة أنت؟</label>
+                    <select class="form-select" id="place_of_birth" name="place_of_birth" required>
+                        <option value="">اختر الإمارة</option>
+                        <option value="Abu Dhabi">أبو ظبي</option>
+                        <option value="Dubai">دبي</option>
+                        <option value="Sharjah">الشارقة</option>
+                        <option value="Ajman">عجمان</option>
+                        <option value="Umm Al Quwain">أم القيوين</option>
+                        <option value="Ras Al Khaimah">رأس الخيمة</option>
+                        <option value="Fujairah">الفجيرة</option>
+                    </select>
+                </div>
+                
+                <!-- Current Residence -->
+                <div class="form-group">
+                    <label class="form-label" for="current_residence">مكان الإقامة الحالي</label>
+                    <input type="text" 
+                           class="form-input" 
+                           id="current_residence" 
+                           name="current_residence" 
+                           placeholder="أدخل مكان الإقامة الحالي"
+                           required>
+                </div>
+                
+                <!-- Dialect Description -->
+                <div class="form-group">
+                    <label class="form-label" for="dialect_description">يرجى وصف لهجتك الإماراتية أو منطقة لهجتك (اختياري)</label>
+                    <input type="text" 
+                           class="form-input" 
+                           id="dialect_description" 
+                           name="dialect_description" 
+                           placeholder="مثال: لهجة أبوظبي، دبي، الفجيرة... (اختياري)">
+                    <span class="form-help">هذا الحقل اختياري ويمكن تركه فارغاً</span>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div style="margin-block-start: var(--spacing-xl); display: flex; gap: var(--spacing-md); justify-content: space-between; flex-wrap: wrap;">
+        <a href="{{ url_for('routes.consent_form') }}" class="btn btn--secondary btn--large" style="order: 1;">
+            → رجوع
+        </a>
+        <button type="submit" form="demographyForm" class="btn btn--primary btn--large" style="order: 2;">
+            حفظ ومتابعة ←
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('demographyForm').addEventListener('submit', function(e) {
+        // Basic validation is handled by HTML5 required attributes
+        // Additional validation can be added here if needed
+    });
+</script>
+{% endblock %}

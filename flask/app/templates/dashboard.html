@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MBZUAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Login/Logout Button -->
+    <div class="auth-button-container">
+        <a href="{{ url_for('routes.manage_data') }}" class="auth-btn manage-data-btn" title="Manage My Data">
+            <i class="fas fa-user-shield"></i>
+            <span>Manage My Data</span>
+        </a>
+        <a href="{{ url_for('routes.logout') }}" class="auth-btn logout-btn" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+    
+    <div class="container">
+        <div class="survey-card">
+            <div class="home-header">
+                <h1 class="home-title">
+                    <i class="fas fa-clipboard-list"></i> My Responses
+                </h1>
+                <p class="home-subtitle">Total responses: {{ total_responses }}</p>
+                <div class="home-actions">
+                    <a href="{{ url_for('routes.index') }}" class="home-link-btn">
+                        <i class="fas fa-home"></i>
+                        Back to Main Page
+                    </a>
+                    {% if total_responses > 0 %}
+                    <button type="button" id="deleteAllDataBtn" class="delete-all-btn">
+                        <i class="fas fa-trash-alt"></i>
+                        Delete All My Data
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if responses %}
+                <div class="responses-list">
+                    {% for response in responses %}
+                        <div class="response-card">
+                            <div class="response-header">
+                                <h3 class="response-question">{{ response.question_prompt }}</h3>
+                                <div class="response-meta">
+                                    <span class="response-survey">{{ response.survey_name }}</span>
+                                    <span class="response-date">
+                                        <i class="fas fa-clock"></i>
+                                        {{ response.timestamp.strftime('%Y-%m-%d %H:%M') if response.timestamp else 'Unknown date' }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="response-content">
+                                {% if response.response_type == 'audio' and response.file_path %}
+                                    <div class="audio-response">
+                                        <i class="fas fa-microphone"></i>
+                                        {% if response.file_path.startswith('http') %}
+                                            <audio controls>
+                                                <source src="{{ response.file_path }}" type="audio/mpeg">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                        {% else %}
+                                            {% set path_parts = response.file_path.split('/') %}
+                                            {% if path_parts|length >= 2 %}
+                                                <audio controls>
+                                                    <source src="{{ url_for('routes.serve_upload', question_id=path_parts[-2], filename=path_parts[-1]) }}" type="audio/mpeg">
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                            {% else %}
+                                                <p>Audio file unavailable</p>
+                                            {% endif %}
+                                        {% endif %}
+                                        <p class="file-path">File: {{ response.file_path.split('/')[-1] if response.file_path else 'Unknown' }}</p>
+                                    </div>
+                                {% elif response.response_type == 'text' %}
+                                    <div class="text-response">
+                                        <p>{{ response.response_value }}</p>
+                                    </div>
+                                {% elif response.response_type == 'radio' or response.response_type == 'checkbox' %}
+                                    <div class="option-response">
+                                        <p><strong>Selected:</strong> {{ response.response_value }}</p>
+                                    </div>
+                                {% else %}
+                                    <div class="generic-response">
+                                        <p><strong>Type:</strong> {{ response.response_type }}</p>
+                                        {% if response.response_value %}
+                                            <p><strong>Value:</strong> {{ response.response_value }}</p>
+                                        {% endif %}
+                                        {% if response.file_path %}
+                                            <p><strong>File:</strong> {{ response.file_path }}</p>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-responses">
+                    <i class="fas fa-inbox"></i>
+                    <p>You haven't submitted any responses yet.</p>
+                    <a href="{{ url_for('routes.survey') }}" class="start-survey-link">
+                        <i class="fas fa-clipboard-list"></i> Start Survey
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <style>
+        .home-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .home-title {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .home-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .home-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .home-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .home-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        
+        .delete-all-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+        
+        .delete-all-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        }
+        
+        .delete-all-btn:active {
+            transform: translateY(0);
+        }
+        
+        .delete-all-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .responses-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .response-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .response-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .response-header {
+            margin-bottom: 15px;
+        }
+        
+        .response-question {
+            color: #333;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .response-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .response-survey {
+            background: #e0e7ff;
+            color: #667eea;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        
+        .response-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .response-content {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        .text-response p {
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        .option-response p {
+            color: #333;
+            margin: 0;
+        }
+        
+        .audio-response {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .audio-response i {
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+        
+        .audio-response audio {
+            width: 100%;
+        }
+        
+        .file-path {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 0;
+        }
+        
+        .generic-response p {
+            margin: 5px 0;
+            color: #333;
+        }
+        
+        .no-responses {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .no-responses i {
+            font-size: 4rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+        
+        .no-responses p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .start-survey-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .start-survey-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        
+        @media (max-width: 600px) {
+            .home-title {
+                font-size: 2rem;
+            }
+            
+            .response-card {
+                padding: 20px;
+            }
+            
+            .response-question {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteAllBtn = document.getElementById('deleteAllDataBtn');
+            if (deleteAllBtn) {
+                deleteAllBtn.addEventListener('click', function() {
+                    if (!confirm('Are you sure you want to delete ALL your data? This will permanently delete all your survey responses and cannot be undone.')) {
+                        return;
+                    }
+                    
+                    const formData = new FormData();
+                    formData.append('csrf_token', '{{ csrf_token() }}');
+                    
+                    deleteAllBtn.disabled = true;
+                    deleteAllBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                    
+                    fetch('{{ url_for("routes.delete_all_data") }}', {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert('All your data has been deleted successfully.');
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + (data.message || 'Failed to delete data'));
+                            deleteAllBtn.disabled = false;
+                            deleteAllBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete All My Data';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while deleting your data.');
+                        deleteAllBtn.disabled = false;
+                        deleteAllBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete All My Data';
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

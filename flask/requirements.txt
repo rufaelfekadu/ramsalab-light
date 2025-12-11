@@ -1,0 +1,14 @@
+alembic==1.13.1
+flask
+flask-limiter
+flask-login
+flask-sqlalchemy
+flask-wtf
+gunicorn
+psycopg
+psycopg2-binary
+python-dotenv
+requests
+werkzeug
+SQLAlchemy==2.0.23
+boto3>=1.35.75
