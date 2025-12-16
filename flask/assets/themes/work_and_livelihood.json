@@ -1,7 +1,7 @@
 [
     {
-        "survey_name": "العمل والرزق",
-        "description": "العمل والرزق",
+        "survey_name": "العمل والحرف اليدوية",
+        "description": "العمل والحرف اليدوية",
         "consent_form": null,
         "question_groups": [
             {
@@ -53,13 +53,6 @@
                     {
                         "prompt_number": 6,
                         "prompt": "هل تفضلون التسوق في الأسواق الشعبية حيث يفترش الناس الأرض ببسطاتهم البسيطة، أم تفضلون المولات الكبيرة والمجمعات التجارية الحديثة؟ ولماذا؟",
-                        "question_type": "audio",
-                        "options": null,
-                        "required": false
-                    },
-                    {
-                        "prompt_number": 7,
-                        "prompt": "كيف تفاصلون في سعر القطع التي تعجبكم؟ وهل تذكرون مرة حصلتم فيها بعد المفاصلة على سعر ممتاز؟ كيف كانت تلك التجربة؟",
                         "question_type": "audio",
                         "options": null,
                         "required": false
