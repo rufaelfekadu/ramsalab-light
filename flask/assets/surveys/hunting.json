@@ -1,0 +1,85 @@
+[
+    {
+        "survey_name": "الصيد",
+        "description": "الصيد",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "هل تُمارَس رياضة القنص بالصقور أو بكلاب الصيد في منطقتكم؟ صفوا مراحل تجهيز الصقر أو الطير محليًا لرحلة القنص: كيف يتم تدريبه، وما أسماء الأدوات المستخدمة معه للتغطية أو الربط؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "ما هي أسماء أجزاء الصقر، مثل المخالب، الريش، المنقار، وغيرها؟ وما المفردات التي يستخدمها أهل المنطقة لوصف حالة الصقر أو قوة أدائه في الصيد؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "ما أنواع الحيوانات البرية التي كانت تُصطاد في منطقتكم، وأين عادة تتم عمليات الصيد؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "ارْووا لنا أولى رحلات الصيد التي شاركتم فيها في حياتكم: كم كان أعماركم؟ من أخذكم معه؟ أين كانت الرحلة؟ وما نوع الصيد المستخدم، مثل الصقارة، السلوقي، أو البندقية؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "ما الأصوات أو الكلمات التي يستخدمها الصقار لمناداة الصقر، لتحفيزه على الانطلاق، لإرجاعه إلى اليد؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "حدّثونا عن دور كلب السلوقي في الصيد: كيف يُختار، وكيف يُربّى، ولأي أنواع الطرائد يُفضَّل استخدامه؟ واذكروا الأسماء التي تُطلقونها عليه، والأوامر التي تُقال له أثناء الصيد أو عند المناداة عليه",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 6,
+                        "prompt": "ما الآداب أو القواعد الأخلاقية الي تلتزمون بها أثناء الصيد؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 7,
+                        "prompt": "هل للأطفال دور في عالم الصيد؟ مثل تربية الصقور، تجهيز العدة، استقبال الصيادين، أو المشاركة في بعض الرحلات",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 8,
+                        "prompt": "هل يرتبط الصيد في منطقتكم بمناسبات أو مواسم معينة، وهل هناك مسابقات تراثية، أو مهرجانات؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 9,
+                        "prompt": "صفوا المراحل المتتابعة التي يمر بها بناء المسكن التقليدي في منطقتكم، مثل بيت العريش، البيت الطيني، أو الحصن",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]

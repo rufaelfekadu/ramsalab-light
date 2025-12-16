@@ -1,0 +1,99 @@
+[
+    {
+        "survey_name": "الزراعة",
+        "description": "الزراعة",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "صِفوا عملية زراعة التمر منذ البداية وحتى الحصاد؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "ما أشهر أنواع التمر الذي تزرعونه وما الفروق التي تجدونها بين كل نوع من حيث اللون والحجم والطعم والسعر والجودة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "ما الأدوات التقليدية المستخدمة في تسلق النخيل والقطاف، وكيف تعمل كل أداة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "ما الآفات والأمراض التي تصيب النخلة وتؤثر في جودة التمر، وكيف تتم معالجتها؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "كيف تُقارَنون طرق الري القديمة بطرق الري الحديثة من حيث الكفاءة والجهد والتكلفة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "كم تستغرقون من الساعات في حراثة هذه الأرض، وكم عاملًا يتولى تنفيذ عملية الحراثة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 6,
+                        "prompt": "اذكروا سنةً ازدهر فيها هذا المحصول وحقق وفرةً في الإنتاج، أو سنةً أخرى خاب فيها بسبب الظروف الطبيعية، وبيّنوا أثر ذلك على الوضع الإقتصادي للعائلة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 7,
+                        "prompt": "ما اسم الشخص المسؤول عن قطف التمر، وما ما أبشع حادث شهدتموه لأحدهم وهو يقطف التمر؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 8,
+                        "prompt": "ما الأسماء التي تستعملونها لأنواع النخيل المختلفة في منطقتكم؟ وهل هنك تسميات مختلفة حسب مراحل نموّ النخلة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 9,
+                        "prompt": "ما أسماء أجزاء النخلة وهل مرّ عليكم إختلاف في التسمية حسب المناطق؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 10,
+                        "prompt": "كيف كانت تُستَخدم النخلة وأجزاؤها في بناء البيوت أو العرشان، أو في صناعة الأدوات قديماً وحديثاً، مثل استخدام الليف وغيرها؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 11,
+                        "prompt": "اذكر مراحل التمر كما تعرفونها في لهجتكم الإماراتية، منذ الطلع الأول حتى يصبح تمرًا جاهزًا للأكل أو التخزين، مثل الطلع، الحبّ، البلح، البسر، الرطب، التمر، أو أي مسميات أخرى",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]

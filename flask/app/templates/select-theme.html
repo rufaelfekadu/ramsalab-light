@@ -73,7 +73,7 @@
                         </p>
                         {% if survey.question_groups %}
                             <p class="theme-card__description" style="margin-top: var(--spacing-xs); font-size: var(--font-size-xs); color: var(--color-text-tertiary);">
-                                {{ survey.question_groups|length }} مجموعة أسئلة
+                                {{ survey.question_groups[0].questions|length }} مجموعة أسئلة
                             </p>
                         {% endif %}
                     </button>

@@ -1,0 +1,92 @@
+[
+    {
+        "survey_name": "البناء والإنشاء",
+        "description": "البناء والإنشاء",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "صفوا المراحل المتتابعة التي يمر بها بناء المسكن التقليدي في منطقتكم، مثل بيت العريش، البيت الطيني، أو الحصن وكم يستغرق من الوقت بناء كل واحدٍ منهم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "كيف يبدأ التحضير للأرضية في البناء التقليدي؟ وكيف تٌشيّد الأساسات والجدران؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "كيف تُصنع الأسقف في البناء التقليدي، وكيف تقولون \"سقفنا البيت\"؟ وهل توجد طقوس احتفالية مرتبطة بذلك؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "ما الأسماء القديمة التي تُطلَق على الأبواب، الشبابيك، والمداخل؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "ما المواد الأولية الأساسية التي كان يُعتمد عليها في البناء قديماً، وهل كانت تُجلب من أماكن محددة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "ما أبرز الأدوات التقليدية التي كان يستخدمها عامل البناء في عمله، مثل أدوات القياس، أدوات الخلط، وأدوات النحت،......إلخ؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 6,
+                        "prompt": "صفوا الطرق الشعبية البسيطة التي كان يعتمدها العمال لاختبار جودة وصلاحية مواد البناء الأساسية قبل استخدامها",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 7,
+                        "prompt": "صفوا لنا تفصيلة معمارية واحدة تحبّونها في بيت إماراتي قديم، مثل باب، مشربية، أو أي عنصر معماري آخر",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 8,
+                        "prompt": "اذكروا أسماء الحِرَف والوظائف في موقع البناء: من المسؤول عن الهيكل، من عن الطابوق، من عن الكهرباء، من عن المكيّفات، من عن الألومنيوم، من عن الجبس، وغيرها.",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 9,
+                        "prompt": "كيف يتحدث العمال والمهندسون عن القياسات في موقع البناء؟ مثلا ارتفاع السقف، والسماكة، والميلان، والمسافة أو “استقامة” البلاط؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 10,
+                        "prompt": "اذكروا أنواع الأخطاء التي يتحدث عنها العمال كثيرًا في موقع البناء، مثل ميلان الجدار، فراغ بين البلاط، تشقق في اللياسة، تسريب ماء، وغيرها؟ ماهي الحلول المتاحة لها؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]

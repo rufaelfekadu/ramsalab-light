@@ -81,7 +81,7 @@ def populate_questions(json_file="assets/surveys/english.json", append=False):
             # Next, create question groups and their questions
             for g in survey_obj.get("question_groups", []):
                 group = QuestionGroup(
-                    name=g.get("name") or f"group_{survey.id}_{len(g.get('questions',[]))}",
+                    name=f'group_{survey.id}_{g.get("name")}' or f"group_{survey.id}_{len(g.get('questions',[]))}",
                     description=g.get("description"),
                     group_type=g.get("group_type", "sequential"),
                     prompt_number=g.get("prompt_number"),
