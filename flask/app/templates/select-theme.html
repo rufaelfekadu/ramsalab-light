@@ -62,15 +62,15 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="survey_id" value="{{ survey.id }}">
                     <button type="submit" class="theme-card" style="width: 100%; border: none; background: var(--color-bg-secondary); cursor: pointer;">
-                        <div class="theme-card__icon">📋</div>
+                        <!-- <div class="theme-card__icon">📋</div> -->
                         <h3 class="theme-card__title">{{ survey.name }}</h3>
-                        <p class="theme-card__description">
+                        <!-- <p class="theme-card__description">
                             {% if survey.description %}
                                 {{ survey.description }}
                             {% else %}
                                 استطلاع يحتوي على {{ survey.question_groups|length }} مجموعة أسئلة
                             {% endif %}
-                        </p>
+                        </p> -->
                         {% if survey.question_groups %}
                             <p class="theme-card__description" style="margin-top: var(--spacing-xs); font-size: var(--font-size-xs); color: var(--color-text-tertiary);">
                                 {{ survey.question_groups[0].questions|length }} مجموعة أسئلة
