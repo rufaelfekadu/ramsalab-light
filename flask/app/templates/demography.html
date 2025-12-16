@@ -76,22 +76,26 @@
                 <!-- Current Residence -->
                 <div class="form-group">
                     <label class="form-label" for="current_residence">مكان الإقامة الحالي</label>
-                    <input type="text" 
-                           class="form-input" 
-                           id="current_residence" 
-                           name="current_residence" 
-                           placeholder="أدخل مكان الإقامة الحالي"
-                           required>
+                    <select class="form-select" id="current_residence" name="current_residence" required>
+                        <option value="">اختر الإمارة</option>
+                        <option value="Abu Dhabi">أبو ظبي</option>
+                        <option value="Dubai">دبي</option>
+                        <option value="Sharjah">الشارقة</option>
+                        <option value="Ajman">عجمان</option>
+                        <option value="Umm Al Quwain">أم القيوين</option>
+                        <option value="Ras Al Khaimah">رأس الخيمة</option>
+                        <option value="Fujairah">الفجيرة</option>
+                    </select>
                 </div>
                 
                 <!-- Dialect Description -->
                 <div class="form-group">
-                    <label class="form-label" for="dialect_description">يرجى وصف لهجتك الإماراتية أو منطقة لهجتك (اختياري)</label>
+                    <label class="form-label" for="dialect_description">المنطقة، القبيلة، أو اللهجة (اختياري)</label>
                     <input type="text" 
                            class="form-input" 
                            id="dialect_description" 
                            name="dialect_description" 
-                           placeholder="مثال: لهجة أبوظبي، دبي، الفجيرة... (اختياري)">
+                           placeholder=" (اختياري)">
                     <span class="form-help">هذا الحقل اختياري ويمكن تركه فارغاً</span>
                 </div>
             </form>
