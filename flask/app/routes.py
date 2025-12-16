@@ -826,6 +826,20 @@ def select_theme():
                 survey_id=survey.id
             ).first()
             
+            # Get all questions for the survey
+            all_questions = Question.query.filter_by(survey_id=survey.id).all()
+            
+            if not all_questions:
+                flash("لا توجد أسئلة في هذا الاستطلاع.", "error")
+                return redirect(url_for('routes.select_theme'))
+            
+            # Get seen question IDs from session
+            seen_key = f'seen_questions_{survey_id}'
+            seen_ids = session.get(seen_key, [])
+            
+            # Get all question IDs
+            all_question_ids = [q.id for q in all_questions]
+            
             if progress:
                 # Get current question from progress
                 current_question = Question.query.filter_by(
@@ -833,56 +847,58 @@ def select_theme():
                     survey_id=survey.id
                 ).first() if progress.current_question_id else None
                 
-                # If current question doesn't exist (maybe deleted), find first question
+                # If current question exists, mark it as seen if not already in the list
+                if current_question and current_question.id not in seen_ids:
+                    seen_ids.append(current_question.id)
+                    session[seen_key] = seen_ids
+                
+                # If current question doesn't exist (maybe deleted), select a random unseen question
                 if not current_question:
-                    current_question = Question.query.filter_by(
-                        survey_id=survey.id,
-                        prompt_number=0
-                    ).first()
+                    # Filter out seen questions
+                    unseen_ids = [qid for qid in all_question_ids if qid not in seen_ids]
                     
-                    # If no question with prompt_number=0, get the first question by prompt_number then id
-                    if not current_question:
-                        # Try to get question with lowest prompt_number
-                        current_question = Question.query.filter_by(
-                            survey_id=survey.id
-                        ).filter(Question.prompt_number.isnot(None)).order_by(
-                            Question.prompt_number.asc()
-                        ).first()
+                    # If no unseen questions remain, reset and start fresh
+                    if not unseen_ids:
+                        seen_ids = []
+                        unseen_ids = all_question_ids
                     
-                    # If still no question, get first by id
-                    if not current_question:
-                        current_question = Question.query.filter_by(
-                            survey_id=survey.id
-                        ).order_by(Question.id.asc()).first()
-                    
-                    # Update progress with new current question
-                    if current_question:
-                        progress.current_question_id = current_question.id
+                    # Randomly select one question from unseen questions
+                    if unseen_ids:
+                        selected_question_id = random.choice(unseen_ids)
+                        current_question = Question.query.filter_by(id=selected_question_id).first()
+                        
+                        # Mark selected question as seen in session
+                        if current_question:
+                            seen_ids.append(selected_question_id)
+                            session[seen_key] = seen_ids
+                            
+                            # Update progress with new current question
+                            progress.current_question_id = current_question.id
             else:
-                # Create new progress entry - start with first question (prompt_number=0)
-                current_question = Question.query.filter_by(
-                    survey_id=survey.id,
-                    prompt_number=0
-                ).first()
+                # Create new progress entry - randomly select first question
+                # Filter out seen questions
+                unseen_ids = [qid for qid in all_question_ids if qid not in seen_ids]
                 
-                # If no question with prompt_number=0, get the first question by prompt_number then id
-                if not current_question:
-                    # Try to get question with lowest prompt_number
-                    current_question = Question.query.filter_by(
-                        survey_id=survey.id
-                    ).filter(Question.prompt_number.isnot(None)).order_by(
-                        Question.prompt_number.asc()
-                    ).first()
+                # If no unseen questions remain, reset and start fresh
+                if not unseen_ids:
+                    seen_ids = []
+                    unseen_ids = all_question_ids
                 
-                # If still no question, get first by id
-                if not current_question:
-                    current_question = Question.query.filter_by(
-                        survey_id=survey.id
-                    ).order_by(Question.id.asc()).first()
+                # Randomly select one question from unseen questions
+                if not unseen_ids:
+                    flash("لا توجد أسئلة في هذا الاستطلاع.", "error")
+                    return redirect(url_for('routes.select_theme'))
+                
+                selected_question_id = random.choice(unseen_ids)
+                current_question = Question.query.filter_by(id=selected_question_id).first()
                 
                 if not current_question:
                     flash("لا توجد أسئلة في هذا الاستطلاع.", "error")
                     return redirect(url_for('routes.select_theme'))
+                
+                # Mark selected question as seen in session
+                seen_ids.append(selected_question_id)
+                session[seen_key] = seen_ids
                 
                 # Create progress entry
                 progress = Progress(
@@ -893,7 +909,7 @@ def select_theme():
                 db.session.add(progress)
             
             db.session.commit()
-            current_app.logger.info(f'Updated progress for user {user.id} on survey {survey.id}, current question: {current_question.id}')
+            current_app.logger.info(f'Updated progress for user {user.id} on survey {survey.id}, current question: {current_question.id} (random selection)')
             
             # Redirect to record page with the current question
             return redirect(url_for('routes.record', 
@@ -1033,45 +1049,55 @@ def change_question():
                 flash("لم يتم العثور على التقدم. يرجى اختيار استطلاع مرة أخرى.", "error")
                 return redirect(url_for('routes.select_theme'))
             
-            # Find next question
+            # Get current question for exclusion
             current_question = None
+            current_question_id_int = None
             if current_question_id:
                 try:
-                    current_question_id = int(current_question_id)
+                    current_question_id_int = int(current_question_id)
                     current_question = Question.query.filter_by(
-                        id=current_question_id,
+                        id=current_question_id_int,
                         survey_id=survey.id
                     ).first()
                 except (ValueError, TypeError):
                     pass
             
-            # Find next question by prompt_number
-            next_question = None
-            if current_question and current_question.prompt_number is not None:
-                # Get next question with higher prompt_number
-                next_question = Question.query.filter_by(
-                    survey_id=survey.id
-                ).filter(
-                    Question.prompt_number > current_question.prompt_number
-                ).order_by(Question.prompt_number.asc()).first()
+            # Get all questions for the survey
+            all_questions = Question.query.filter_by(survey_id=survey.id).all()
             
-            # If no next question by prompt_number, try by id
-            if not next_question:
-                if current_question:
-                    next_question = Question.query.filter_by(
-                        survey_id=survey.id
-                    ).filter(Question.id > current_question.id).order_by(Question.id.asc()).first()
-                else:
-                    # If no current question, get first question
-                    next_question = Question.query.filter_by(
-                        survey_id=survey.id
-                    ).order_by(Question.id.asc()).first()
+            if not all_questions:
+                flash("لا توجد أسئلة متاحة في هذا الاستطلاع.", "error")
+                return redirect(url_for('routes.select_theme'))
             
-            # If still no next question, get first question (wrap around)
-            if not next_question:
-                next_question = Question.query.filter_by(
-                    survey_id=survey.id
-                ).order_by(Question.id.asc()).first()
+            # Get seen question IDs from session
+            seen_key = f'seen_questions_{survey_id}'
+            seen_ids = session.get(seen_key, [])
+            
+            # Get all question IDs
+            all_question_ids = [q.id for q in all_questions]
+            
+            # Filter out seen questions and current question
+            unseen_ids = [qid for qid in all_question_ids 
+                         if qid not in seen_ids and qid != current_question_id_int]
+            
+            # If no unseen questions remain, reset and start fresh
+            if not unseen_ids:
+                seen_ids = []
+                unseen_ids = [qid for qid in all_question_ids if qid != current_question_id_int]
+            
+            # # Randomly select one question from unseen questions
+            if not unseen_ids:
+                flash("لا توجد أسئلة متاحة في هذا الاستطلاع.", "error")
+                unseen_ids = [current_question_id_int]
+            
+            next_question_id = random.choice(unseen_ids)
+            
+            # Mark selected question as seen in session
+            seen_ids.append(next_question_id)
+            session[seen_key] = seen_ids
+            
+            # Get the next question object
+            next_question = Question.query.filter_by(id=next_question_id).first()
             
             if not next_question:
                 flash("لا توجد أسئلة متاحة في هذا الاستطلاع.", "error")
@@ -1081,7 +1107,7 @@ def change_question():
             progress.current_question_id = next_question.id
             db.session.commit()
             
-            current_app.logger.info(f'Changed question for user {user.id} in survey {survey.id} to question {next_question.id}')
+            current_app.logger.info(f'Changed question for user {user.id} in survey {survey.id} to question {next_question.id} (random selection)')
             
             # Redirect to record page with new question
             return redirect(url_for('routes.record', 
