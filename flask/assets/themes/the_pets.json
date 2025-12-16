@@ -1,0 +1,50 @@
+[
+    {
+        "survey_name": "الحيوانات الأليفة",
+        "description": "الحيوانات الأليفة",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "هل تربّون حيوانًا أليفًا في المنزل؟ ما هو هذا الحيوان وهل أعطيتموه اسمًا خاصًا، وكيف هي علاقتكم به؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "هل كان أجدادكم أو أقاربكم في الماضي يربّون الدواب؟ وكيف كانت هذه الدواب تخدمهم وتسهّل عليهم حياتهم في التنقل أو العمل اليومي؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "هل تتذكرون قصة إنقاذ لحيوان أليف—مثل قطة أو طائر—حدثت معكم شخصيًا أو مع أحد أقربائكم؟ وكيف كانت تجربة الاعتناء بذلك الحيوان بعد إنقاذه؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "كيف تتعامل دولة الإمارات مع الأشخاص الذين يعذبون الحيوانات؟ وما هي العقوبات أو الغرامات المفروضة على من يرتكب مثل هذه الأفعال غير الإنسانية؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "هل تُستخدم أسماء الحيوانات كشتائم أو تعابير سلبية في ثقافتكم؟ وهل هناك حالات في المجتمع تُستعمل فيها الحيوانات كرموز لصفات حسنة، مثل الوفاء أو الشجاعة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]

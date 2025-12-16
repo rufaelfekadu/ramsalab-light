@@ -1,0 +1,57 @@
+[
+    {
+        "survey_name": "الهاتف والتواصل الاجتماعي",
+        "description": "الهاتف والتواصل الاجتماعي",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "كم ساعة تقضونها عادة على مواقع التواصل الاجتماعي؟ وما أكثر الأنشطة التي تستهلك وقتكم، مثل المكالمات، الفيديوهات، أو التصفح؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "ما أكثر موقع تواصل اجتماعي تستخدمونه؟ وفيما تستخدمونه بشكل رئيسي—هل هو للتواصل مع الأصدقاء، متابعة الأخبار، أو الأنشطة الأخرى؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "هل تفضلون إجراء المكالمات الهاتفية أم كتابة الرسائل النصية؟ وما أطول مدة مكالمة هاتفية أجريتموها في حياتكم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "عندما ترغبون في التهرب من مكالمة أو حديث مع شخص ما، ماذا عادة تفعلون؟ وهل هي مجدية؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "ما أكثر لعبة تلعبونها على هاتفكم؟ صفوا لنا كيفية عمل اللعبة وما هي الاستراتيجيات أو الخطوات التي تساعدكم على الفوز فيها؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "ما نوع هاتفكم المحمول؟ وكل كم من الوقت تقومون بتغييره عادةً؟ وما العوامل التي تؤثر في قراركم بتغيير الهاتف؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]

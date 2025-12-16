@@ -207,4 +207,6 @@ marimo/_lsp/
 __marimo__/
 
 _uploads/
-logs/
+
+# ds_store
+*.DS_Store

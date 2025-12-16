@@ -1,0 +1,183 @@
+[
+    {
+        "survey_name": "الثياب",
+        "description": "الثياب",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "احكوا لنا عن ثوبكم المفضّل: من أين اشتريتموه؟ متى ترتدونه عادة، ولماذا اخترتم لونه وقَصّته؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "احكوا لنا قصة عباءة أو ثوب انتقل بين أفراد العائلة (ورثتموه أو أُهدي إليكم): متى ترتدونه عادة، ولماذا بقي مميّزًا لديكم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "كيف تختلف ملابسكم في البيت عن ملابسكم عند الخروج؟ وهل هناك عادات معينة عند تبديل الملابس، مثل قبل الصلاة أو قبل استقبال الضيوف؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "احكوا لنا عن لباسكم في يوم العيد: كيف يتبدّل بين البيت وملابس الخروج، وما الطقوس أو العادات المتعلقة بتغيير الملابس قبل صلاة العيد والزيارات؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "احكوا لنا عن لباس العرس التقليدي عند الرجل: صفوا التفاصيل مثل اللون، القماش، الإكسسوارات، وكيف يُرتّب أو يُرتدى، وهل يختلف من منطقة إلى أخرى أو من جيل إلى جيل ؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "صفوا زيّ العروس في ثقافتكم: كيف يكون اللون، والتطريز، والزينة، والقماش، والنقوش، والإكسسوارات؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 6,
+                        "prompt": "صفوا لنا ثوباً (مثل العباءة، البشت، أو الجاكيت) اشتريتموه وظل معكم فترة طويلة دون أن يهترئ أو يخرب. كم كان سعره عند الشراء، وما المادة التي صُنع منها؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 7,
+                        "prompt": "ما هو غطاء الرأس الذي ترتديه النساء، وهل تختلف طريقة ارتدائه أو تنسيقه بين المناطق؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 8,
+                        "prompt": "هل يختلف اسم أو طريقة ارتداء أغطية الرأس بين النساء الكبيرات في السن والجيل الأصغر؟ وما الكلمة التي تصف طريقة تنسيقها أو تثبيتها؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 9,
+                        "prompt": "هل تختلف أغطية الرأس بين الاستخدام اليومي في البيت أو السوق مقارنة بالمناسبات الرسمية أو الاحتفالات؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 10,
+                        "prompt": "احكوا لنا عن إكسسوار صغير يرافقكم في المجالس أو المناسبات (مثل المسبحة، المحفظة، أو الحُليّ): ما اسمه في لهجتكم، متى ولماذا يُحمَل، وشاركوا قصة مرتبطة به ؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 11,
+                        "prompt": "ماذا تسمون الحذاء اليومي الذي تلبسونه في البيت أو الشارع؟ من أي مادة يُصنع عادة؟ وهل يوجد اختلاف بين الرجال والنساء أو بين الصيف والشتاء ؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 12,
+                        "prompt": "ما الكلمات التي تستخدمونها لوصف الملابس الطويلة أو القصيرة، الواسعة أو الضيّقة؟ وهل قمتم بإعادة خياطتها، تعديلها، أم أهديتموها بعد اكتشاف ذلك؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 13,
+                        "prompt": "إذا اشتريتم قطعة ملابس وكانت طويلة، قصيرة، واسعة أو ضيقة، ولم يكن هناك خيار لتبديلها، كيف تتصرفون؟ هل تأخذونها إلى الخياط لتعديلها، وكيف تُعدّل عادةً في كل حالة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 14,
+                        "prompt": "احكوا لنا عن نقشين أو تطريزين تقليديين تحبّونهما: أين يُوضَع كلٌّ منهما، على أي نوع من الثياب يظهر، وما الجمال أو المعنى الذي يضيفه للزي?",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 15,
+                        "prompt": "ما هي الأدوات الأساسية التي كانت تستخدمها النساء لعمل النقوش أو التطريزات التقليدية (مثل الخيوط، الإبر، أو آلات خاصة)؟ وما هي الأسماء المحلية التي كانت تُطلق على هذه الأدوات؟ ؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 16,
+                        "prompt": "صفوا مشهد الاستعداد للخروج من بيتكم، بدءًا من فتح الخزانة وحتى الرجوع إلى المنزل وإغلاق الباب. ما الأفعال والألفاظ التي تستخدمونها في لهجتكم لوصف: ارتداء الملابس، خلعها، ترتيبها، كيّها، وطيّها؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 17,
+                        "prompt": "شاركوا أطرف موقف أو أكثر موقف محرج حصل لكم أثناء ارتداء الملابس أو ترتيبها قبل الخروج، مثل ارتداء الثوب بالمقلوب، اكتشاف عيب في اللحظة الأخيرة، أو مواجهة صعوبة في اللبس.",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 18,
+                        "prompt": "كم مرة يُغسل الثوب في الأسبوع، وأي الملابس تحتاج كيًّا خاصًا أو عناية أكثر؟.",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 19,
+                        "prompt": "ما أغرب ما وقع لكم أثناء الغسيل أو الكيّ؟ ماذا جرى وكيف تعاملتم معه؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 20,
+                        "prompt": "تخيّلوا هذا الموقف: كان لديكم ثوب تحبونه كثيرًا أو وله مكانة خاصة، وفجأة لاحظتم أن ألوانه بدأت تبهت، أو النسيج تآكل، أو ظهر عليها بعض التلف. احكوا لنا كيف تعاملتم مع الأمر.",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 21,
+                        "prompt": "هل تختلف طرق الغسيل والكي حسب نوع القماش: قطني، صوف، مطرّز، أو مشخّص؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 22,
+                        "prompt": "احكوا عن مناسبة عامة رأيتم فيها لباسًا اعتُبر غير مناسب. كيف كان رد فعل الناس وتعاملهم مع اختلاف اللباس؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 23,
+                        "prompt": "كيف تغيّر معنى الاحتشام بين جيل الجدّات وجيلكم؟ احكوا قصةً واحدة تُظهر الفروق بين الجيلين؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]

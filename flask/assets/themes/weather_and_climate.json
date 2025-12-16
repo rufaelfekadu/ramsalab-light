@@ -1,0 +1,99 @@
+[
+    {
+        "survey_name": "الجو والطقس",
+        "description": "الجو والطقس",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "كيف تصفون حالة الجو اليوم (مثل: حار، دافئ، غائم)؟ وهل احتجتم اليوم إلى استخدام مُكيّف، أو مُدفأة، أم كان يكفي فتح النافذة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "كيف تُعبّرون عن حرارة الصيف الشديدة والرطوبة في الإمارات، وماذا تفعلون كي تخففوا وطأة الحر الشديد؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "كيف يكون جو الإمارات في الشتاء وماذا تفعلون كي تخففوا من حدة البرد؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "ما أسماء الرياح الشائعة عندكم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "كيف تسمّون الريح بحسب اتجاهها عندكم (الشمال/الجنوب/الشرق/الغرب)؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "صفوا مشهد المطر الغزير عندكم. كيف تقولون في لهجتكم إن المطر نزل دفعةً واحدة وبغزارة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 6,
+                        "prompt": "ماذا تسمون ندى الصباح الذي يكون على السيارات والنوافذ؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 7,
+                        "prompt": "هل هناك فرق في التسمية بين الضباب الخفيف والكثيف، وكيف تصفون لحظة انقشاعه؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 8,
+                        "prompt": "صِف كيف يكون الندى في وقت الفجر؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 9,
+                        "prompt": "كيف تصفون شدّة العاصفة الرمليّة وانعدام الرؤية؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 10,
+                        "prompt": "احكِ عن عاصفةٍ رملية أثّرت على جهازك التنفسي أو على أحد من أسرتك: أين كنتم؟ كيف بدأت الأعراض؟ ماذا فعلتم حتى هدأت الحالة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 11,
+                        "prompt": "ما التسميات الموسمية عندكم (مثل \"المربّعانية\"، \"السعود\"، وغيرها)؟ احكوا ماذا تعني ومتى تبدأ وتنتهي، وما علاماتها في الطقس؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]

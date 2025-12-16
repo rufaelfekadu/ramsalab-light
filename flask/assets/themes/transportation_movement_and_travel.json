@@ -1,0 +1,106 @@
+[
+    {
+        "survey_name": "المواصلات والتنقّل والسفر",
+        "description": "المواصلات والتنقّل والسفر",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "هل الشوارع في منطقتكم، من بيتكم إلى العمل، تشهد ازدحامًا مروريًا؟ وما الأوقات التي تكون فيها الطرق أكثر سلاسة وخالية من الزحام؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "كيف تذهبون إلى مدرستكم أو جامعتكم أو عملكم؟ هل تستخدمون وسائل النقل العامة أم الخاصة؟ وهل عادة ما تصلون في الوقت المحدد أم تواجهون تأخيرًا؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "ما هي أول سيارة اقتناها والدكم؟ وكيف تختلف مواصفاتها عن السيارات التي تملكونها اليوم من حيث التصميم، التكنولوجيا، والراحة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "ما هي القوانين الصارمة التي فرضتها دولة الإمارات على القيادة المتهورة؟ وكيف أثرت هذه القوانين في تقليل الحوادث المرورية والوفيات على الطرق؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "هل تعرضتم لحادث سير من قبل؟ ماذا حدث في تلك اللحظة وكيف تعاملتم مع الموقف؟ وكيف كانت تجربة الإسعاف والتأمين بعد الحادث؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "هل جربتم أن يكون مكان سكنكم في إمارة، وعملكم أو دراستكم في إمارة أخرى؟ إذا كانت الإجابة نعم، كيف كانت تجربتكم؟ وهل أنتم مستعدون لتكرار هذه التجربة في المستقبل؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 6,
+                        "prompt": "هل تتمنون أن تستخدموا الدراجة في تنقلاتكم اليومية؟ وهل هناك أشخاص في منطقتكم يعتمدون على الدراجة كوسيلة نقل؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 7,
+                        "prompt": "ما هي وسيلة السفر المحببة إلى قلوبكم؟ وهل تفضلون السفر بالسيارة، الطائرة، القطار، أم وسائل أخرى؟ ولماذا؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 8,
+                        "prompt": "هل تحبون السفر؟ وما هي وجهتكم المفضلة للسفر؟ ولماذا تختارون هذه الوجهة بالذات؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 9,
+                        "prompt": "ماذا تفعلون عندما تتأخر رحلتكم على الطائرة؟ وهل تجدون أن المطار يوفر كل ما تحتاجونه من خدمات أثناء الانتظار، مثل أماكن للراحة أو خيارات للطعام والترفيه؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 10,
+                        "prompt": "ما هي أصعب رحلة سفر قمتم بها؟ ولماذا كانت تلك الرحلة صعبة بالنسبة لكم؟ هل كانت بسبب الظروف الجوية، أو التعب، أو أي أسباب أخرى؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 11,
+                        "prompt": "كم من الوقت عادةً تأخذون في تجهيز وتوضيب شنطة السفر؟ وهل لديكم طريقة معينة لترتيب الأغراض؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 12,
+                        "prompt": "هل أنتم من النوع الذي يشعر بالقلق قبل السفر ويصيبكم الأرق؟ كيف تتعاملون مع هذا القلق، وهل تجدون طرقًا للتغلب عليه؟ ما هي النصائح التي يمكنكم تقديمها لمن يعانون من نفس المشكلة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]

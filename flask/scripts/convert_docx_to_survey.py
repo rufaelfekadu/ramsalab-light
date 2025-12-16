@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""
-Script to convert Word document themes to survey JSON format.
-
-Converts themes from a Word document into the survey JSON format used by
-the application. Each theme becomes a separate survey with a random question group.
-"""
+"""Convert Word document themes to survey JSON format."""
 
 import zipfile
 import xml.etree.ElementTree as ET
@@ -13,349 +8,248 @@ import re
 import argparse
 import sys
 from pathlib import Path
+from dataclasses import dataclass, field
+from typing import Optional, List, Tuple
+
+# Constants
+MAX_THEME_LENGTH, MIN_QUESTION_LENGTH, MAX_SUBCATEGORY_LENGTH = 200, 20, 100
+WORD_NS = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+
+# Regex patterns
+ARABIC = re.compile(r'[\u0600-\u06FF]')
+EN_PAREN = re.compile(r'\(([^)]+)\)')
+EN_PAREN_CAP = re.compile(r'\([A-Z]')
+NUM_Q = re.compile(r'^(\d+)\.\s*(.+)')
+LETTER_SUB = re.compile(r'^[A-Z][\.\)]\s*')
+NUM = re.compile(r'^\d+\.')
+SLUG = re.compile(r'[^a-zA-Z0-9]+')
+UNDERSCORE = re.compile(r'_+')
+
+# Arabic transliteration map
+AR_TRANS = {
+    'ا': 'a', 'أ': 'a', 'إ': 'i', 'آ': 'aa', 'ب': 'b', 'ت': 't', 'ث': 'th', 'ج': 'j',
+    'ح': 'h', 'خ': 'kh', 'د': 'd', 'ذ': 'dh', 'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 'sh',
+    'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'z', 'ع': 'a', 'غ': 'gh', 'ف': 'f', 'ق': 'q',
+    'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n', 'ه': 'h', 'و': 'w', 'ي': 'y', 'ى': 'a',
+    'ة': 'a', 'ء': 'a', 'ئ': 'i', 'ؤ': 'u', ' ': '_', '-': '_'
+}
 
 
-def extract_text_from_paragraph(paragraph, ns):
-    """Extract text content from a Word paragraph element."""
-    text_parts = []
-    for t in paragraph.findall('.//w:t', ns):
-        if t.text:
-            text_parts.append(t.text)
-    return ''.join(text_parts).strip()
+def extract_text(p, ns):
+    return ''.join(t.text for t in p.findall('.//w:t', ns) if t.text).strip()
 
 
-def arabic_to_slug(arabic_text):
-    """
-    Convert Arabic text to a simple slug.
-    Uses a basic transliteration mapping for common Arabic characters.
-    """
-    # Basic Arabic to English transliteration mapping
-    transliteration_map = {
-        'ا': 'a', 'أ': 'a', 'إ': 'i', 'آ': 'aa',
-        'ب': 'b', 'ت': 't', 'ث': 'th', 'ج': 'j',
-        'ح': 'h', 'خ': 'kh', 'د': 'd', 'ذ': 'dh',
-        'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 'sh',
-        'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'z',
-        'ع': 'a', 'غ': 'gh', 'ف': 'f', 'ق': 'q',
-        'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n',
-        'ه': 'h', 'و': 'w', 'ي': 'y', 'ى': 'a',
-        'ة': 'a', 'ء': 'a', 'ئ': 'i', 'ؤ': 'u',
-        ' ': '_', '-': '_'
-    }
+def get_style(p, ns):
+    pPr = p.find('w:pPr', ns)
+    return pPr.find('w:pStyle', ns).get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val') if pPr is not None and pPr.find('w:pStyle', ns) is not None else None
+
+
+def has_arabic(t): return bool(ARABIC.search(t)) if t else False
+def has_en_paren(t): return t and '(' in t and ')' in t and bool(EN_PAREN_CAP.search(t))
+def extract_en(t): return (m := EN_PAREN.search(t)) and m.group(1) or t if t else ''
+def is_num_q(t): return bool(NUM_Q.match(t)) if t else False
+def is_q_mark(t): return t and (t.endswith('؟') or t.endswith('?'))
+
+
+def arabic_to_slug(t):
+    s = ''.join(AR_TRANS.get(c, c.lower() if c.isalnum() else '_' if c in '_-' else '') for c in t)
+    return UNDERSCORE.sub('_', s).strip('_')
+
+
+def text_to_slug(t):
+    return UNDERSCORE.sub('_', SLUG.sub('_', (t or '').lower()).strip('_'))
+
+
+@dataclass
+class ThemeBuilder:
+    arabic_title: Optional[str] = None
+    english_title: Optional[str] = None
+    questions: List[str] = field(default_factory=list)
     
-    slug = ''
-    for char in arabic_text:
-        if char in transliteration_map:
-            slug += transliteration_map[char]
-        elif char.isalnum():
-            slug += char.lower()
-        elif char in ['_', '-']:
-            slug += '_'
+    def start(self, ar, en=None):
+        self.arabic_title, self.english_title, self.questions = ar, en, []
     
-    # Clean up multiple underscores
-    slug = re.sub(r'_+', '_', slug)
-    slug = slug.strip('_')
+    def add_q(self, q):
+        if q: self.questions.append(q.strip())
     
-    return slug
+    def finalize(self):
+        return {'arabic_title': self.arabic_title, 'english_title': self.english_title, 'questions': self.questions.copy()} if self.arabic_title else None
+    
+    def active(self): return self.arabic_title is not None
 
 
-def generate_survey_name(arabic_title, english_title):
-    """
-    Generate survey_name slug from Arabic and English titles.
-    Format: arabic_slug_english_slug
-    """
-    # Extract English part from parentheses if present
-    english_match = re.search(r'\(([^)]+)\)', english_title)
-    if english_match:
-        english_part = english_match.group(1)
-    else:
-        english_part = english_title
-    
-    # Convert English to slug
-    english_slug = re.sub(r'[^a-zA-Z0-9]+', '_', english_part.lower()).strip('_')
-    
-    # Convert Arabic to slug
-    arabic_slug = arabic_to_slug(arabic_title)
-    
-    # Combine
-    if arabic_slug and english_slug:
-        return f"{arabic_slug}_{english_slug}"
-    elif arabic_slug:
-        return arabic_slug
-    elif english_slug:
-        return english_slug
-    else:
-        return "survey"
+def is_subcategory(t, theme):
+    if not t: return False
+    if LETTER_SUB.match(t): return True
+    if not theme or not theme.active(): return False
+    ar, en_p, num = has_arabic(t), has_en_paren(t), bool(NUM.match(t))
+    return (ar and en_p and not num) or (ar and len(t) < MAX_SUBCATEGORY_LENGTH and not num and not is_q_mark(t))
 
 
-def parse_docx(docx_path):
-    """
-    Parse Word document and extract themes with their questions.
-    
-    Returns a list of dictionaries, each containing:
-    - arabic_title: Arabic theme title
-    - english_title: English theme title
-    - questions: List of question texts
-    """
+def process_title(text, style, next_t, next_s, theme, themes):
+    if style != 'Title': return False, 0
+    if has_arabic(text):
+        if theme.active(): themes.append(theme.finalize())
+        en, skip = None, 1
+        if next_t and (next_s == 'Title' or has_en_paren(next_t)):
+            en, skip = next_t.strip(), 2
+        theme.start(text, en)
+        return True, skip
+    if has_en_paren(text) and theme.active() and not theme.english_title:
+        theme.english_title = text.strip()
+        return True, 1
+    return False, 0
+
+
+def process_theme(text, next_t, theme, themes):
+    if theme.active(): return False, 0
+    if has_arabic(text) and len(text) < MAX_THEME_LENGTH and not NUM.match(text):
+        if next_t and has_en_paren(next_t) and not is_subcategory(next_t, theme):
+            theme.start(text, next_t.strip())
+            return True, 2
+    if has_en_paren(text) and len(text) < MAX_THEME_LENGTH and not NUM.match(text):
+        theme.start(text, text)
+        return True, 1
+    return False, 0
+
+
+def process_q(text, theme):
+    if not theme.active() or not text: return
+    if m := NUM_Q.match(text):
+        theme.add_q(m.group(2))
+    elif has_arabic(text) and is_q_mark(text) and not is_subcategory(text, theme) and len(text) > MIN_QUESTION_LENGTH:
+        theme.add_q(text)
+
+
+def parse_docx(path):
     try:
-        z = zipfile.ZipFile(docx_path)
-        doc_xml = z.read('word/document.xml')
-        root = ET.fromstring(doc_xml)
-        ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
-        paragraphs = root.findall('.//w:p', ns)
+        with zipfile.ZipFile(path) as z:
+            root = ET.fromstring(z.read('word/document.xml'))
+        paragraphs = root.findall('.//w:p', WORD_NS)
     except Exception as e:
         raise ValueError(f"Failed to read Word document: {e}")
     
-    themes = []
-    current_theme_ar = None
-    current_theme_en = None
-    current_questions = []
-    
+    themes, theme = [], ThemeBuilder()
     i = 0
     while i < len(paragraphs):
-        text = extract_text_from_paragraph(paragraphs[i], ns)
-        
+        text = extract_text(paragraphs[i], WORD_NS)
         if not text:
             i += 1
             continue
         
-        # Check if this is an Arabic theme title (Arabic characters, no numbers, short)
-        # This could be pure Arabic or Arabic with Arabic text in parentheses
-        is_arabic_title = (
-            re.search(r'[\u0600-\u06FF]', text) and  # Contains Arabic characters
-            len(text) < 200 and  # Reasonable length
-            not re.match(r'^\d+\.', text)  # Not a numbered question
-        )
+        style = get_style(paragraphs[i], WORD_NS)
+        next_t = extract_text(paragraphs[i+1], WORD_NS) if i+1 < len(paragraphs) else None
+        next_s = get_style(paragraphs[i+1], WORD_NS) if i+1 < len(paragraphs) else None
         
-        if is_arabic_title:
-            # Check next paragraph for English translation
-            if i + 1 < len(paragraphs):
-                next_text = extract_text_from_paragraph(paragraphs[i+1], ns)
-                # If next paragraph has English in parentheses, combine them
-                if '(' in next_text and ')' in next_text and re.search(r'\([A-Z]', next_text):
-                    # Save previous theme if exists
-                    if current_theme_ar is not None:
-                        themes.append({
-                            'arabic_title': current_theme_ar,
-                            'english_title': current_theme_en,
-                            'questions': current_questions
-                        })
-                    
-                    # Start new theme
-                    current_theme_ar = text
-                    current_theme_en = next_text.strip()
-                    current_questions = []
-                    i += 2  # Skip both paragraphs
-                    continue
-        
-        # Check if it's a standalone English theme (in case Arabic was missed)
-        # This handles cases where we might have missed the Arabic title
-        if '(' in text and ')' in text and re.search(r'\([A-Z]', text) and not re.match(r'^\d+\.', text) and len(text) < 200:
-            # Only use if we don't already have a theme
-            if current_theme_ar is None:
-                current_theme_ar = text
-                current_theme_en = text
-                current_questions = []
+        if (cont := process_title(text, style, next_t, next_s, theme, themes))[0]:
+            i += cont[1]
+            continue
+        if is_subcategory(text, theme):
             i += 1
             continue
-        
-        # Detect questions (start with number followed by period)
-        if current_theme_ar is not None and text:
-            match = re.match(r'^(\d+)\.\s*(.+)', text)
-            if match:
-                question_text = match.group(2).strip()
-                current_questions.append(question_text)
-        
+        if (cont := process_theme(text, next_t, theme, themes))[0]:
+            i += cont[1]
+            continue
+        process_q(text, theme)
         i += 1
     
-    # Don't forget the last theme
-    if current_theme_ar is not None:
-        themes.append({
-            'arabic_title': current_theme_ar,
-            'english_title': current_theme_en,
-            'questions': current_questions
-        })
-    
+    if theme.active():
+        themes.append(theme.finalize())
     return themes
 
 
-def generate_filename(english_title):
-    """
-    Generate filename from English title.
-    Extracts English text from parentheses and converts to slug.
-    """
-    # Extract English part from parentheses if present
-    english_match = re.search(r'\(([^)]+)\)', english_title)
-    if english_match:
-        english_part = english_match.group(1)
-    else:
-        english_part = english_title
-    
-    # Convert to slug: lowercase, replace spaces/special chars with underscores
-    filename = re.sub(r'[^a-zA-Z0-9]+', '_', english_part.lower()).strip('_')
-    
-    # Clean up multiple underscores
-    filename = re.sub(r'_+', '_', filename)
-    
-    return filename
+def generate_filename(en_title): return text_to_slug(extract_en(en_title or ''))
 
 
-def convert_to_survey_json(themes):
-    """
-    Convert parsed themes to survey JSON format.
-    
-    Returns a list of survey objects matching the arabic.json structure.
-    Each survey object includes a '_filename' key for file naming (not included in JSON output).
-    """
+def convert_to_json(themes):
     surveys = []
-    
-    for theme in themes:
-        if not theme['questions']:
-            print(f"Warning: Theme '{theme['arabic_title']}' has no questions, skipping.")
+    for t in themes:
+        if not t or not t.get('questions'):
+            print(f"Warning: Theme '{t.get('arabic_title', 'Unknown') if t else 'Unknown'}' has no questions, skipping.", file=sys.stderr)
             continue
-        
-        # Use Arabic title as survey_name
-        survey_name = theme['arabic_title']
-        
-        # Generate filename from English title
-        filename = generate_filename(theme['english_title'])
-        
-        # Create survey object
+        filename = generate_filename(t.get('english_title') or '')
         survey = {
-            "survey_name": survey_name,
-            "description": theme['arabic_title'],
+            "survey_name": t['arabic_title'],
+            "description": t['arabic_title'],
             "consent_form": None,
-            "question_groups": [
-                {
-                    "name": "main_group",
-                    "group_type": "random",
-                    "questions": []
-                }
-            ],
-            "_filename": filename  # Internal field for file naming, will be removed before JSON output
+            "question_groups": [{"name": "main_group", "group_type": "random", "questions": []}],
+            "_filename": filename
         }
-        
-        # Add questions with zero-indexed prompt_numbers
-        for idx, question_text in enumerate(theme['questions']):
-            question = {
-                "prompt_number": idx,
-                "prompt": question_text,
-                "question_type": "audio",
-                "options": None,
-                "required": False
-            }
-            survey["question_groups"][0]["questions"].append(question)
-        
+        for idx, q in enumerate(t['questions']):
+            survey["question_groups"][0]["questions"].append({
+                "prompt_number": idx, "prompt": q, "question_type": "audio", "options": None, "required": False
+            })
         surveys.append(survey)
-    
     return surveys
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description='Convert Word document themes to survey JSON format'
-    )
-    parser.add_argument(
-        '--input', '-i',
-        default='Themes for Fieldwork Data Collection.10.12.2025.docx',
-        help='Path to input Word document (default: Themes for Fieldwork Data Collection.10.12.2025.docx)'
-    )
-    parser.add_argument(
-        '--output', '-o',
-        default='flask/assets/surveys',
-        help='Path to output directory or JSON file (default: flask/assets/surveys). If directory, each theme will be written to a separate file.'
-    )
-    parser.add_argument(
-        '--single-file',
-        action='store_true',
-        help='Write all themes to a single JSON file (default: write each theme to separate files)'
-    )
-    parser.add_argument(
-        '--dry-run',
-        action='store_true',
-        help='Preview output without writing file'
-    )
+    p = argparse.ArgumentParser(description='Convert Word document themes to survey JSON format')
+    p.add_argument('--input', '-i', default='Themes for Fieldwork Data Collection.10.12.2025.docx', help='Input Word document')
+    p.add_argument('--output', '-o', default='flask/assets/surveys', help='Output directory or JSON file')
+    p.add_argument('--single-file', action='store_true', help='Write all themes to a single JSON file')
+    p.add_argument('--dry-run', action='store_true', help='Preview output without writing file')
+    args = p.parse_args()
     
-    args = parser.parse_args()
+    root = Path(__file__).parent.parent.parent
+    input_path, output_path = root / args.input, root / args.output
     
-    # Resolve paths relative to project root
-    project_root = Path(__file__).parent.parent.parent
-    input_path = project_root / args.input
-    output_path = project_root / args.output
-    
-    # Validate input file
     if not input_path.exists():
         print(f"Error: Input file not found: {input_path}", file=sys.stderr)
         sys.exit(1)
     
-    # Determine if output is a directory or file
-    output_is_dir = args.single_file == False and (output_path.suffix == '' or output_path.is_dir() or not output_path.exists())
+    output_is_dir = not args.single_file and (not output_path.suffix or output_path.is_dir() or not output_path.exists())
     
     try:
-        # Parse document
         print(f"Parsing document: {input_path}")
         themes = parse_docx(str(input_path))
         print(f"Found {len(themes)} themes")
         
-        # Convert to JSON format
-        surveys = convert_to_survey_json(themes)
+        if not themes:
+            print("Warning: No themes found in document.", file=sys.stderr)
+            sys.exit(1)
+        
+        surveys = convert_to_json(themes)
         print(f"Generated {len(surveys)} surveys")
         
-        # Helper function to remove internal fields before JSON serialization
-        def clean_survey_for_json(survey):
-            """Remove internal fields like _filename before JSON output."""
-            cleaned = survey.copy()
-            cleaned.pop('_filename', None)
-            return cleaned
+        if not surveys:
+            print("Error: No valid surveys generated.", file=sys.stderr)
+            sys.exit(1)
+        
+        clean = lambda s: {k: v for k, v in s.items() if k != '_filename'}
         
         if args.dry_run:
             print("\n=== DRY RUN - Output preview ===")
             if args.single_file:
-                cleaned_surveys = [clean_survey_for_json(s) for s in surveys]
-                json_output = json.dumps(cleaned_surveys, ensure_ascii=False, indent=4)
-                print(json_output)
+                print(json.dumps([clean(s) for s in surveys], ensure_ascii=False, indent=4))
             else:
-                for survey in surveys:
-                    print(f"\n--- Survey: {survey['survey_name']} (filename: {survey.get('_filename', 'N/A')}.json) ---")
-                    cleaned_survey = clean_survey_for_json(survey)
-                    json_output = json.dumps([cleaned_survey], ensure_ascii=False, indent=4)
-                    print(json_output)
+                for s in surveys:
+                    print(f"\n--- Survey: {s['survey_name']} (filename: {s.get('_filename', 'N/A')}.json) ---")
+                    print(json.dumps([clean(s)], ensure_ascii=False, indent=4))
             print("\n=== End of preview ===")
         else:
             if args.single_file:
-                # Write all surveys to a single file
                 output_path.parent.mkdir(parents=True, exist_ok=True)
-                cleaned_surveys = [clean_survey_for_json(s) for s in surveys]
-                json_output = json.dumps(cleaned_surveys, ensure_ascii=False, indent=4)
                 with open(output_path, 'w', encoding='utf-8') as f:
-                    f.write(json_output)
+                    json.dump([clean(s) for s in surveys], f, ensure_ascii=False, indent=4)
                 print(f"\nSuccessfully wrote {len(surveys)} surveys to: {output_path}")
             else:
-                # Write each survey to a separate file
                 output_dir = output_path if output_is_dir else output_path.parent
                 output_dir.mkdir(parents=True, exist_ok=True)
-                
-                written_files = []
-                for survey in surveys:
-                    # Use English filename
-                    filename = f"{survey.get('_filename', 'survey')}.json"
-                    file_path = output_dir / filename
-                    cleaned_survey = clean_survey_for_json(survey)
-                    json_output = json.dumps([cleaned_survey], ensure_ascii=False, indent=4)
-                    with open(file_path, 'w', encoding='utf-8') as f:
-                        f.write(json_output)
-                    written_files.append(file_path)
-                
+                written = []
+                for s in surveys:
+                    fp = output_dir / f"{s.get('_filename', 'survey')}.json"
+                    with open(fp, 'w', encoding='utf-8') as f:
+                        json.dump([clean(s)], f, ensure_ascii=False, indent=4)
+                    written.append(fp)
                 print(f"\nSuccessfully wrote {len(surveys)} surveys to separate files in: {output_dir}")
                 print("\nWritten files:")
-                for file_path in written_files:
-                    print(f"  - {file_path.name}")
+                for fp in written:
+                    print(f"  - {fp.name}")
             
-            # Print summary
             print("\nSurvey summary:")
-            for survey in surveys:
-                q_count = len(survey['question_groups'][0]['questions'])
-                print(f"  - {survey['survey_name']}: {q_count} questions")
+            for s in surveys:
+                print(f"  - {s['survey_name']}: {len(s['question_groups'][0]['questions'])} questions")
     
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
@@ -366,4 +260,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

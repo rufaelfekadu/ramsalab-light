@@ -1,0 +1,50 @@
+[
+    {
+        "survey_name": "الوقت",
+        "description": "الوقت",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "كم ساعة تنامون في اليوم عادة؟ وما هو روتينكم قبل النوم؟ هل هناك عادات معينة تساعدكم على الاسترخاء أو تحسين جودة النوم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "متى تستيقظون عادة؟ وما هي الأنشطة التي تقومون بها منذ الاستيقاظ حتى موعد ذهابكم إلى دراستكم أو عملكم؟ هل هناك روتين معين تبدأون به يومكم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "ماذا تفعلون في أوقات فراغكم؟ هل هناك أنشطة معينة تستمتعون بها أو هوايات تمارسونها؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "كيف تقسمون يومكم؟ ما هي الأنشطة التي تقومون بها في كل جزء من اليوم، بدءًا من الصباح حتى المساء؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "هل أنتم أشخاص دقيقون في مواعيدكم؟ وما رأيكم فيمن يحدّد موعدًا ثم يتأخر؟ وكيف تتعاملون مع مثل هذا الموقف؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]

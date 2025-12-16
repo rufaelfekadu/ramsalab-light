@@ -1,0 +1,71 @@
+[
+    {
+        "survey_name": "العمل والرزق",
+        "description": "العمل والرزق",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "صفوا لنا تفاصيل \"أول وظيفة\" أو \"أول مشروع صغير\" قمتم به في حياتكم، سواء كان عملًا منظّمًا أو حرفة يدويّة. كيف كانت تلك التجربة، وما التحديات التي واجهتموها حينها؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "كم كان أول راتب تقاضيتوه، وماذا فعلتم به؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "اذكروا لنا أسماء الأدوات التي كنتم تستخدمونها في أول حرفة يدوية أو وظيفة قمتم بها. هل كانت لهذه الأدوات أسماء مختلفة عن الأسماء المتعارف عليها اليوم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "كيف تتعاملون مع ضغط العمل والمهام الكثيرة؟ ما هي الأساليب التي تتبعونها لتنظيم وقتكم وتحقيق التوازن بين مختلف المسؤوليات؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "ما الوظيفة التي تحلمون بالحصول عليها؟ وما المميزات التي تروونها فيها مقارنة بالوظائف التي شغلتموها سابقًا؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "أخبرونا عن تجربة بيع بعض الأغراض الشخصية لكم. أين حدث ذلك؟ ما هي الأغراض التي قررتم بيعها، وكم كان ربحكم في تلك المرة؟ كيف كانت تجربتكم بشكل عام؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 6,
+                        "prompt": "هل تفضلون التسوق في الأسواق الشعبية حيث يفترش الناس الأرض ببسطاتهم البسيطة، أم تفضلون المولات الكبيرة والمجمعات التجارية الحديثة؟ ولماذا؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 7,
+                        "prompt": "كيف تفاصلون في سعر القطع التي تعجبكم؟ وهل تذكرون مرة حصلتم فيها بعد المفاصلة على سعر ممتاز؟ كيف كانت تلك التجربة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]

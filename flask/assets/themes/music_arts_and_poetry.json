@@ -1,0 +1,64 @@
+[
+    {
+        "survey_name": "الموسيقى والفنون والشعر",
+        "description": "الموسيقى والفنون والشعر",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "ما هي أشهر شيلة أو أغنية قصيرة ما زالت عالقة في ذهنك من المناسبات القديمة (سواء كانت للأطفال أو للكبار)؟ هل تذكر بعض كلماتها أو أبياتها التي بقيت في ذاكرتك؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "من هو مطربك الإماراتي المفضل؟ وما هي أجمل الأغاني التي لا زلت تستمتع بها إلى يومنا هذا، سواء كانت قديمة أو حديثة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "عددوا بعض الرقصات الإماراتية التقليدية من التراث، وما هي أكثر الرقصات التي لا زالت تُستخدم في الأعراس والمناسبات اليوم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "من هو شاعركم المفضل؟ وما أجمل قصيدة تحبونها له؟ هل تذكرون بعض كلماتها أو أبياتها التي ما زالت عالقة في ذاكرتكم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "هل تجيدون العزف على أي آلة موسيقية؟ إذا كان الجواب نعم، فما هي الآلات التي تعزفون عليها؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "اذكروا بعض الأغانِ أو الكلمات التي كان أهاليكم يغنونها لكم عندما كنتم أطفالًا. كيف كانت هذه الألحان أو الكلمات تؤثر عليكم في تلك الفترة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 6,
+                        "prompt": "هل تحضرون أمسيات شعرية؟ وكيف ترون الفرق بين الشعر النبطي والشعر الفصيح؟ أيهما أقرب إلى قلوبكم ولماذا؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]

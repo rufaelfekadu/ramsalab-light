@@ -1,0 +1,64 @@
+[
+    {
+        "survey_name": "الموت",
+        "description": "الموت",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "ما هي أكثر الألفاظ والعبارات شيوعًا في ثقافتكم التي تُستخدم لوصف وفاة شخص؟ وهل تختلف حسب المقام أو العلاقة مع المتوفى؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 1,
+                        "prompt": "ما هي أصعب قصة وفاة سمعتموها أو مررتم بها؟ وما الذي جعلها مؤثرة أو صعبة بالنسبة لكم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 2,
+                        "prompt": "هل مررتم بتجربة شاهدتم فيها شخصًا يمرّ بلحظاته الأخيرة؟ من كان ذلك الشخص، وكيف كان شعوركم في تلك اللحظة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 3,
+                        "prompt": "هل تخافون من الموت؟ وكيف تستعدون له من الناحية الروحية أو النفسية أو الحياتية؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 4,
+                        "prompt": "كيف تواسون شخصًا فقد عزيزًا عليه ولم يتعافَ بعد من الألم؟ وما النصائح أو الكلمات التي تقدمونها له لتخفيف حزنه ومساعدته على التعافي؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 5,
+                        "prompt": "ما هي أفضل الأعمال الصالحة أو الخيرات التي يمكنكم تقديمها للميت بعد وفاته؟ وكيف تعتقدون أن هذه الأعمال تصله؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 6,
+                        "prompt": "هل شاركتم يومًا في غسل وتكفين الميت؟ صفوا لنا هذه التجربة بالتفصيل، وما هي الخطوات التي قمتم بها بالترتيب؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]
