@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}اختر الموضوع - مشروع جمع البيانات الصوتية{% endblock %}
+{% block title %}اختر الموضوع - مختبر رمسة{% endblock %}
 
 {% block head_extra %}
 <style>
@@ -8,7 +8,7 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: var(--spacing-lg);
-        margin-block-start: var(--spacing-2xl);
+        margin-block-start: var(--spacing-xl);
     }
     
     .themes-grid form {
@@ -30,7 +30,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        min-height: 150px;
+        min-height: 100px;
         height: 100%;
     }
     
@@ -46,7 +46,7 @@
     }
     
     .theme-card__title {
-        font-size: var(--font-size-xl);
+        font-size: var(--font-size-lg);
         margin-block-end: var(--spacing-sm);
     }
     
@@ -60,9 +60,9 @@
 
 {% block content %}
 <div class="container" style="max-width: 1200px; padding-block: var(--spacing-2xl);">
-    <h1 style="text-align: center; margin-block-end: var(--spacing-md);">اختر فئة الأسئلة</h1>
+    <!-- <h1 style="text-align: center; margin-block-end: var(--spacing-md);">اختر فئة الأسئلة</h1> -->
     <p style="text-align: center; color: var(--color-text-secondary); margin-block-end: var(--spacing-2xl);">
-        اختر الموضوع الذي ترغب في التسجيل حوله
+           <h4 style="text-align: center; color: var(--color-text-secondary);">اختر الموضوع اللي ودك تتكلم عنه</h4>
     </p>
     
     <div class="themes-grid">
@@ -73,7 +73,7 @@
                     <input type="hidden" name="survey_id" value="{{ survey.id }}">
                     <button type="submit" class="theme-card" style="width: 100%; height: 100%; border: none; background: var(--color-bg-secondary); cursor: pointer;">
                         <!-- <div class="theme-card__icon">📋</div> -->
-                        <h3 class="theme-card__title">{{ survey.name }}</h3>
+                        <h5 class="theme-card__title">{{ survey.name }}</h5>
                         <!-- <p class="theme-card__description">
                             {% if survey.description %}
                                 {{ survey.description }}
@@ -97,7 +97,7 @@
     </div>
     
     <div style="text-align: center; margin-block-start: var(--spacing-2xl);">
-        <a href="{{ url_for('routes.demography') }}" class="btn btn--secondary">
+        <a href="{{ url_for('routes.demography') }}" class="btn btn--secondary btn--mid">
             → رجوع
         </a>
     </div>

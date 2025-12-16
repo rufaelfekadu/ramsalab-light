@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}التسجيل الصوتي{% endblock %}
+{% block title %} التسجيل الصوتي - مختبر رمسة{% endblock %}
 
 {% block head_extra %}
 <style>
@@ -373,7 +373,11 @@
         <div class="permission-modal__content">
             <h2 class="permission-modal__title">إذن استخدام الميكروفون</h2>
             <p class="permission-modal__message">
-                لبدء التسجيل، نحتاج إلى إذن استخدام الميكروفون. سيظهر لك طلب من المتصفح - يرجى النقر على "السماح" أو "Allow" لتفعيل الميكروفون.
+                لبدء التسجيل، نحتاج إلى إذن استخدام الميكروفون. سيظهر لك طلب من المتصفح - يرجى النقر على 
+                "<span style="font-weight: bold; font-family: var(--font-arabic-title); color: black;">السماح</span>" 
+                أو 
+                "<span style="font-weight: bold; font-family: var(--font-arabic-title); color: black;">Allow</span>" 
+                لتفعيل الميكروفون.
             </p>
             <div class="permission-modal__buttons">
                 <button type="button" class="btn btn--primary" id="allowPermissionBtn">
