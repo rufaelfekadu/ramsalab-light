@@ -77,6 +77,90 @@
                         "question_type": "audio",
                         "options": null,
                         "required": false
+                    },
+                    {
+                        "prompt_number": 10,
+                        "prompt": "كيف تعبّرون عن \"رضاكم الشديد\" عن فعل أو قول قام به شخص مقرب؟ وما هي أقوى عبارات المدح والثناء التي تستخدمونها للتعبير عن إعجابكم بشخص ما أو تقديركم له؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 11,
+                        "prompt": "عندما تشعرون بالزعل أو الغضب من شخص، كيف تعبّرون عن هذا الشعور بشكل مهذب وكيف توبخونه؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 12,
+                        "prompt": "كيف تعاتبون شخص عزيز على قلوبكم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 13,
+                        "prompt": "ما أغرب سبب طلاق سمعتموه في حياتكم؟ وهل كان السبب منطقيًا في نظركم، أم كان من وجهة نظركم مجرد سبب غير مُقنع؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 14,
+                        "prompt": "ما رأيكم في ظاهرة عقوق بعض الأبناء لآبائهم؟ وماذا يجب على الأهل أن يفعلوا في هذه الحالة للتعامل مع هذا الوضع بشكل سليم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 15,
+                        "prompt": "ما سر استمرار زواجكم لسنوات طويلة؟ وكيف ترون أن مفهوم الزواج قد تغير في هذه الأيام مقارنة بما كان عليه في الماضي؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 16,
+                        "prompt": "عندما يحدث خلاف بينكم وبين أحد الأشخاص الأعزاء ويؤدي إلى قطيعة، كيف تتعاملون مع الوضع؟ هل هناك طرق معينة تتبعونها للمصالحة وإعادة العلاقة بينكم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 17,
+                        "prompt": "تحدثوا عن مفهومي جبر الخاطر وكسر الخاطر في الحياة اليومية. كيف يمكن لأبسط الكلمات أن تكون لها تأثير قوي، إما في إحياء الروح أو إلحاق الأذى بها؟ وكيف يمكن للكلمة أن تبني أو تهدم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 18,
+                        "prompt": "كيف تتعاملون مع من يقلل من احترامه لكم بالكلام أو الأفعال أو بالهمز واللمز؟ شاركوا معنا موقفًا مرّ بهذا النوع من التعامل، وكيف تصرفتم مع الشخص المؤذي في تلك اللحظة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 19,
+                        "prompt": "هل تستطيعون فصل مشاعركم الشخصية المتعلقة بالحب والكره عن عملكم وتعاملكم مع الأشخاص في بيئة العمل؟ كيف تؤثر هذه المشاعر على أدائكم وتفاعلاتكم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 20,
+                        "prompt": "تحدثوا عن أثر الحب الصادق في حياتكم. كيف يؤثر في قراراتكم وعلاقاتكم؟ وما النصائح التي تقدمونها لمن يضيعون أشخاصًا يحبونهم بصدق؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 21,
+                        "prompt": "كيف تصفون علاقتكم مع الأطفال بشكل عام؟ وما الطرق التي تحبون بها إظهار حبكم ودلالكم لهم؟ هل تذكرون موقفًا محببًا إلى قلبكم جمعكم مع طفل عزيز عليكم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
                     }
                 ]
             }

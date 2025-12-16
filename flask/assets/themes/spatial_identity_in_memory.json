@@ -98,6 +98,34 @@
                         "question_type": "audio",
                         "options": null,
                         "required": false
+                    },
+                    {
+                        "prompt_number": 13,
+                        "prompt": "صفوا لنا المرحلة الأولى من بناء البيت، وهي حفر الأساس. ما هي الكلمات أو المصطلحات التي تستخدمونها لوصف \"قواعد\" البيت أو الأساسات في لهجتكم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 14,
+                        "prompt": "ما هي أدوات ومواد البناء الأساسية التي تستخدمونها؟ وكم عادةً يستغرق بناء البيت؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 15,
+                        "prompt": "ما هي الأسماء القديمة المتعلقة بالتراث التي كانت تُطلق على \"النافذة\" و\"الباب\"؟ وهل كان هناك اختلاف بين الباب الكبير والصغير، أو أداة للطرق على الباب تختلف للرجال عن النساء كما كان الحال في بعض الدول العربية الأخرى؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 16,
+                        "prompt": "هل كان بيت جدكم يحتوي على مساحات تخزين مدمجة داخل الجدار؟ ما كان اسمها، وما نوع الأشياء التي كانوا يخزنونها فيها؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
                     }
                 ]
             }

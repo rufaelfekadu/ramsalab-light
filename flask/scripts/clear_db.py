@@ -7,7 +7,7 @@ import sys
 
 # Add the project root to the Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import create_app
 from app.database import db
 from app.models import Survey, Question, QuestionGroup, SurveyLogic, User, Response, Progress

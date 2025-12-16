@@ -49,6 +49,69 @@
                         "question_type": "audio",
                         "options": null,
                         "required": false
+                    },
+                    {
+                        "prompt_number": 6,
+                        "prompt": "ما هي الأسماء التقليدية التي كانت تُطلق على مراحل التعليم المختلفة قديماً، مثل المرحلة الابتدائية، الإعدادية، والثانوية؟ وهل كانت لفصول الدراسة أسماء محددة في تلك الفترة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 7,
+                        "prompt": "كيف تصفون روتين اليوم الدراسي القديم؟ وما هي الألفاظ أو التعابير التي كانت تُستخدم لوصف \"نهاية الدوام\" أو \"وقت الاستراحة\" (الفرصة)؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 8,
+                        "prompt": "كيف كنتم تصفون الطلاب حسب سلوكهم أو اجتهادهم، مثل الطالب المجتهد، النشيط، الكسول، الضعيف، أو المشاغب؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 9,
+                        "prompt": "شاركوا معنا تجربة شخصية في المدرسة، سواء كانت قصة نجاح أو تجربة رسوب. ما الذي تعلمتموه من هذه التجارب؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 10,
+                        "prompt": "ما أجمل ما تتذكرونه من ذكريات المدرسة، مثل المقصف، وقت الفسحة، أو اليوم المفتوح؟ احكوا لنا عن أحد هذه الأحداث أو جميعها وكيف كنتم تستمتعون بها.",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 11,
+                        "prompt": "ما هي الأسماء أو المصطلحات المحلية التي كنتم تطلقونها على أدوات مثل السبورة، القلم، الممحاة، وأي أدوات  تعليمية أخرى؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 12,
+                        "prompt": "تحدثوا عن المواد الدراسية التي كنتم تدرسونها في كل مرحلة تعليمية. ما هي المواد التي أحببتموها أكثر، وأي المواد كانت الأقل محبّة لديكم ولماذا؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 13,
+                        "prompt": "تحدثوا عن الواجبات المدرسية المطلوبة. هل كانت أحيانًا تُستخدم كعقاب، مثل كتابة الواجب عدة مرات عند عدم إنجازه أو عند المشاغبة؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    },
+                    {
+                        "prompt_number": 14,
+                        "prompt": "هل كان الضرب مسموحًا في مدارس أيامكم؟ ما أصعب عقاب واجهتموه، وهل بكيتم أمام زملائكم؟ وكيف أثرت هذه التجربة عليكم حتى اليوم؟",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
                     }
                 ]
             }

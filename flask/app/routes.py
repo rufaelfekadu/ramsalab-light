@@ -930,7 +930,7 @@ def select_theme():
         return redirect(url_for('routes.index'))
     
     try:
-        surveys = Survey.query.all()
+        surveys = Survey.query.order_by(Survey.id).all()
         current_app.logger.info(f'Fetched {len(surveys)} surveys for select-theme page')
     except Exception as e:
         current_app.logger.error(f"Error fetching surveys: {e}", exc_info=True)
