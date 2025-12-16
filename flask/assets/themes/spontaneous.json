@@ -1,0 +1,22 @@
+[
+    {
+        "survey_name": "تحدّث بعفوية",
+        "description": "تحدّث بعفوية",
+        "consent_form": null,
+        "question_groups": [
+            {
+                "name": "main_group",
+                "group_type": "random",
+                "questions": [
+                    {
+                        "prompt_number": 0,
+                        "prompt": "تكلم بعفوية عن أي موضوع. مثلاً: قصة، شعر، موقف، رأي، أمثال، أو تقاليد محلية تريد مشاركتها.",
+                        "question_type": "audio",
+                        "options": null,
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    }
+]
