@@ -39,6 +39,9 @@
             this.confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
             this.cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
             
+            // Track if permission modal has been shown
+            this.permissionModalShownKey = 'micPermissionModalShown';
+            
             // Status messages in Arabic
             this.statusMessages = {
                 idle: 'لا يوجد تسجيل حاليًا',
@@ -72,7 +75,7 @@
             }
             
             // Attach event listeners
-            this.startBtn.addEventListener('click', () => this.showPermissionModal());
+            this.startBtn.addEventListener('click', () => this.handleStartRecording());
             this.stopBtn.addEventListener('click', () => this.stopRecording());
             
             if (this.uploadInput) {
@@ -82,6 +85,8 @@
             // Setup permission modal event listeners
             if (this.allowPermissionBtn) {
                 this.allowPermissionBtn.addEventListener('click', () => {
+                    // Mark modal as shown
+                    localStorage.setItem(this.permissionModalShownKey, 'true');
                     this.hidePermissionModal();
                     this.startRecording();
                 });
@@ -90,6 +95,8 @@
             // Keep tryAgainBtn for backward compatibility (if it exists)
             if (this.tryAgainBtn) {
                 this.tryAgainBtn.addEventListener('click', () => {
+                    // Mark modal as shown
+                    localStorage.setItem(this.permissionModalShownKey, 'true');
                     this.hidePermissionModal();
                     this.startRecording();
                 });
@@ -142,6 +149,72 @@
             }
             
             this.updateStatus(this.statusMessages.idle, 'idle');
+        }
+        
+        /**
+         * Handle start recording button click
+         * Checks permission status and shows modal only if needed
+         */
+        async handleStartRecording() {
+            try {
+                // Check if permission was already granted
+                const permissionStatus = await this.checkMicrophonePermission();
+                
+                if (permissionStatus === 'granted') {
+                    // Permission already granted, start recording directly
+                    this.startRecording();
+                    return;
+                }
+                
+                // Check if modal was already shown before
+                const modalShown = localStorage.getItem(this.permissionModalShownKey);
+                
+                if (modalShown === 'true') {
+                    // Modal was already shown, try to start recording directly
+                    // Browser will handle the permission prompt if needed
+                    this.startRecording();
+                    return;
+                }
+                
+                // Permission not granted and modal not shown yet - show modal
+                if (permissionStatus === 'prompt' || permissionStatus === 'denied') {
+                    this.showPermissionModal();
+                } else {
+                    // Unknown status, try to start recording
+                    this.startRecording();
+                }
+            } catch (error) {
+                console.error('Error checking permission:', error);
+                // If permission check fails, try to start recording anyway
+                this.startRecording();
+            }
+        }
+        
+        /**
+         * Check microphone permission status
+         * @returns {Promise<string>} 'granted', 'denied', 'prompt', or 'unknown'
+         */
+        async checkMicrophonePermission() {
+            try {
+                // Check if Permissions API is supported
+                if (navigator.permissions && navigator.permissions.query) {
+                    try {
+                        const result = await navigator.permissions.query({ name: 'microphone' });
+                        return result.state; // 'granted', 'denied', or 'prompt'
+                    } catch (permError) {
+                        // Permissions API might not support 'microphone' name in some browsers
+                        // Return 'unknown' to let normal flow handle it
+                        return 'unknown';
+                    }
+                }
+                
+                // Permissions API not supported - return 'unknown' to let normal flow handle it
+                // We don't want to trigger getUserMedia here as it would show browser prompt
+                return 'unknown';
+            } catch (error) {
+                console.error('Error checking microphone permission:', error);
+                return 'unknown';
+            }
         }
         
         /**
@@ -202,6 +275,9 @@
                 this.mediaRecorder.start(1000); // Collect data every second
                 this.isRecording = true;
                 
+                // Permission granted successfully - mark modal as shown so we don't show it again
+                localStorage.setItem(this.permissionModalShownKey, 'true');
+                
                 // Update UI
                 this.startBtn.disabled = true;
                 this.startBtn.style.display = 'none';
@@ -218,7 +294,11 @@
                 
                 if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
                     this.updateStatus(this.statusMessages.noPermission, 'error');
-                    this.showPermissionModal();
+                    // Only show modal if it hasn't been shown before
+                    const modalShown = localStorage.getItem(this.permissionModalShownKey);
+                    if (modalShown !== 'true') {
+                        this.showPermissionModal();
+                    }
                 } else {
                     this.updateStatus(this.statusMessages.error, 'error');
                 }

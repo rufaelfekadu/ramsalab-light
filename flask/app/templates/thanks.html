@@ -94,6 +94,31 @@
         color: #383c2a;
         margin-block-end: var(--spacing-md);
     }
+    
+    .whatsapp-share-container {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        margin-block-start: var(--spacing-xl);
+    }
+    
+    .whatsapp-share-text {
+        color: #383c2a;
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+    }
+    
+    .whatsapp-share-link {
+        display: inline-block;
+        text-decoration: none;
+    }
+    
+    .whatsapp-share-link img {
+        width: 6em;
+        height: 6em;
+        vertical-align: middle;
+        transform: translateY(0.2em);
+    }
 </style>
 {% endblock %}
 
@@ -135,9 +160,30 @@
             التسجيل مرة أخرى
         </a>
     </div>
+    
+    <div class="whatsapp-share-container">
+        <span class="whatsapp-share-text">شارك الموقع عبر</span>
+        <a href="#" 
+           id="whatsapp-share-link"
+           target="_blank" 
+           rel="noopener noreferrer"
+           class="whatsapp-share-link">
+            <img src="{{ url_for('static', filename='img/whatsAppIcon.svg') }}" alt="WhatsApp">
+        </a>
+    </div>
 </div>
 <script>
     // Initialize Lucide icons
     lucide.createIcons();
+    
+    // Set up WhatsApp share link
+    (function() {
+        const message = 'شارك بصوتك وساهم في ترميز اللهجة الإماراتية';
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappLink = document.getElementById('whatsapp-share-link');
+        if (whatsappLink) {
+            whatsappLink.href = 'https://wa.me/?text=' + encodedMessage;
+        }
+    })();
 </script>
 {% endblock %}
