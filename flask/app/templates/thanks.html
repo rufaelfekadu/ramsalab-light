@@ -106,18 +106,24 @@
         color: #383c2a;
         font-size: var(--font-size-xl);
         font-weight: var(--font-weight-semibold);
+        line-height: 1.2;
     }
     
     .whatsapp-share-link {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         text-decoration: none;
+        line-height: 0;
     }
     
     .whatsapp-share-link img {
         width: 6em;
-        height: 6em;
-        vertical-align: middle;
-        transform: translateY(0.2em);
+        height: auto;
+        display: block;
+        object-fit: contain;
+        object-position: center;
+        transform: translateY(0.25em);
     }
 </style>
 {% endblock %}
