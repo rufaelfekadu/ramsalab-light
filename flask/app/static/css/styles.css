@@ -840,7 +840,9 @@ img {
     padding-block-start: var(--spacing-md);
     line-height: var(--line-height-relaxed);
 }
-
+.accordion-content:hover {
+    background-color: var(--color-bg-secondary);
+}
 .accordion-body p {
     margin-block-end: var(--spacing-sm);
 }

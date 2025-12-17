@@ -776,6 +776,7 @@ def demography():
         flash("يرجى البدء من الصفحة الرئيسية.", "error")
         return redirect(url_for('routes.index'))
     
+    
     return render_template("demography.html", current_user=current_user)
 
 
@@ -783,7 +784,7 @@ def demography():
 def select_theme():
     """Theme/category selection page - displays surveys from database"""
     
-    # Handle POST requests: validate user and survey, update progress
+    # Handle POST requests: validate user and survey, select random question
     if request.method == "POST":
         survey_id = request.form.get('survey_id')
         
@@ -820,12 +821,6 @@ def select_theme():
                 flash("حدث خطأ في التحقق من المستخدم.", "error")
                 return redirect(url_for('routes.select_theme'))
             
-            # Get or create progress entry for this user and survey
-            progress = Progress.query.filter_by(
-                user_id=user.id,
-                survey_id=survey.id
-            ).first()
-            
             # Get all questions for the survey
             all_questions = Question.query.filter_by(survey_id=survey.id).all()
             
@@ -840,76 +835,31 @@ def select_theme():
             # Get all question IDs
             all_question_ids = [q.id for q in all_questions]
             
-            if progress:
-                # Get current question from progress
-                current_question = Question.query.filter_by(
-                    id=progress.current_question_id,
-                    survey_id=survey.id
-                ).first() if progress.current_question_id else None
-                
-                # If current question exists, mark it as seen if not already in the list
-                if current_question and current_question.id not in seen_ids:
-                    seen_ids.append(current_question.id)
-                    session[seen_key] = seen_ids
-                
-                # If current question doesn't exist (maybe deleted), select a random unseen question
-                if not current_question:
-                    # Filter out seen questions
-                    unseen_ids = [qid for qid in all_question_ids if qid not in seen_ids]
-                    
-                    # If no unseen questions remain, reset and start fresh
-                    if not unseen_ids:
-                        seen_ids = []
-                        unseen_ids = all_question_ids
-                    
-                    # Randomly select one question from unseen questions
-                    if unseen_ids:
-                        selected_question_id = random.choice(unseen_ids)
-                        current_question = Question.query.filter_by(id=selected_question_id).first()
-                        
-                        # Mark selected question as seen in session
-                        if current_question:
-                            seen_ids.append(selected_question_id)
-                            session[seen_key] = seen_ids
-                            
-                            # Update progress with new current question
-                            progress.current_question_id = current_question.id
-            else:
-                # Create new progress entry - randomly select first question
-                # Filter out seen questions
-                unseen_ids = [qid for qid in all_question_ids if qid not in seen_ids]
-                
-                # If no unseen questions remain, reset and start fresh
-                if not unseen_ids:
-                    seen_ids = []
-                    unseen_ids = all_question_ids
-                
-                # Randomly select one question from unseen questions
-                if not unseen_ids:
-                    flash("لا توجد أسئلة في هذا الاستطلاع.", "error")
-                    return redirect(url_for('routes.select_theme'))
-                
-                selected_question_id = random.choice(unseen_ids)
-                current_question = Question.query.filter_by(id=selected_question_id).first()
-                
-                if not current_question:
-                    flash("لا توجد أسئلة في هذا الاستطلاع.", "error")
-                    return redirect(url_for('routes.select_theme'))
-                
-                # Mark selected question as seen in session
-                seen_ids.append(selected_question_id)
-                session[seen_key] = seen_ids
-                
-                # Create progress entry
-                progress = Progress(
-                    user_id=user.id,
-                    survey_id=survey.id,
-                    current_question_id=current_question.id
-                )
-                db.session.add(progress)
+            # Filter out seen questions
+            unseen_ids = [qid for qid in all_question_ids if qid not in seen_ids]
             
-            db.session.commit()
-            current_app.logger.info(f'Updated progress for user {user.id} on survey {survey.id}, current question: {current_question.id} (random selection)')
+            # If no unseen questions remain, reset and start fresh
+            if not unseen_ids:
+                seen_ids = []
+                unseen_ids = all_question_ids
+            
+            # Randomly select one question from unseen questions
+            if not unseen_ids:
+                flash("لا توجد أسئلة في هذا الاستطلاع.", "error")
+                return redirect(url_for('routes.select_theme'))
+            
+            selected_question_id = random.choice(unseen_ids)
+            current_question = Question.query.filter_by(id=selected_question_id).first()
+            
+            if not current_question:
+                flash("لا توجد أسئلة في هذا الاستطلاع.", "error")
+                return redirect(url_for('routes.select_theme'))
+            
+            # Mark selected question as seen in session
+            seen_ids.append(selected_question_id)
+            session[seen_key] = seen_ids
+            
+            current_app.logger.info(f'Selected random question {current_question.id} from survey {survey.id} for user {user.id}')
             
             # Redirect to record page with the current question
             return redirect(url_for('routes.record', 
@@ -922,9 +872,8 @@ def select_theme():
             flash("معرف الاستطلاع غير صحيح.", "error")
             return redirect(url_for('routes.select_theme'))
         except Exception as e:
-            db.session.rollback()
-            current_app.logger.error(f"Error updating progress: {e}", exc_info=True)
-            flash("حدث خطأ أثناء تحديث التقدم. يرجى المحاولة مرة أخرى.", "error")
+            current_app.logger.error(f"Error selecting question: {e}", exc_info=True)
+            flash("حدث خطأ أثناء اختيار السؤال. يرجى المحاولة مرة أخرى.", "error")
             return redirect(url_for('routes.select_theme'))
     
     # Handle GET requests: fetch and display all surveys
@@ -1039,16 +988,6 @@ def change_question():
                 flash("الاستطلاع المحدد غير موجود.", "error")
                 return redirect(url_for('routes.select_theme'))
             
-            # Get or create progress entry
-            progress = Progress.query.filter_by(
-                user_id=user.id,
-                survey_id=survey.id
-            ).first()
-            
-            if not progress:
-                flash("لم يتم العثور على التقدم. يرجى اختيار استطلاع مرة أخرى.", "error")
-                return redirect(url_for('routes.select_theme'))
-            
             # Get current question for exclusion
             current_question = None
             current_question_id_int = None
@@ -1103,10 +1042,6 @@ def change_question():
                 flash("لا توجد أسئلة متاحة في هذا الاستطلاع.", "error")
                 return redirect(url_for('routes.select_theme'))
             
-            # Update progress
-            progress.current_question_id = next_question.id
-            db.session.commit()
-            
             current_app.logger.info(f'Changed question for user {user.id} in survey {survey.id} to question {next_question.id} (random selection)')
             
             # Redirect to record page with new question
@@ -1120,7 +1055,6 @@ def change_question():
             flash("معرف غير صحيح.", "error")
             return redirect(url_for('routes.select_theme'))
         except Exception as e:
-            db.session.rollback()
             current_app.logger.error(f"Error changing question: {e}", exc_info=True)
             flash("حدث خطأ أثناء تغيير السؤال. يرجى المحاولة مرة أخرى.", "error")
             return redirect(url_for('routes.select_theme'))

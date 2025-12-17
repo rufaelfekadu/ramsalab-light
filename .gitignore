@@ -210,3 +210,6 @@ _uploads/
 
 # ds_store
 *.DS_Store
+
+# logs
+*logs/
