@@ -41,6 +41,7 @@ class User(UserMixin, db.Model):
 
     phone_number = db.Column(db.String(50), unique=True, nullable=True)  
     
+    delete_data_token = db.Column(db.String(6), unique=True, nullable=True)
 
     # Relationships
     responses = db.relationship('Response', backref='user', lazy=True, cascade='all, delete-orphan')
