@@ -24,6 +24,7 @@ class User(UserMixin, db.Model):
 
     emirati_citizenship = db.Column(db.Boolean, nullable=True, default=None)
     age_group = db.Column(db.Integer, nullable=True, default=None)
+    gender = db.Column(db.Text, nullable=True)
     place_of_birth = db.Column(db.Text, nullable=True)
     current_residence = db.Column(db.Text, nullable=True)
     dialect_description = db.Column(db.Text, nullable=True)
@@ -34,6 +35,7 @@ class User(UserMixin, db.Model):
     consent_read_form = db.Column(db.Boolean, nullable=True, default=None)
     consent_required = db.Column(db.Boolean, nullable=True, default=None)
     consent_optional = db.Column(db.Boolean, nullable=True, default=None)
+    consent_required_2 = db.Column(db.Boolean, nullable=True, default=None)
     consent_optional_alternative = db.Column(db.Boolean, nullable=True, default=None)
     demographics_and_consent_completed = db.Column(db.Boolean, nullable=False, default=False)
 

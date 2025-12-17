@@ -12,6 +12,9 @@ class Config:
     LOG_FILE = os.environ.get("LOG_FILE", "audio_submissions.log")
     WTF_CSRF_ENABLED = True  # Enable CSRF protection
 
+    # session configuration
+    SESSION_PERMANENT = False
+
     # PostgreSQL connection string
     DB_HOST = os.environ.get("DB_HOST", "localhost")
     DB_PORT = os.environ.get("DB_PORT", "5432")

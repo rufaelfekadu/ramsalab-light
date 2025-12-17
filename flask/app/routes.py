@@ -307,13 +307,14 @@ def update_consent():
     """Update user's consent field in database"""
     try:
         # Get consent values from form - support both old and new field names for backward compatibility
-        consent_read_form = request.form.get("consent_read_form") == "on" or request.form.get("consent_read") == "on"
-        consent_required = request.form.get("consent_required") == "on" or request.form.get("consent_audio") == "on"
+        consent_read_form = request.form.get("consent_read_form") == "on" 
+        consent_required = request.form.get("consent_required") == "on"
+        consent_required_2 = request.form.get("consent_required_2") == "on"
         consent_optional = request.form.get("consent_optional") == "on" or request.form.get("consent_data") == "on"
-        consent_optional_alternative = request.form.get("consent_optional_alternative") == "on"
+        # consent_optional_alternative = request.form.get("consent_optional_alternative") == "on"
         
         # Validate required consents (consent_read_form, consent_required, and consent_optional_alternative are required)
-        if not (consent_read_form and consent_required and (consent_optional or consent_optional_alternative)):
+        if not (consent_read_form and consent_required and consent_required_2):
             flash("يرجى الموافقة على جميع الإقرارات المطلوبة (المميزة بـ *)", "error")
             return redirect(url_for('routes.consent_form'))
         
@@ -347,7 +348,7 @@ def update_consent():
         user.consent_read_form = consent_read_form
         user.consent_required = consent_required
         user.consent_optional = consent_optional
-        user.consent_optional_alternative = consent_optional_alternative
+        user.consent_required_2 = consent_required_2
         
         db.session.commit()
         current_app.logger.info(f'Updated consent for user {user.id}')
@@ -723,6 +724,8 @@ def participant_information():
 @bp.route("/")
 def index():
     """Landing page"""
+    # delete the session and start a new one
+    session.clear()
     return render_template("index.html", current_user=current_user)
 
 
@@ -1139,24 +1142,24 @@ def update_demography():
             # For now, we'll store it as a string in a text field or handle conversion
             # Since age_group is Integer in model, we'll need to map string to int
             age_mapping = {
-                "18-25": 1,
-                "26-35": 2,
-                "36-45": 3,
-                "46-55": 4,
-                "56-65": 5,
-                "65+": 6
+                "18-20": 1,
+                "21-25": 2,
+                "26-35": 3,
+                "36-45": 4,
+                "46-55": 5,
+                "56-65": 6,
+                "65+": 7
             }
             user.age_group = age_mapping.get(age_group, None)
+
         # Note: gender field doesn't exist in User model, skipping for now
-        # if gender:
-        #     user.gender = gender
+        if gender:
+            user.gender = gender
         if place_of_birth:
             user.place_of_birth = place_of_birth
         if current_residence:
             user.current_residence = current_residence
-        if real_name:
-            user.real_name_optional_input = real_name
-        
+
         if dialect_description:
             user.dialect_description = dialect_description
         
