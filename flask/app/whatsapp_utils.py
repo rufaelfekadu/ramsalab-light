@@ -282,14 +282,75 @@ class WhatsAppMediaHandler:
         """
         response = requests.get(
             url,
-            headers={"Authorization": f"Bearer {self.access_token}"}
+            headers={"Authorization": f"Bearer {self.access_token}"},
+            stream=True  # Enable streaming for better memory efficiency
         )
         
         if response.status_code == 200:
             with open(file_path, 'wb') as f:
-                f.write(response.content)
+                # Stream in chunks to avoid loading entire file into memory
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
         else:
             raise ValueError(f"Failed to download media: {response.status_code}")
+    
+    def _stream_media_to_spaces(self, url: str, spaces_key: str, question_id: str, user_id: str) -> str:
+        """
+        Stream media directly from WhatsApp API to DigitalOcean Spaces without local storage.
+        
+        Args:
+            url: Media download URL from WhatsApp
+            spaces_key: Spaces key for the file
+            question_id: Question ID for organizing files
+            user_id: User ID for logging
+            
+        Returns:
+            Spaces key
+            
+        Raises:
+            ValueError: If stream fails
+        """
+        from flask import current_app
+        from app.utils import _get_spaces_client, _is_spaces_enabled
+        
+        if not _is_spaces_enabled():
+            raise ValueError("Spaces is not enabled")
+        
+        client = _get_spaces_client()
+        
+        # Stream directly from WhatsApp API to Spaces
+        response = requests.get(
+            url,
+            headers={"Authorization": f"Bearer {self.access_token}"},
+            stream=True
+        )
+        
+        if response.status_code != 200:
+            raise ValueError(f"Failed to download media from WhatsApp: {response.status_code}")
+        
+        try:
+            # Create a BytesIO buffer to stream the content
+            from io import BytesIO
+            file_obj = BytesIO()
+            
+            # Stream content in chunks
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    file_obj.write(chunk)
+            
+            # Reset file pointer and upload to Spaces
+            file_obj.seek(0)
+            client.upload_fileobj(file_obj,
+                                current_app.config['SPACES_BUCKET'],
+                                spaces_key,
+                                ExtraArgs={'ACL': 'private'})
+            
+            current_app.logger.info(f"Streamed WhatsApp media directly to Spaces: {spaces_key}")
+            return spaces_key
+        except Exception as e:
+            current_app.logger.error(f"Failed to stream media to Spaces: {e}")
+            raise
     
     def _get_file_extension(self, mime_type: str, media_type: str) -> str:
         """
@@ -317,6 +378,59 @@ class WhatsAppMediaHandler:
             raise ValueError(f"Unsupported MIME type: {mime_type}")
         
         return mime_to_extension[mime_type]
+    
+    def _get_media_metadata(self, message_data: Dict[str, Any], media_location: str) -> Dict[str, Any]:
+        """
+        Extract media metadata from WhatsApp message without downloading.
+        Used when streaming directly to Spaces.
+        
+        Args:
+            message_data: WhatsApp message data
+            media_location: Location of media (Spaces key or local path)
+            
+        Returns:
+            Media metadata dictionary
+        """
+        message_type = message_data["type"]
+        media_data = message_data[message_type]
+        
+        if message_type == "video":
+            return {
+                "message_type": "video",
+                "media_download_location": media_location,
+                "video_download_location": media_location,
+                "video_caption_field": media_data.get("caption")
+            }
+        elif message_type == "sticker":
+            return {
+                "message_type": "sticker",
+                "media_download_location": media_location,
+                "sticker_download_location": media_location,
+                "sticker_animated_yn_field": media_data.get("animated")
+            }
+        elif message_type == "audio":
+            return {
+                "message_type": "audio",
+                "media_download_location": media_location,
+                "audio_download_location": media_location,
+                "audio_voice_yn_field": media_data.get("voice")
+            }
+        elif message_type == "image":
+            return {
+                "message_type": "image",
+                "media_download_location": media_location,
+                "image_download_location": media_location,
+                "image_caption_field": media_data.get("caption")
+            }
+        elif message_type == "document":
+            return {
+                "message_type": "document",
+                "media_download_location": media_location,
+                "document_download_location": media_location,
+                "document_caption_field": media_data.get("caption")
+            }
+        else:
+            raise ValueError(f"Unsupported media type: {message_type}")
     
     def process_video(self, message_metadata: Dict[str, Any]) -> Dict[str, Any]:
         """

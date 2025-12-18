@@ -890,10 +890,23 @@ def dashboard():
 
 @bp.route("/uploads/<path:question_id>/<path:filename>")
 def serve_upload(question_id, filename):
-    """Serve uploaded files"""
-    upload_folder = current_app.config["UPLOAD_FOLDER"]
-    question_folder = os.path.join(upload_folder, question_id)
-    return send_from_directory(question_folder, filename)
+    """Serve uploaded files - redirects to Spaces signed URL if using Spaces, otherwise serves locally"""
+    from app.utils import _is_spaces_enabled, get_spaces_signed_url
+    
+    if _is_spaces_enabled():
+        # Generate signed URL for Spaces file
+        spaces_key = f"{question_id}/{filename}"
+        try:
+            signed_url = get_spaces_signed_url(spaces_key)
+            return redirect(signed_url)
+        except Exception as e:
+            current_app.logger.error(f"Error generating signed URL: {e}")
+            return "File not found", 404
+    else:
+        # Serve from local storage
+        upload_folder = current_app.config["UPLOAD_FOLDER"]
+        question_folder = os.path.join(upload_folder, question_id)
+        return send_from_directory(question_folder, filename)
 
 
 # ============================================================================
@@ -1412,15 +1425,24 @@ def submit_audio():
                 flash("معرف السؤال غير صحيح.", "error")
                 return redirect(url_for('routes.select_theme'))
         
-        filename = save_audio_file(audio, str(user.id), str(question_id))
+        file_identifier = save_audio_file(audio, str(user.id), str(question_id))
+        
+        # Determine file_path based on whether we're using Spaces or local storage
+        from app.utils import _is_spaces_enabled
+        if _is_spaces_enabled():
+            # file_identifier is a Spaces key (e.g., "123/filename.webm")
+            file_path = file_identifier
+        else:
+            # file_identifier is a filename, construct local path
+            import os
+            file_path = os.path.join(current_app.config["UPLOAD_FOLDER"], str(question_id), file_identifier)
         
         # Create response
-        import os
         response = Response(
             user_id=user.id,
             question_id=question_id,
             response_type="audio",
-            file_path=os.path.join(current_app.config["UPLOAD_FOLDER"], str(question_id), filename)
+            file_path=file_path
         )
         db.session.add(response)
         db.session.commit()

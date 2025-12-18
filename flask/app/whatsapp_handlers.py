@@ -356,10 +356,51 @@ def handle_survey_flow(parsed_message, user, survey, message_metadata):
         # Process media messages
         else:
             if parsed_message['message_type'] in ["document", "sticker", "audio", "image", "video"]:
+                from app.utils import _is_spaces_enabled, _generate_safe_filename
+                
                 media_handler = WhatsAppMediaHandler(downloads_directory=os.path.join(current_app.config["UPLOAD_FOLDER"], str(current_question.id)))
-                message_media_metadata = media_handler.process_media(message_metadata)
-                parsed_message['media_download_location'] = message_media_metadata.get("media_download_location", "none")
-                parsed_message['message_media_metadata'] = message_media_metadata
+                
+                # Try streaming directly to Spaces if enabled (avoids local disk I/O)
+                if _is_spaces_enabled():
+                    try:
+                        # Extract media info to generate Spaces key
+                        message_data = message_metadata[0]
+                        media_type = message_data["type"]
+                        media_id = message_data[media_type]["id"]
+                        mime_type = message_data[media_type]["mime_type"]
+                        
+                        # Get file extension
+                        extension = media_handler._get_file_extension(mime_type, media_type)
+                        safe_name = _generate_safe_filename(str(user.id), None, extension)
+                        spaces_key = f"{current_question.id}/{safe_name}"
+                        
+                        # Get media URL and stream directly to Spaces
+                        media_url = media_handler._get_media_url(media_id)
+                        spaces_key = media_handler._stream_media_to_spaces(
+                            media_url, spaces_key, str(current_question.id), str(user.id)
+                        )
+                        
+                        # Set media location to Spaces key
+                        parsed_message['media_download_location'] = spaces_key
+                        
+                        # Process metadata (without local file)
+                        message_media_metadata = media_handler._get_media_metadata(message_data, spaces_key)
+                        parsed_message['message_media_metadata'] = message_media_metadata
+                        
+                        current_app.logger.info(f"Streamed WhatsApp {media_type} directly to Spaces: {spaces_key}")
+                    except Exception as e:
+                        current_app.logger.error(f"Failed to stream WhatsApp media to Spaces, falling back to local: {e}")
+                        # Fall back to local download
+                        message_media_metadata = media_handler.process_media(message_metadata)
+                        local_file_path = message_media_metadata.get("media_download_location", "none")
+                        parsed_message['media_download_location'] = local_file_path
+                        parsed_message['message_media_metadata'] = message_media_metadata
+                else:
+                    # Spaces not enabled, use local storage
+                    message_media_metadata = media_handler.process_media(message_metadata)
+                    local_file_path = message_media_metadata.get("media_download_location", "none")
+                    parsed_message['media_download_location'] = local_file_path
+                    parsed_message['message_media_metadata'] = message_media_metadata
             
             # Check for audio requirement
             if current_question.question_type == "audio" and parsed_message["media_download_location"] == "none":

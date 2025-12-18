@@ -141,6 +141,7 @@ def get_or_create_anonymous_user():
 def delete_response_files(responses, upload_folder):
     """
     Delete files associated with responses.
+    Handles both local files and DigitalOcean Spaces files.
     
     Args:
         responses: List of Response objects
@@ -150,9 +151,35 @@ def delete_response_files(responses, upload_folder):
         int: Number of files successfully deleted
     """
     deleted_count = 0
+    use_spaces = current_app.config.get('USE_SPACES', False)
+    
     for response in responses:
-        if response.file_path and not response.file_path.startswith('http'):
-            try:
+        if not response.file_path:
+            continue
+            
+        # Skip HTTP URLs (already handled elsewhere or external)
+        if response.file_path.startswith('http'):
+            continue
+        
+        try:
+            # Check if this is a Spaces key (format: "question_id/filename")
+            is_spaces_key = '/' in response.file_path and not os.path.isabs(response.file_path)
+            
+            if use_spaces and is_spaces_key and current_app.config.get('SPACES_KEY'):
+                # Delete from Spaces
+                try:
+                    from app.utils import _get_spaces_client
+                    client = _get_spaces_client()
+                    client.delete_object(
+                        Bucket=current_app.config['SPACES_BUCKET'],
+                        Key=response.file_path
+                    )
+                    deleted_count += 1
+                    current_app.logger.info(f'Deleted file from Spaces: {response.file_path}')
+                except Exception as e:
+                    current_app.logger.warning(f"Could not delete file from Spaces {response.file_path}: {e}")
+            else:
+                # Delete local file
                 # Handle both absolute and relative paths
                 if os.path.isabs(response.file_path):
                     file_path = response.file_path
@@ -164,9 +191,9 @@ def delete_response_files(responses, upload_folder):
                 if os.path.exists(file_path):
                     os.remove(file_path)
                     deleted_count += 1
-                    current_app.logger.info(f'Deleted file: {file_path}')
-            except Exception as e:
-                current_app.logger.warning(f"Could not delete file {response.file_path}: {e}")
+                    current_app.logger.info(f'Deleted local file: {file_path}')
+        except Exception as e:
+            current_app.logger.warning(f"Could not delete file {response.file_path}: {e}")
     
     return deleted_count
 

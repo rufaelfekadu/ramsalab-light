@@ -33,3 +33,12 @@ class Config:
     WHATSAPP_FROM_PHONE_NUMBER_ID = os.environ.get("WHATSAPP_PHONE_NUMBER_ID", "your_phone_number_id_here")
     WHATSAPP_VERIFY_TOKEN = os.environ.get("WHATSAPP_VERIFY_TOKEN", "your_verify_token_here")
     WHATSAPP_WEBHOOK_ENDPOINT = os.environ.get("WHATSAPP_WEBHOOK_ENDPOINT", "https://mbzsurvey.dev/whatsapp-webhook-endpoint")
+    
+    # DigitalOcean Spaces configuration
+    SPACES_KEY = os.environ.get("SPACES_KEY", "")
+    SPACES_SECRET = os.environ.get("SPACES_SECRET", "")
+    SPACES_BUCKET = os.environ.get("SPACES_BUCKET", "")
+    _spaces_region = os.environ.get("SPACES_REGION", "nyc3")
+    SPACES_REGION = _spaces_region
+    SPACES_ENDPOINT = os.environ.get("SPACES_ENDPOINT", f"https://{_spaces_region}.digitaloceanspaces.com")
+    USE_SPACES = os.environ.get("USE_SPACES", "false").lower() == "true"
