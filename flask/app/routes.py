@@ -476,8 +476,8 @@ def select_theme():
                 flash("حدث خطأ في التحقق من المستخدم.", "error")
                 return redirect(url_for('routes.index'))
             
-            # Get all questions for the survey
-            all_questions = Question.query.filter_by(survey_id=survey.id).all()
+            # Get all questions for the survey (only active ones)
+            all_questions = Question.query.filter_by(survey_id=survey.id, active=True).all()
             
             if not all_questions:
                 flash("لا توجد أسئلة في هذا الاستطلاع.", "error")
@@ -504,7 +504,7 @@ def select_theme():
                 return redirect(url_for('routes.select_theme'))
             
             selected_question_id = random.choice(unseen_ids)
-            current_question = Question.query.filter_by(id=selected_question_id).first()
+            current_question = Question.query.filter_by(id=selected_question_id, active=True).first()
             
             if not current_question:
                 flash("لا توجد أسئلة في هذا الاستطلاع.", "error")
@@ -571,7 +571,7 @@ def record():
     if question_id:
         try:
             question_id = int(question_id)
-            question = Question.query.filter_by(id=question_id).first()
+            question = Question.query.filter_by(id=question_id, active=True).first()
             if question:
                 prompt_text = question.prompt
                 if survey_id:
@@ -621,13 +621,14 @@ def change_question():
                     current_question_id_int = int(current_question_id)
                     current_question = Question.query.filter_by(
                         id=current_question_id_int,
-                        survey_id=survey.id
+                        survey_id=survey.id,
+                        active=True
                     ).first()
                 except (ValueError, TypeError):
                     pass
             
-            # Get all questions for the survey
-            all_questions = Question.query.filter_by(survey_id=survey.id).all()
+            # Get all questions for the survey (only active ones)
+            all_questions = Question.query.filter_by(survey_id=survey.id, active=True).all()
             
             if not all_questions:
                 flash("لا توجد أسئلة متاحة في هذا الاستطلاع.", "error")
@@ -661,7 +662,7 @@ def change_question():
             session[seen_key] = seen_ids
             
             # Get the next question object
-            next_question = Question.query.filter_by(id=next_question_id).first()
+            next_question = Question.query.filter_by(id=next_question_id, active=True).first()
             
             if not next_question:
                 flash("لا توجد أسئلة متاحة في هذا الاستطلاع.", "error")
@@ -1110,7 +1111,8 @@ def survey():
         # current_question_id is a foreign key to Question.id
         current_question = Question.query.filter_by(
             id=progress.current_question_id,
-            survey_id=survey.id
+            survey_id=survey.id,
+            active=True
         ).first() if progress.current_question_id else None
         current_question_group = current_question.question_group if current_question else None
         last_prompt_sent = current_question.prompt_number if current_question else None
@@ -1118,7 +1120,8 @@ def survey():
         # create new progress entry - start with prompt_number 0
         current_question = Question.query.filter_by(
             survey_id=survey.id,
-            prompt_number=0
+            prompt_number=0,
+            active=True
         ).first()
         if not current_question:
             return "No questions found in survey", 404
@@ -1153,7 +1156,8 @@ def survey():
                 if current_question_group and current_question_group.group_type == "random":
                     # Get another random question from the group
                     group_questions = Question.query.filter_by(
-                        question_group_id=current_question_group.id
+                        question_group_id=current_question_group.id,
+                        active=True
                     ).all()
                     if group_questions:
                         # Exclude the current question to get a different one
@@ -1197,7 +1201,8 @@ def survey():
             # Get all questions that need responses
             questions_to_process = Question.query.filter(
                 Question.id.in_(question_ids),
-                Question.survey_id == survey.id
+                Question.survey_id == survey.id,
+                Question.active == True
             ).all()
             
             if not questions_to_process:
@@ -1249,7 +1254,8 @@ def survey():
                 # Find the question with this prompt_number
                 next_question = Question.query.filter_by(
                     survey_id=survey.id,
-                    prompt_number=next_prompt_number
+                    prompt_number=next_prompt_number,
+                    active=True
                 ).first()
                 if next_question:
                     progress.current_question_id = next_question.id

@@ -111,7 +111,8 @@
                         "prompt": "هل لديكم تسمية محلية لـ\"الخَضّة\" أو \"الفَجعة\" (الصدمة أو الذعر المفاجئ)؟ وهل تستخدمون أدوات معيّنة — مثل الطاسة أو غيرها — لإزالة أثر الذعر؟",
                         "question_type": "audio",
                         "options": null,
-                        "required": false
+                        "required": false,
+                        "active": false
                     },
                     {
                         "prompt_number": 15,
@@ -125,14 +126,16 @@
                         "prompt": "اذكروا اسم شيءٍ يُعلَّق أو يُحمَل عندكم لدفع الضرّ أو لجلب البركة (إن كان يُستعمل). ثم تحدّثوا عن مدى فعاليته: هل تؤمنون به أم ترونه مجرد خرافات لا صحة لها؟",
                         "question_type": "audio",
                         "options": null,
-                        "required": false
+                        "required": false,
+                        "active": false
                     },
                     {
                         "prompt_number": 17,
                         "prompt": "اذكروا تسمية لعادة قديمة تتعلّق بضياع دابّة، أو بطلب الغيث، أو بإبعاد الضرر. اذكروا اسم الممارسة، ثم قدّموا وصفًا بسيطًا عنها: كيف كانت تُقام، وما الألفاظ التي تُقال خلالها وهل فعلًا كان يتحقق الغرض من هذه العادة؟",
                         "question_type": "audio",
                         "options": null,
-                        "required": false
+                        "required": false,
+                        "active": false
                     },
                     {
                         "prompt_number": 18,
