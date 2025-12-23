@@ -108,6 +108,7 @@ class Question(db.Model):
     prompt_number = db.Column(db.Integer, nullable=True)  # Sequential prompt number (for WhatsApp surveys)
     options = db.Column(db.JSON, nullable=True)  # For radio/checkbox questions, store options as JSON
     required = db.Column(db.Boolean, nullable=False, default=True)  # Whether the question is required
+    active = db.Column(db.Boolean, nullable=True, default=True)  # Whether the question is active/enabled
     
     # Relationships
     # Note: 'question_group' relationship is provided via backref from QuestionGroup.questions

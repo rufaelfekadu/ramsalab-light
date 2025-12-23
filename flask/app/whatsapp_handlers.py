@@ -306,7 +306,8 @@ def handle_survey_flow(parsed_message, user, survey, message_metadata):
         # Record response from user
         current_question = Question.query.filter_by(
             survey_id=survey.id,
-            prompt_number=user.last_prompt_sent
+            prompt_number=user.last_prompt_sent,
+            active=True
         ).first()
         if not current_question:
             current_app.logger.warning(f'No question found for prompt {user.last_prompt_sent} in survey {survey.name}')
@@ -326,7 +327,7 @@ def handle_survey_flow(parsed_message, user, survey, message_metadata):
                 current_app.logger.error(f'Invalid question ID in list selection: {selected_question_id}')
                 return "Invalid selection", 400
             
-            selected_question = Question.query.filter_by(id=selected_question_id).first()
+            selected_question = Question.query.filter_by(id=selected_question_id, active=True).first()
             if not selected_question or selected_question.question_group_id != current_question_group.id:
                 current_app.logger.error(f'Selected question {selected_question_id} not found or not in group')
                 return "Invalid question selection", 400
@@ -397,7 +398,8 @@ def send_next_survey_question(user, survey, prompt_number, phone_number):
     # Get the next question, if it exists
     next_question = Question.query.filter_by(
         survey_id=survey.id,
-        prompt_number=prompt_number
+        prompt_number=prompt_number,
+        active=True
     ).first()
     
     # If the previous question was the last question, send completion message
@@ -417,7 +419,8 @@ def send_next_survey_question(user, survey, prompt_number, phone_number):
     if next_question_is_from_select_group:
         # Get all questions in the group
         group_questions = Question.query.filter_by(
-            question_group_id=next_question_group.id
+            question_group_id=next_question_group.id,
+            active=True
         ).all()
         
         if not group_questions:
@@ -458,7 +461,8 @@ def send_next_survey_question(user, survey, prompt_number, phone_number):
     elif next_question_is_from_random_group:
         random_next_question = Question.query.filter_by(
             survey_id=survey.id,
-            prompt_number=prompt_number
+            prompt_number=prompt_number,
+            active=True
         ).order_by(func.random()).first()
         question_data = {
             "question_type": random_next_question.question_type,

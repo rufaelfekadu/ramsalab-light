@@ -111,7 +111,8 @@
                         "prompt": "احكوا لنا عن نقشين أو تطريزين تقليديين تحبّونهما: أين يُوضَع كلٌّ منهما، على أي نوع من الثياب يظهر، وما الجمال أو المعنى الذي يضيفه للزي؟",
                         "question_type": "audio",
                         "options": null,
-                        "required": false
+                        "required": false,
+                        "active": false
                     },
                     {
                         "prompt_number": 15,
