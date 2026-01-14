@@ -12,6 +12,13 @@ class Config:
     LOG_FILE = os.environ.get("LOG_FILE", "audio_submissions.log")
     WTF_CSRF_ENABLED = True  # Enable CSRF protection
 
+    # AWS S3 configuration
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
+    AWS_S3_BUCKET = os.environ.get("AWS_S3_BUCKET")
+    AWS_S3_ENABLED = os.environ.get("AWS_S3_ENABLED", "false").lower() == "true"
+
     # session configuration
     SESSION_PERMANENT = False
 
