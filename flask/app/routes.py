@@ -1,11 +1,15 @@
 import os
 import random
 import time
+import shutil
 
 from flask import (
     Blueprint, current_app, render_template, request, redirect,
-    url_for, jsonify, flash, session, send_from_directory
+    url_for, jsonify, flash, session, send_from_directory, send_file
 )
+from flask_login import login_user, logout_user, login_required, current_user
+import tempfile
+from datetime import datetime
 
 from app import csrf
 from app.utils import allowed_file, save_audio_file
@@ -17,8 +21,56 @@ from app.route_helpers import (
     create_new_user_token,
     generate_unique_deletion_token
 )
+from app.export_utils import generate_csv, collect_audio_files, create_export_zip
 
 bp = Blueprint("routes", __name__)
+
+
+# ============================================================================
+# Authentication Routes
+# ============================================================================
+
+@bp.route("/login", methods=["GET", "POST"])
+def login():
+    """Login page and handler"""
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        remember = request.form.get("remember") == "true"
+        
+        if not username or not password:
+            flash("Please provide both username and password.", "error")
+            return render_template("login.html")
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if user and user.check_password(password):
+            login_user(user, remember=remember)
+            next_page = request.args.get("next")
+            if next_page:
+                return redirect(next_page)
+            flash("Login successful!", "success")
+            return redirect(url_for("routes.dashboard"))
+        else:
+            flash("Invalid username or password.", "error")
+    
+    return render_template("login.html")
+
+
+@bp.route("/logout")
+@login_required
+def logout():
+    """Logout handler"""
+    logout_user()
+    flash("You have been logged out.", "info")
+    return redirect(url_for("routes.index"))
+
+
+@bp.route("/register", methods=["GET", "POST"])
+def register():
+    """Registration is disabled - users must be manually added by administrators"""
+    flash("Registration is not available. Please contact an administrator for access.", "error")
+    return redirect(url_for("routes.login"))
 
 
 # ============================================================================
@@ -583,5 +635,222 @@ def submit_audio():
         else:
             flash("حدث خطأ أثناء رفع الملف. يرجى المحاولة مرة أخرى.", "error")
             return redirect(url_for('routes.record', question_id=question_id, survey_id=survey_id))
+
+
+# ============================================================================
+# Dashboard Routes
+# ============================================================================
+
+@bp.route("/dashboard")
+@login_required
+def dashboard():
+    """Dashboard page for data export with filters"""
+    try:
+        # Get all surveys and questions for filter options
+        surveys = Survey.query.order_by(Survey.id).all()
+        questions = Question.query.filter_by(active=True).order_by(Question.id).all()
+        
+        # Group questions by survey for better UI
+        questions_by_survey = {}
+        for question in questions:
+            survey_id = question.survey_id
+            if survey_id not in questions_by_survey:
+                questions_by_survey[survey_id] = []
+            questions_by_survey[survey_id].append(question)
+        
+        return render_template(
+            "dashboard.html",
+            surveys=surveys,
+            questions=questions,
+            questions_by_survey=questions_by_survey,
+            current_user=current_user
+        )
+    except Exception as e:
+        current_app.logger.error(f"Error loading dashboard: {e}", exc_info=True)
+        flash("An error occurred while loading the dashboard.", "error")
+        return redirect(url_for("routes.index"))
+
+
+@bp.route("/dashboard/preview", methods=["POST"])
+@login_required
+@csrf.exempt  # Exempt from CSRF since it's already protected by @login_required
+def dashboard_preview():
+    """Get preview of filtered responses (limited to 20 rows)"""
+    try:
+        # Get filter parameters from JSON
+        data = request.get_json() or {}
+        survey_ids = data.get('survey_ids', [])
+        question_ids = data.get('question_ids', [])
+        date_from = data.get('date_from')
+        date_to = data.get('date_to')
+        
+        # Convert to integers
+        try:
+            survey_ids = [int(sid) for sid in survey_ids if sid]
+            question_ids = [int(qid) for qid in question_ids if qid]
+        except (ValueError, TypeError) as e:
+            current_app.logger.error(f"Invalid filter parameters: {e}")
+            return jsonify({"error": "Invalid filter parameters"}), 400
+        
+        # Build query with proper joins
+        query = db.session.query(Response).join(Question).join(Survey)
+        
+        # Apply filters
+        if survey_ids:
+            query = query.filter(Survey.id.in_(survey_ids))
+        
+        if question_ids:
+            query = query.filter(Question.id.in_(question_ids))
+        
+        # Apply date filters
+        if date_from:
+            try:
+                from datetime import datetime as dt
+                date_from_obj = dt.strptime(date_from, '%Y-%m-%d')
+                query = query.filter(Response.timestamp >= date_from_obj)
+            except ValueError as e:
+                current_app.logger.error(f"Invalid date_from format: {e}")
+        
+        if date_to:
+            try:
+                from datetime import datetime as dt
+                # Add one day to include the entire end date
+                date_to_obj = dt.strptime(date_to, '%Y-%m-%d')
+                from datetime import timedelta
+                date_to_obj = date_to_obj + timedelta(days=1)
+                query = query.filter(Response.timestamp < date_to_obj)
+            except ValueError as e:
+                current_app.logger.error(f"Invalid date_to format: {e}")
+        
+        # Get total count
+        total_count = query.count()
+        
+        # Get limited preview (max 20 rows)
+        preview_responses = query.limit(20).all()
+        
+        # Format preview data
+        preview_data = []
+        for response in preview_responses:
+            user = response.user if hasattr(response, 'user') else None
+            question = response.question if hasattr(response, 'question') else None
+            survey = question.survey if question and hasattr(question, 'survey') else None
+            
+            preview_data.append({
+                'response_id': response.id,
+                'user_id': response.user_id,
+                'question_prompt': question.prompt[:100] + '...' if question and len(question.prompt) > 100 else (question.prompt if question else ''),
+                'survey_name': survey.name if survey else '',
+                'response_type': response.response_type,
+                'response_value': (response.response_value[:50] + '...' if response.response_value and len(response.response_value) > 50 else response.response_value) or '',
+                'timestamp': response.timestamp.isoformat() if response.timestamp else '',
+                'has_audio': bool(response.file_path and response.response_type == 'audio')
+            })
+        
+        return jsonify({
+            'total_count': total_count,
+            'preview_count': len(preview_data),
+            'preview': preview_data
+        })
+        
+    except Exception as e:
+        current_app.logger.error(f"Error getting preview: {e}", exc_info=True)
+        return jsonify({"error": "An error occurred while getting preview"}), 500
+
+
+@bp.route("/dashboard/export", methods=["POST"])
+@login_required
+def dashboard_export():
+    """Export filtered survey data as CSV and zip with audio files"""
+    try:
+        # Get filter parameters
+        survey_ids = request.form.getlist('survey_ids[]')
+        question_ids = request.form.getlist('question_ids[]')
+        date_from = request.form.get('date_from')
+        date_to = request.form.get('date_to')
+        
+        # Convert to integers
+        try:
+            survey_ids = [int(sid) for sid in survey_ids if sid]
+            question_ids = [int(qid) for qid in question_ids if qid]
+        except (ValueError, TypeError) as e:
+            current_app.logger.error(f"Invalid filter parameters: {e}")
+            flash("Invalid filter parameters.", "error")
+            return redirect(url_for("routes.dashboard"))
+        
+        # Build query with proper joins
+        query = db.session.query(Response).join(Question).join(Survey)
+        
+        # Apply filters
+        if survey_ids:
+            query = query.filter(Survey.id.in_(survey_ids))
+        
+        if question_ids:
+            query = query.filter(Question.id.in_(question_ids))
+        
+        # Apply date filters
+        if date_from:
+            try:
+                from datetime import datetime as dt
+                date_from_obj = dt.strptime(date_from, '%Y-%m-%d')
+                query = query.filter(Response.timestamp >= date_from_obj)
+            except ValueError as e:
+                current_app.logger.error(f"Invalid date_from format: {e}")
+        
+        if date_to:
+            try:
+                from datetime import datetime as dt
+                from datetime import timedelta
+                date_to_obj = dt.strptime(date_to, '%Y-%m-%d')
+                # Add one day to include the entire end date
+                date_to_obj = date_to_obj + timedelta(days=1)
+                query = query.filter(Response.timestamp < date_to_obj)
+            except ValueError as e:
+                current_app.logger.error(f"Invalid date_to format: {e}")
+        
+        # Get all responses
+        # SQLAlchemy relationships will automatically load User, Question, Survey
+        responses = query.all()
+        
+        if not responses:
+            flash("No responses found matching the selected filters.", "info")
+            return redirect(url_for("routes.dashboard"))
+        
+        current_app.logger.info(f"Exporting {len(responses)} responses for user {current_user.id}")
+        
+        # Create temporary directory for files
+        temp_dir = tempfile.mkdtemp()
+        
+        try:
+            # Generate CSV
+            csv_path = os.path.join(temp_dir, "survey_responses.csv")
+            generate_csv(responses, csv_path)
+            
+            # Collect audio files
+            audio_files = collect_audio_files(responses, temp_dir)
+            
+            # Create zip file
+            zip_filename = f"survey_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
+            zip_path = os.path.join(temp_dir, zip_filename)
+            create_export_zip(responses, csv_path, audio_files, zip_path)
+            
+            # Send file
+            return send_file(
+                zip_path,
+                mimetype='application/zip',
+                as_attachment=True,
+                download_name=zip_filename
+            )
+            
+        finally:
+            # Clean up temporary directory
+            try:
+                shutil.rmtree(temp_dir)
+            except Exception as e:
+                current_app.logger.warning(f"Error cleaning up temp directory: {e}")
+        
+    except Exception as e:
+        current_app.logger.error(f"Error exporting data: {e}", exc_info=True)
+        flash("An error occurred while exporting data.", "error")
+        return redirect(url_for("routes.dashboard"))
 
 

@@ -3,9 +3,11 @@ import logging
 from flask import Flask
 from config import Config
 from flask_wtf import CSRFProtect
+from flask_login import LoginManager
 from dotenv import load_dotenv
 
 csrf = CSRFProtect()
+login_manager = LoginManager()
 
 def create_app():
     load_dotenv()
@@ -43,6 +45,18 @@ def create_app():
 
     # Init security (CSRF protection still needed for forms)
     csrf.init_app(app)
+
+    # Init Flask-Login
+    login_manager.init_app(app)
+    login_manager.login_view = 'routes.login'
+    login_manager.login_message = 'Please log in to access this page.'
+    login_manager.login_message_category = 'info'
+
+    # User loader callback for Flask-Login
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.models import User
+        return User.query.get(int(user_id))
 
     # Register routes
     from app.routes import bp as routes_bp

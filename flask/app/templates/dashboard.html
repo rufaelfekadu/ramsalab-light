@@ -1,386 +1,808 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - MBZUAI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-</head>
-<body>
-    <!-- Login/Logout Button -->
-    <div class="auth-button-container">
-        <a href="{{ url_for('routes.manage_data') }}" class="auth-btn manage-data-btn" title="Manage My Data">
-            <i class="fas fa-user-shield"></i>
-            <span>Manage My Data</span>
-        </a>
-        <a href="{{ url_for('routes.logout') }}" class="auth-btn logout-btn" title="Logout">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Logout</span>
-        </a>
-    </div>
-    
-    <div class="container">
-        <div class="survey-card">
-            <div class="home-header">
-                <h1 class="home-title">
-                    <i class="fas fa-clipboard-list"></i> My Responses
-                </h1>
-                <p class="home-subtitle">Total responses: {{ total_responses }}</p>
-                <div class="home-actions">
-                    <a href="{{ url_for('routes.index') }}" class="home-link-btn">
-                        <i class="fas fa-home"></i>
-                        Back to Main Page
-                    </a>
-                    {% if total_responses > 0 %}
-                    <button type="button" id="deleteAllDataBtn" class="delete-all-btn">
-                        <i class="fas fa-trash-alt"></i>
-                        Delete All My Data
-                    </button>
-                    {% endif %}
-                </div>
-            </div>
+{% extends "base.html" %}
 
-            {% if responses %}
-                <div class="responses-list">
-                    {% for response in responses %}
-                        <div class="response-card">
-                            <div class="response-header">
-                                <h3 class="response-question">{{ response.question_prompt }}</h3>
-                                <div class="response-meta">
-                                    <span class="response-survey">{{ response.survey_name }}</span>
-                                    <span class="response-date">
-                                        <i class="fas fa-clock"></i>
-                                        {{ response.timestamp.strftime('%Y-%m-%d %H:%M') if response.timestamp else 'Unknown date' }}
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div class="response-content">
-                                {% if response.response_type == 'audio' and response.file_path %}
-                                    <div class="audio-response">
-                                        <i class="fas fa-microphone"></i>
-                                        {% if response.file_path.startswith('http') %}
-                                            <audio controls>
-                                                <source src="{{ response.file_path }}" type="audio/mpeg">
-                                                Your browser does not support the audio element.
-                                            </audio>
-                                        {% else %}
-                                            {% set path_parts = response.file_path.split('/') %}
-                                            {% if path_parts|length >= 2 %}
-                                                <audio controls>
-                                                    <source src="{{ url_for('routes.serve_upload', question_id=path_parts[-2], filename=path_parts[-1]) }}" type="audio/mpeg">
-                                                    Your browser does not support the audio element.
-                                                </audio>
-                                            {% else %}
-                                                <p>Audio file unavailable</p>
-                                            {% endif %}
-                                        {% endif %}
-                                        <p class="file-path">File: {{ response.file_path.split('/')[-1] if response.file_path else 'Unknown' }}</p>
-                                    </div>
-                                {% elif response.response_type == 'text' %}
-                                    <div class="text-response">
-                                        <p>{{ response.response_value }}</p>
-                                    </div>
-                                {% elif response.response_type == 'radio' or response.response_type == 'checkbox' %}
-                                    <div class="option-response">
-                                        <p><strong>Selected:</strong> {{ response.response_value }}</p>
-                                    </div>
-                                {% else %}
-                                    <div class="generic-response">
-                                        <p><strong>Type:</strong> {{ response.response_type }}</p>
-                                        {% if response.response_value %}
-                                            <p><strong>Value:</strong> {{ response.response_value }}</p>
-                                        {% endif %}
-                                        {% if response.file_path %}
-                                            <p><strong>File:</strong> {{ response.file_path }}</p>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="no-responses">
-                    <i class="fas fa-inbox"></i>
-                    <p>You haven't submitted any responses yet.</p>
-                    <a href="{{ url_for('routes.survey') }}" class="start-survey-link">
-                        <i class="fas fa-clipboard-list"></i> Start Survey
-                    </a>
-                </div>
-            {% endif %}
-        </div>
-    </div>
+{% block title %}Data Export Dashboard - MBZUAI{% endblock %}
+
+{% block head_extra %}
     <style>
-        .home-header {
+    .dashboard-container {
+        max-width: 1200px;
+        padding-block: var(--spacing-2xl);
+    }
+
+    .dashboard-header {
             text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .home-title {
-            color: #667eea;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        
-        .home-subtitle {
-            color: #666;
-            font-size: 1.1rem;
-        }
-        
-        .home-actions {
+        margin-block-end: var(--spacing-2xl);
+    }
+
+    .dashboard-title {
+        font-size: var(--font-size-3xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-primary);
+        margin-block-end: var(--spacing-sm);
+    }
+
+    .dashboard-subtitle {
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-lg);
+    }
+
+    .filters-section {
+        background: var(--color-bg-secondary);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-md);
+        margin-block-end: var(--spacing-xl);
+    }
+
+    .filters-row {
             display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
+        gap: var(--spacing-md);
+        align-items: flex-start;
             flex-wrap: wrap;
         }
         
-        .home-link-btn {
-            display: inline-flex;
+    .filter-dropdown {
+        position: relative;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .filter-dropdown-btn {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: var(--color-bg-primary);
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
             align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        gap: var(--spacing-sm);
+        transition: all var(--transition-base);
+    }
+
+    .filter-dropdown-btn:hover {
+        border-color: var(--color-primary);
+        background: var(--color-bg-tertiary);
+    }
+
+    .filter-dropdown-btn.active {
+        border-color: var(--color-primary);
+        background: var(--color-bg-tertiary);
+    }
+
+    .filter-dropdown-btn .badge {
+        background: var(--color-primary);
             color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-        
-        .home-link-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-        }
-        
-        .delete-all-btn {
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+        min-width: 20px;
+        text-align: center;
+    }
+
+    .filter-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--color-bg-primary);
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-md);
+        margin-block-start: var(--spacing-xs);
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 100;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .filter-dropdown-menu.show {
+        display: block;
+    }
+
+    .filter-dropdown-header {
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-bottom: 1px solid var(--color-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--color-bg-secondary);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .filter-dropdown-header h4 {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-primary);
+        margin: 0;
+    }
+
+    .filter-dropdown-select-all {
+        background: none;
+        border: none;
+        color: var(--color-primary);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+        cursor: pointer;
+        padding: var(--spacing-xs);
+        transition: color var(--transition-base);
+    }
+
+    .filter-dropdown-select-all:hover {
+        color: var(--color-primary-dark);
+        text-decoration: underline;
+    }
+
+    .filter-dropdown-items {
+        padding: var(--spacing-xs);
+    }
+
+    .filter-dropdown-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        cursor: pointer;
+        transition: background var(--transition-base);
+        border-radius: var(--radius-sm);
+    }
+
+    .filter-dropdown-item:hover {
+        background: var(--color-bg-tertiary);
+    }
+
+    .filter-dropdown-item input[type="checkbox"] {
+        margin-top: 2px;
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        accent-color: var(--color-primary);
+    }
+
+    .filter-dropdown-item label {
+        flex: 1;
+        cursor: pointer;
+        font-size: var(--font-size-sm);
+        color: var(--color-text-primary);
+        margin: 0;
+        line-height: var(--line-height-relaxed);
+    }
+
+    .filter-dropdown-empty {
+        padding: var(--spacing-md);
+        text-align: center;
+        color: var(--color-text-tertiary);
+        font-style: italic;
+        font-size: var(--font-size-sm);
+    }
+
+    .export-section {
+        text-align: center;
+        padding: var(--spacing-xl);
+        background: var(--color-bg-secondary);
+        border-radius: var(--radius-lg);
+    }
+
+    .export-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: #dc3545;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md) var(--spacing-xl);
+        background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        transition: all var(--transition-base);
+        box-shadow: var(--shadow-md);
         }
         
-        .delete-all-btn:hover {
-            background: #c82333;
+    .export-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
-        }
-        
-        .delete-all-btn:active {
-            transform: translateY(0);
-        }
-        
-        .delete-all-btn:disabled {
-            background: #6c757d;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .export-btn:disabled {
+        opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
         
-        .responses-list {
+    .export-info {
+        margin-block-start: var(--spacing-lg);
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-relaxed);
             display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .response-card {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            border-left: 4px solid #667eea;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .response-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .response-header {
-            margin-bottom: 15px;
-        }
-        
-        .response-question {
-            color: #333;
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        
-        .response-meta {
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-xs);
+    }
+
+    .export-info i {
+        color: var(--color-primary);
+    }
+
+    .preview-section {
+        background: var(--color-bg-secondary);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        margin-block-end: var(--spacing-xl);
+        display: none;
+    }
+
+    .preview-section.active {
+        display: block;
+    }
+
+    .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-block-end: var(--spacing-lg);
+        padding-block-end: var(--spacing-sm);
+        border-block-end: 2px solid var(--color-border);
+    }
+
+    .preview-title {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
             display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .response-survey {
-            background: #e0e7ff;
-            color: #667eea;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-weight: 600;
-        }
-        
-        .response-date {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .response-content {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-        
-        .text-response p {
-            color: #333;
-            line-height: 1.6;
-            margin: 0;
-        }
-        
-        .option-response p {
-            color: #333;
-            margin: 0;
-        }
-        
-        .audio-response {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .audio-response i {
-            color: #667eea;
-            font-size: 1.5rem;
-        }
-        
-        .audio-response audio {
-            width: 100%;
-        }
-        
-        .file-path {
-            font-size: 0.85rem;
-            color: #666;
-            margin: 0;
-        }
-        
-        .generic-response p {
-            margin: 5px 0;
-            color: #333;
-        }
-        
-        .no-responses {
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
+    .preview-count {
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-normal);
+    }
+
+    .preview-table-container {
+        overflow-x: auto;
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-primary);
+    }
+
+    .preview-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: var(--font-size-sm);
+    }
+
+    .preview-table thead {
+        position: sticky;
+        top: 0;
+        background: var(--color-bg-secondary);
+        z-index: 10;
+    }
+
+    .preview-table th {
+        padding: var(--spacing-sm) var(--spacing-md);
+        text-align: left;
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        border-bottom: 2px solid var(--color-border);
+        white-space: nowrap;
+    }
+
+    .preview-table td {
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-bottom: 1px solid var(--color-border);
+        color: var(--color-text-primary);
+    }
+
+    .preview-table tbody tr:hover {
+        background: var(--color-bg-tertiary);
+    }
+
+    .preview-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .preview-loading {
+        text-align: center;
+        padding: var(--spacing-xl);
+        color: var(--color-text-secondary);
+    }
+
+    .preview-loading i {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .preview-empty {
+        text-align: center;
+        padding: var(--spacing-xl);
+        color: var(--color-text-secondary);
+        font-style: italic;
+    }
+
+    .preview-note {
+        margin-block-start: var(--spacing-md);
+        padding: var(--spacing-sm);
+        background: var(--color-bg-tertiary);
+        border-radius: var(--radius-sm);
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
             text-align: center;
-            padding: 60px 20px;
-            color: #666;
+    }
+
+    .text-truncate {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .text-success {
+        color: var(--color-success);
+    }
+
+    .text-muted {
+        color: var(--color-text-tertiary);
+    }
+
+        @media (max-width: 768px) {
+        .dashboard-title {
+            font-size: var(--font-size-2xl);
         }
+
+        .filters-row {
+            flex-direction: column;
+        }
+
+        .filter-dropdown {
+            min-width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container container">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <i class="fas fa-download"></i> Data Export Dashboard
+        </h1>
+        <p class="dashboard-subtitle">Filter and download survey responses with audio files</p>
+    </div>
+
+    <form id="exportForm" method="POST" action="{{ url_for('routes.dashboard_export') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         
-        .no-responses i {
-            font-size: 4rem;
-            color: #ccc;
-            margin-bottom: 20px;
-        }
-        
-        .no-responses p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-        }
-        
-        .start-survey-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-        
-        .start-survey-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-        }
-        
-        @media (max-width: 600px) {
-            .home-title {
-                font-size: 2rem;
-            }
-            
-            .response-card {
-                padding: 20px;
-            }
-            
-            .response-question {
-                font-size: 1.1rem;
-            }
-        }
-    </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const deleteAllBtn = document.getElementById('deleteAllDataBtn');
-            if (deleteAllBtn) {
-                deleteAllBtn.addEventListener('click', function() {
-                    if (!confirm('Are you sure you want to delete ALL your data? This will permanently delete all your survey responses and cannot be undone.')) {
-                        return;
-                    }
-                    
-                    const formData = new FormData();
-                    formData.append('csrf_token', '{{ csrf_token() }}');
-                    
-                    deleteAllBtn.disabled = true;
-                    deleteAllBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
-                    
-                    fetch('{{ url_for("routes.delete_all_data") }}', {
-                        method: 'POST',
-                        body: formData,
-                        credentials: 'same-origin'
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            alert('All your data has been deleted successfully.');
-                            window.location.reload();
-                        } else {
-                            alert('Error: ' + (data.message || 'Failed to delete data'));
-                            deleteAllBtn.disabled = false;
-                            deleteAllBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete All My Data';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while deleting your data.');
-                        deleteAllBtn.disabled = false;
-                        deleteAllBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete All My Data';
-                    });
-                });
+        <div class="filters-section card">
+            <div class="card__body">
+                <div class="filters-row">
+                    <!-- Survey Filter Dropdown -->
+                    <div class="filter-dropdown">
+                        <button type="button" class="filter-dropdown-btn" id="surveyDropdownBtn">
+                            <span>
+                                <i class="fas fa-filter"></i> Themes
+                                <span class="badge" id="surveyBadge" style="display: none;">0</span>
+                            </span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="filter-dropdown-menu" id="surveyDropdown">
+                            <div class="filter-dropdown-header">
+                                <h4>Themes</h4>
+                                <button type="button" class="filter-dropdown-select-all" data-target="surveys">Select All</button>
+                            </div>
+                            <div class="filter-dropdown-items" id="surveys-group">
+                                {% if surveys %}
+                                    {% for survey in surveys %}
+                                        <div class="filter-dropdown-item">
+                                            <input type="checkbox" name="survey_ids[]" value="{{ survey.id }}" id="survey_{{ survey.id }}" class="survey-checkbox">
+                                            <label for="survey_{{ survey.id }}">{{ survey.name }}</label>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="filter-dropdown-empty">No themes available</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question Filter Dropdown -->
+                    <div class="filter-dropdown">
+                        <button type="button" class="filter-dropdown-btn" id="questionDropdownBtn">
+                            <span>
+                                <i class="fas fa-filter"></i> Questions
+                                <span class="badge" id="questionBadge" style="display: none;">0</span>
+                            </span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="filter-dropdown-menu" id="questionDropdown">
+                            <div class="filter-dropdown-header">
+                                <h4>Questions</h4>
+                                <button type="button" class="filter-dropdown-select-all" data-target="questions">Select All</button>
+                            </div>
+                            <div class="filter-dropdown-items" id="questions-group">
+                                {% if questions %}
+                                    {% for question in questions %}
+                                        <div class="filter-dropdown-item">
+                                            <input type="checkbox" name="question_ids[]" value="{{ question.id }}" id="question_{{ question.id }}" class="question-checkbox">
+                                            <label for="question_{{ question.id }}">{{ question.prompt[:80] }}{% if question.prompt|length > 80 %}...{% endif %}</label>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="filter-dropdown-empty">No questions available</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timestamp Filter -->
+                    <div class="filter-dropdown">
+                        <button type="button" class="filter-dropdown-btn" id="timestampDropdownBtn">
+                            <span>
+                                <i class="fas fa-calendar-alt"></i> Date Range
+                                <span class="badge" id="timestampBadge" style="display: none;">1</span>
+                            </span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="filter-dropdown-menu" id="timestampDropdown">
+                            <div class="filter-dropdown-header">
+                                <h4>Date Range</h4>
+                            </div>
+                            <div class="filter-dropdown-items" style="padding: var(--spacing-md);">
+                                <div style="margin-block-end: var(--spacing-md);">
+                                    <label for="dateFrom" style="display: block; margin-block-end: var(--spacing-xs); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">From:</label>
+                                    <input type="date" id="dateFrom" name="date_from" class="form-input" style="width: 100%; padding: var(--spacing-xs) var(--spacing-sm);">
+                                </div>
+                                <div>
+                                    <label for="dateTo" style="display: block; margin-block-end: var(--spacing-xs); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">To:</label>
+                                    <input type="date" id="dateTo" name="date_to" class="form-input" style="width: 100%; padding: var(--spacing-xs) var(--spacing-sm);">
+                                </div>
+                                <div style="margin-block-start: var(--spacing-md); text-align: center;">
+                                    <button type="button" id="clearDateFilter" class="filter-dropdown-select-all" style="width: 100%; padding: var(--spacing-xs);">Clear Dates</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div id="previewSection" class="preview-section card">
+            <div class="card__body">
+                <div class="preview-header">
+                    <h2 class="preview-title">
+                        <i class="fas fa-eye"></i> Preview
+                        <span class="preview-count" id="previewCount"></span>
+                    </h2>
+                </div>
+                
+                <div id="previewContent">
+                    <div class="preview-loading" id="previewLoading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i> Loading preview...
+                    </div>
+                    <div class="preview-empty" id="previewEmpty" style="display: none;">
+                        <i class="fas fa-info-circle"></i> Select filters to see preview
+                    </div>
+                    <div id="previewTableContainer" class="preview-table-container" style="display: none;">
+                        <table class="preview-table">
+                            <thead>
+                                <tr>
+                                    <th>Response ID</th>
+                                    <th>User ID</th>
+                                    <th>Survey</th>
+                                    <th>Question</th>
+                                    <th>Response Type</th>
+                                    <th>Response Value</th>
+                                    <th>Timestamp</th>
+                                    <th>Audio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="previewTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="preview-note" id="previewNote" style="display: none;">
+                    <i class="fas fa-info-circle"></i> Showing first 20 rows. Total rows: <span id="totalCount">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="export-section card">
+            <div class="card__body">
+                <button type="submit" id="exportBtn" class="export-btn">
+                    <i class="fas fa-download"></i>
+                    <span id="exportBtnText">Export Data</span>
+                </button>
+                <p class="export-info">
+                    <i class="fas fa-info-circle"></i>
+                    The export will include a CSV file with all responses, demographics, and consent data, plus a zip file containing all associated audio files.
+                </p>
+            </div>
+        </div>
+    </form>
+
+    <div style="text-align: center; margin-block-start: var(--spacing-xl);">
+        <a href="{{ url_for('routes.index') }}" class="btn btn--secondary btn--mid">
+            <i class="fas fa-home"></i> Back to Main Page
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Dropdown toggle functionality
+        const dropdownButtons = document.querySelectorAll('.filter-dropdown-btn');
+        const dropdowns = document.querySelectorAll('.filter-dropdown-menu');
+
+        dropdownButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const dropdown = this.nextElementSibling;
+                const isOpen = dropdown.classList.contains('show');
+                
+                // Close all dropdowns
+                dropdowns.forEach(d => d.classList.remove('show'));
+                dropdownButtons.forEach(b => b.classList.remove('active'));
+                
+                // Toggle current dropdown
+                if (!isOpen) {
+                    dropdown.classList.add('show');
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.filter-dropdown')) {
+                dropdowns.forEach(d => d.classList.remove('show'));
+                dropdownButtons.forEach(b => b.classList.remove('active'));
             }
         });
-    </script>
-</body>
-</html>
 
+        // Update badge counts
+        function updateBadges() {
+            const surveyCount = document.querySelectorAll('.survey-checkbox:checked').length;
+            const questionCount = document.querySelectorAll('.question-checkbox:checked').length;
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            const hasDateFilter = dateFrom || dateTo;
+            
+            const surveyBadge = document.getElementById('surveyBadge');
+            const questionBadge = document.getElementById('questionBadge');
+            const timestampBadge = document.getElementById('timestampBadge');
+            
+            if (surveyCount > 0) {
+                surveyBadge.textContent = surveyCount;
+                surveyBadge.style.display = 'inline-block';
+            } else {
+                surveyBadge.style.display = 'none';
+            }
+            
+            if (questionCount > 0) {
+                questionBadge.textContent = questionCount;
+                questionBadge.style.display = 'inline-block';
+            } else {
+                questionBadge.style.display = 'none';
+            }
+            
+            if (hasDateFilter) {
+                timestampBadge.style.display = 'inline-block';
+            } else {
+                timestampBadge.style.display = 'none';
+            }
+        }
+
+        // Clear date filter
+        document.getElementById('clearDateFilter').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            updateBadges();
+            updatePreview();
+        });
+
+        // Listen for date input changes
+        document.getElementById('dateFrom').addEventListener('change', function() {
+            updateBadges();
+            updatePreview();
+        });
+
+        document.getElementById('dateTo').addEventListener('change', function() {
+            updateBadges();
+            updatePreview();
+        });
+
+        // Select All functionality
+        const selectAllButtons = document.querySelectorAll('.filter-dropdown-select-all');
+        selectAllButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const target = this.getAttribute('data-target');
+                const group = document.getElementById(target + '-group');
+                const checkboxes = group.querySelectorAll('input[type="checkbox"]');
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                
+                checkboxes.forEach(cb => {
+                    cb.checked = !allChecked;
+                });
+                
+                this.textContent = allChecked ? 'Select All' : 'Deselect All';
+                updateBadges();
+                updatePreview();
+            });
+        });
+
+        // Listen for checkbox changes
+        document.querySelectorAll('.filter-dropdown-item input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateBadges();
+                updatePreview();
+            });
+        });
+
+        // Initial badge update
+        updateBadges();
+
+        // Debounce function for preview updates
+        let previewTimeout;
+        function updatePreview() {
+            clearTimeout(previewTimeout);
+            previewTimeout = setTimeout(fetchPreview, 500); // Wait 500ms after last change
+        }
+
+        // Fetch preview data
+        function fetchPreview() {
+            const surveyIds = Array.from(document.querySelectorAll('.survey-checkbox:checked')).map(cb => cb.value);
+            const questionIds = Array.from(document.querySelectorAll('.question-checkbox:checked')).map(cb => cb.value);
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            
+            // Hide preview if no filters selected
+            if (surveyIds.length === 0 && questionIds.length === 0 && !dateFrom && !dateTo) {
+                document.getElementById('previewSection').classList.remove('active');
+                document.getElementById('previewEmpty').style.display = 'block';
+                document.getElementById('previewTableContainer').style.display = 'none';
+                document.getElementById('previewNote').style.display = 'none';
+                return;
+            }
+                    
+            // Show loading state
+            document.getElementById('previewSection').classList.add('active');
+            document.getElementById('previewLoading').style.display = 'block';
+            document.getElementById('previewEmpty').style.display = 'none';
+            document.getElementById('previewTableContainer').style.display = 'none';
+            document.getElementById('previewNote').style.display = 'none';
+
+            // Get CSRF token from form
+            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+
+            // Fetch preview
+            fetch('{{ url_for("routes.dashboard_preview") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    survey_ids: surveyIds,
+                    question_ids: questionIds,
+                    date_from: dateFrom || null,
+                    date_to: dateTo || null,
+                    csrf_token: csrfToken
+                })
+            })
+                    .then(response => response.json())
+                    .then(data => {
+                document.getElementById('previewLoading').style.display = 'none';
+                
+                if (data.error) {
+                    document.getElementById('previewEmpty').textContent = 'Error: ' + data.error;
+                    document.getElementById('previewEmpty').style.display = 'block';
+                    return;
+                }
+
+                if (data.total_count === 0) {
+                    document.getElementById('previewEmpty').textContent = 'No responses found matching the selected filters.';
+                    document.getElementById('previewEmpty').style.display = 'block';
+                    return;
+                }
+
+                // Update count
+                document.getElementById('previewCount').textContent = `(${data.total_count} total${data.preview_count < data.total_count ? ', showing ' + data.preview_count : ''})`;
+                document.getElementById('totalCount').textContent = data.total_count;
+
+                // Populate table
+                const tbody = document.getElementById('previewTableBody');
+                tbody.innerHTML = '';
+                
+                data.preview.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.response_id}</td>
+                        <td>${row.user_id || ''}</td>
+                        <td>${row.survey_name || ''}</td>
+                        <td class="text-truncate" title="${row.question_prompt}">${row.question_prompt || ''}</td>
+                        <td>${row.response_type || ''}</td>
+                        <td class="text-truncate" title="${row.response_value}">${row.response_value || ''}</td>
+                        <td>${row.timestamp ? new Date(row.timestamp).toLocaleString() : ''}</td>
+                        <td>${row.has_audio ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-muted"></i>'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('previewTableContainer').style.display = 'block';
+                document.getElementById('previewNote').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error fetching preview:', error);
+                document.getElementById('previewLoading').style.display = 'none';
+                document.getElementById('previewEmpty').textContent = 'Error loading preview. Please try again.';
+                document.getElementById('previewEmpty').style.display = 'block';
+            });
+        }
+
+        // Form submission with loading state
+        const exportForm = document.getElementById('exportForm');
+        const exportBtn = document.getElementById('exportBtn');
+        const exportBtnText = document.getElementById('exportBtnText');
+
+        exportForm.addEventListener('submit', function(e) {
+            // Check if at least one filter is selected
+            const surveyChecked = document.querySelectorAll('.survey-checkbox:checked').length > 0;
+            const questionChecked = document.querySelectorAll('.question-checkbox:checked').length > 0;
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            const hasDateFilter = dateFrom || dateTo;
+            
+            // Add date filters to form
+            if (dateFrom) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'date_from';
+                input.value = dateFrom;
+                exportForm.appendChild(input);
+            }
+            
+            if (dateTo) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'date_to';
+                input.value = dateTo;
+                exportForm.appendChild(input);
+            }
+            
+            if (!surveyChecked && !questionChecked && !hasDateFilter) {
+                e.preventDefault();
+                alert('Please select at least one filter (survey, question, or date range) to export.');
+                return;
+            }
+
+            // Show loading state
+            exportBtn.disabled = true;
+            exportBtnText.textContent = 'Exporting...';
+            exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Exporting...</span>';
+        });
+        });
+    </script>
+{% endblock %}
