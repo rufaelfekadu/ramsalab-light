@@ -40,3 +40,6 @@ class Config:
     WHATSAPP_FROM_PHONE_NUMBER_ID = os.environ.get("WHATSAPP_PHONE_NUMBER_ID", "your_phone_number_id_here")
     WHATSAPP_VERIFY_TOKEN = os.environ.get("WHATSAPP_VERIFY_TOKEN", "your_verify_token_here")
     WHATSAPP_WEBHOOK_ENDPOINT = os.environ.get("WHATSAPP_WEBHOOK_ENDPOINT", "https://mbzsurvey.dev/whatsapp-webhook-endpoint")
+
+    # API key for Audino integration
+    RAMSALAB_API_KEY = os.environ.get("RAMSALAB_API_KEY", "")
