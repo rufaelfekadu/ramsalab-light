@@ -1,190 +1,261 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - MBZUAI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-    <style>
-        .register-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            max-width: 450px;
-            margin: 0 auto;
+{% extends "base.html" %}
+
+{% block title %}Register - MBZUAI{% endblock %}
+
+{% block head_extra %}
+<style>
+    .auth-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding-block: var(--spacing-2xl);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-block-end: var(--spacing-xl);
+    }
+
+    .auth-title {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-primary);
+        margin-block-end: var(--spacing-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-sm);
+    }
+
+    .auth-subtitle {
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-base);
+    }
+
+    .auth-card {
+        background: var(--color-bg-primary);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .form-group {
+        margin-block-end: var(--spacing-lg);
+    }
+
+    .form-label {
+        display: block;
+        margin-block-end: var(--spacing-xs);
+        color: var(--color-text-primary);
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-size-base);
+    }
+
+    .form-label .required {
+        color: var(--color-error);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-base);
+        font-family: inherit;
+        transition: all var(--transition-base);
+        background: var(--color-bg-primary);
+        color: var(--color-text-primary);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(155, 47, 40, 0.1);
+    }
+
+    .form-help {
+        display: block;
+        margin-block-start: var(--spacing-xs);
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-sm);
+        font-style: italic;
+    }
+
+    .auth-btn {
+        width: 100%;
+        padding: var(--spacing-md) var(--spacing-lg);
+        background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+        color: var(--color-text-inverse);
+        border: none;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        cursor: pointer;
+        transition: all var(--transition-base);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-sm);
+        box-shadow: var(--shadow-md);
+    }
+
+    .auth-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+    }
+
+    .auth-btn:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    .auth-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .auth-link {
+        text-align: center;
+        margin-block-start: var(--spacing-lg);
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-sm);
+    }
+
+    .auth-link a {
+        color: var(--color-primary);
+        text-decoration: none;
+        font-weight: var(--font-weight-semibold);
+        transition: color var(--transition-base);
+    }
+
+    .auth-link a:hover {
+        color: var(--color-primary-dark);
+        text-decoration: underline;
+    }
+
+    .back-links {
+        text-align: center;
+        margin-block-end: var(--spacing-lg);
+        display: flex;
+        gap: var(--spacing-sm);
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+        .auth-container {
+            padding-block: var(--spacing-xl);
         }
-        .register-header {
-            text-align: center;
-            margin-bottom: 30px;
+
+        .auth-card {
+            padding: var(--spacing-lg);
         }
-        .register-header h1 {
-            color: #667eea;
-            font-size: 2rem;
-            margin-bottom: 10px;
+
+        .auth-title {
+            font-size: var(--font-size-xl);
         }
-        .register-header p {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-        .alert {
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .alert-error {
-            background-color: #fee;
-            color: #c33;
-            border: 1px solid #fcc;
-        }
-        .alert-success {
-            background-color: #efe;
-            color: #3c3;
-            border: 1px solid #cfc;
-        }
-        .alert-info {
-            background-color: #eef;
-            color: #33c;
-            border: 1px solid #ccf;
-        }
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-        }
-        .login-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-        .back-to-main-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #f0f0f0;
-            color: #667eea;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            transition: background 0.3s, transform 0.2s;
-        }
-        .back-to-main-btn:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
-        }
-        .back-to-main-btn i {
-            margin-right: 8px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <a href="{{ url_for('routes.manage_data') }}" class="back-to-main-btn" style="margin-right: 10px;">
-                <i class="fas fa-user-shield"></i> Manage My Data
-            </a>
-            <a href="{{ url_for('routes.index') }}" class="back-to-main-btn">
-                <i class="fas fa-arrow-left"></i> Back to Main Page
-            </a>
-        </div>
-        <div class="register-card">
-            <div class="register-header">
-                <h1><i class="fas fa-user-plus"></i> Register</h1>
-                <p>Create a new account</p>
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container container">
+    <div class="back-links">
+        <a href="{{ url_for('routes.index') }}" class="btn btn--secondary btn--mid">
+            <i class="fas fa-home"></i> Back to Main Page
+        </a>
+    </div>
+
+    <div class="card auth-card">
+        <div class="card__body">
+            <div class="auth-header">
+                <h1 class="auth-title">
+                    <i class="fas fa-user-plus"></i> Register
+                </h1>
+                <p class="auth-subtitle">Create a new account</p>
             </div>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-
-            <form method="post" action="{{ url_for('routes.register') }}">
+            <form method="post" action="{{ url_for('routes.register') }}" id="registerForm">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                {% if user_id %}
-                <input type="hidden" name="user_id" value="{{ user_id }}">
-                {% endif %}
                 
                 <div class="form-group">
-                    <label for="username">Username *</label>
-                    <input type="text" id="username" name="username" required autofocus>
+                    <label class="form-label" for="username">
+                        Username <span class="required">*</span>
+                    </label>
+                    <input type="text" 
+                           class="form-input" 
+                           id="username" 
+                           name="username" 
+                           required 
+                           autofocus
+                           placeholder="Choose a username">
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email (optional)</label>
-                    <input type="email" id="email" name="email">
+                    <label class="form-label" for="email">Email (optional)</label>
+                    <input type="email" 
+                           class="form-input" 
+                           id="email" 
+                           name="email"
+                           placeholder="your.email@example.com">
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password *</label>
-                    <input type="password" id="password" name="password" required minlength="6">
-                    <small style="color: #666; font-size: 0.85rem; display: block; margin-top: 5px;">Must be at least 6 characters</small>
+                    <label class="form-label" for="password">
+                        Password <span class="required">*</span>
+                    </label>
+                    <input type="password" 
+                           class="form-input" 
+                           id="password" 
+                           name="password" 
+                           required 
+                           minlength="6"
+                           placeholder="Enter your password">
+                    <span class="form-help">Must be at least 6 characters</span>
                 </div>
 
                 <div class="form-group">
-                    <label for="password_confirm">Confirm Password *</label>
-                    <input type="password" id="password_confirm" name="password_confirm" required minlength="6">
+                    <label class="form-label" for="password_confirm">
+                        Confirm Password <span class="required">*</span>
+                    </label>
+                    <input type="password" 
+                           class="form-input" 
+                           id="password_confirm" 
+                           name="password_confirm" 
+                           required 
+                           minlength="6"
+                           placeholder="Confirm your password">
                 </div>
 
-                <button type="submit" class="submit-btn">
+                <button type="submit" class="auth-btn">
                     <i class="fas fa-user-plus"></i> Register
                 </button>
             </form>
 
-            <div class="login-link">
+            <div class="auth-link">
                 Already have an account? <a href="{{ url_for('routes.login') }}">Login here</a>
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
 
+{% block scripts %}
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const password = document.getElementById('password').value;
+        const passwordConfirm = document.getElementById('password_confirm').value;
+        
+        if (password !== passwordConfirm) {
+            e.preventDefault();
+            alert('Passwords do not match. Please try again.');
+            return false;
+        }
+        
+        if (password.length < 6) {
+            e.preventDefault();
+            alert('Password must be at least 6 characters long.');
+            return false;
+        }
+    });
+</script>
+{% endblock %}
