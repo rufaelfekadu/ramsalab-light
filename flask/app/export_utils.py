@@ -183,9 +183,9 @@ def collect_audio_files(responses: List, temp_dir: str) -> Dict[str, str]:
                     current_app.logger.warning(f"Failed to download audio for response {response.id}")
             else:
                 # Copy from local storage
-                # Construct full source path
-                upload_folder = current_app.config.get("UPLOAD_FOLDER", "_uploads")
-                source_path = os.path.join(upload_folder, relative_path)
+                # # Construct full source path
+                # upload_folder = current_app.config.get("UPLOAD_FOLDER", "_uploads")
+                source_path = relative_path
                 
                 if os.path.exists(source_path):
                     try:

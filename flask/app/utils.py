@@ -68,6 +68,6 @@ def save_audio_file(audio, user_id: str, question_id: str) -> str:
     current_app.logger.info("user_id=%s, question_id=%s, file=%s", user_id, question_id, safe_name)
 
     # Return relative path for local storage
-    return os.path.join(str(question_id), safe_name)
+    return filepath
 
 
