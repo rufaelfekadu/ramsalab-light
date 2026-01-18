@@ -831,7 +831,7 @@ def dashboard_export():
             # Create zip file
             zip_filename = f"survey_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
             zip_path = os.path.join(temp_dir, zip_filename)
-            create_export_zip(responses, csv_path, audio_files, zip_path)
+            create_export_zip(responses, csv_path, audio_files, zip_path, temp_dir)
             
             # Send file
             return send_file(
