@@ -27,9 +27,6 @@
     }
 
     .filters-section {
-        background: var(--color-bg-secondary);
-        border-radius: var(--radius-lg);
-        padding: var(--spacing-md);
         margin-block-end: var(--spacing-xl);
     }
 
@@ -49,7 +46,7 @@
     .filter-dropdown-btn {
         width: 100%;
         padding: var(--spacing-sm) var(--spacing-md);
-        background: var(--color-bg-primary);
+        background: var(--color-bg-secondary);
         border: 2px solid var(--color-border);
         border-radius: var(--radius-md);
         font-size: var(--font-size-base);
@@ -185,9 +182,6 @@
 
     .export-section {
         text-align: center;
-        padding: var(--spacing-xl);
-        background: var(--color-bg-secondary);
-        border-radius: var(--radius-lg);
     }
 
     .export-btn {
@@ -195,8 +189,8 @@
             align-items: center;
         gap: var(--spacing-sm);
         padding: var(--spacing-md) var(--spacing-xl);
-        background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%);
-            color: white;
+        background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
             border: none;
         border-radius: var(--radius-md);
         font-size: var(--font-size-lg);
@@ -388,9 +382,8 @@
     <form id="exportForm" method="POST" action="{{ url_for('routes.dashboard_export') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         
-        <div class="filters-section card">
-            <div class="card__body">
-                <div class="filters-row">
+        <div class="filters-section">
+            <div class="filters-row">
                     <!-- Survey Filter Dropdown -->
                     <div class="filter-dropdown">
                         <button type="button" class="filter-dropdown-btn" id="surveyDropdownBtn">
@@ -478,7 +471,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
 
         <!-- Preview Section -->
@@ -524,25 +516,18 @@
             </div>
         </div>
 
-        <div class="export-section card">
-            <div class="card__body">
-                <button type="submit" id="exportBtn" class="export-btn">
-                    <i class="fas fa-download"></i>
-                    <span id="exportBtnText">Export Data</span>
-                </button>
-                <p class="export-info">
-                    <i class="fas fa-info-circle"></i>
-                    The export will include a CSV file with all responses, demographics, and consent data, plus a zip file containing all associated audio files.
-                </p>
-            </div>
+        <div class="export-section">
+            <button type="submit" id="exportBtn" class="export-btn">
+                <i class="fas fa-download"></i>
+                <span id="exportBtnText">Export Data</span>
+            </button>
+            <p class="export-info">
+                <i class="fas fa-info-circle"></i>
+                The export will include a CSV file with all responses, demographics, and consent data, plus a zip file containing all associated audio files.
+            </p>
         </div>
     </form>
 
-    <div style="text-align: center; margin-block-start: var(--spacing-xl);">
-        <a href="{{ url_for('routes.index') }}" class="btn btn--secondary btn--mid">
-            <i class="fas fa-home"></i> Back to Main Page
-        </a>
-    </div>
 </div>
 {% endblock %}
 

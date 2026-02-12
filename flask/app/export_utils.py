@@ -42,14 +42,22 @@ def generate_csv(responses: List, output_path: str):
             question = response.question if hasattr(response, 'question') else None
             survey = question.survey if question and hasattr(question, 'survey') else None
             
-            # Extract filename from file_path
+            # Extract filename and normalize file_path to match zip structure
             file_name = None
+            normalized_file_path = response.file_path or ''
+            
             if response.file_path:
                 if response.file_path.startswith('http'):
-                    # S3 URL - extract filename
-                    file_name = os.path.basename(response.file_path.split('?')[0])
+                    # S3 URL - extract relative path (question_id/filename) and normalize
+                    # URL format: https://bucket.s3.region.amazonaws.com/question_id/filename
+                    url_parts = response.file_path.replace('https://', '').replace('http://', '').split('/', 1)
+                    if len(url_parts) == 2:
+                        relative_path = url_parts[1].split('?')[0]  # Remove query parameters
+                        normalized_file_path = f"audio/{relative_path}"
+                        file_name = os.path.basename(relative_path)
                 else:
-                    # Local path
+                    # Local path - normalize to match zip structure (audio/question_id/filename)
+                    normalized_file_path = f"audio/{response.file_path}"
                     file_name = os.path.basename(response.file_path)
             
             row = {
@@ -62,7 +70,7 @@ def generate_csv(responses: List, output_path: str):
                 'response_type': response.response_type,
                 'response_value': response.response_value or '',
                 'timestamp': response.timestamp.isoformat() if response.timestamp else '',
-                'file_path': response.file_path or '',
+                'file_path': normalized_file_path,
                 'file_name': file_name or '',
                 # Demographics
                 'emirati_citizenship': user.emirati_citizenship if user and user.emirati_citizenship is not None else '',
@@ -130,46 +138,62 @@ def download_audio_from_s3(s3_url: str, local_path: str) -> bool:
 def collect_audio_files(responses: List, temp_dir: str) -> Dict[str, str]:
     """
     Collect all audio files from responses (download from S3 or copy from local).
+    Maintains the folder structure from file_path (e.g., question_id/filename).
     
     Args:
         responses: List of Response objects
         temp_dir: Temporary directory to store audio files
         
     Returns:
-        Dictionary mapping response_id to local file path
+        Dictionary mapping response_id to local file path (relative to temp_dir)
     """
     audio_files = {}
     
     for response in responses:
         if response.response_type == 'audio' and response.file_path:
-            # Generate unique filename
-            file_name = None
-            if response.file_path.startswith('http'):
-                # S3 URL
-                file_name = os.path.basename(response.file_path.split('?')[0])
-            else:
-                # Local path
-                file_name = os.path.basename(response.file_path)
+            # Extract the relative path structure from file_path
+            relative_path = None
             
-            # Create unique filename: user_{user_id}_question_{question_id}_{filename}
-            unique_filename = f"user_{response.user_id}_question_{response.question_id}_{file_name}"
-            local_path = os.path.join(temp_dir, unique_filename)
+            if response.file_path.startswith('http'):
+                # S3 URL - extract the S3 key (question_id/filename)
+                # URL format: https://bucket.s3.region.amazonaws.com/question_id/filename
+                url_parts = response.file_path.replace('https://', '').replace('http://', '').split('/', 1)
+                if len(url_parts) == 2:
+                    # Remove query parameters if present
+                    relative_path = url_parts[1].split('?')[0]
+                else:
+                    current_app.logger.warning(f"Invalid S3 URL format: {response.file_path}")
+                    continue
+            else:
+                # Local path - already in format question_id/filename
+                relative_path = response.file_path
+            
+            if not relative_path:
+                continue
+            
+            # Create the full local path maintaining the folder structure
+            local_path = os.path.join(temp_dir, relative_path)
             
             if response.file_path.startswith('http'):
                 # Download from S3
                 if download_audio_from_s3(response.file_path, local_path):
-                    audio_files[response.id] = local_path
+                    # Store relative path for zip creation
+                    audio_files[response.id] = relative_path
                 else:
                     current_app.logger.warning(f"Failed to download audio for response {response.id}")
             else:
                 # Copy from local storage
-                upload_folder = current_app.config["UPLOAD_FOLDER"]
-                source_path = os.path.join(upload_folder, response.file_path)
+                # # Construct full source path
+                # upload_folder = current_app.config.get("UPLOAD_FOLDER", "_uploads")
+                source_path = relative_path
                 
                 if os.path.exists(source_path):
                     try:
+                        # Ensure destination directory exists
+                        os.makedirs(os.path.dirname(local_path), exist_ok=True)
                         shutil.copy2(source_path, local_path)
-                        audio_files[response.id] = local_path
+                        # Store relative path for zip creation
+                        audio_files[response.id] = relative_path
                         current_app.logger.info(f"Copied local file {source_path} to {local_path}")
                     except Exception as e:
                         current_app.logger.error(f"Error copying file {source_path}: {e}")
@@ -179,26 +203,33 @@ def collect_audio_files(responses: List, temp_dir: str) -> Dict[str, str]:
     return audio_files
 
 
-def create_export_zip(responses: List, csv_path: str, audio_files: Dict[str, str], output_path: str):
+def create_export_zip(responses: List, csv_path: str, audio_files: Dict[str, str], output_path: str, temp_dir: str):
     """
     Create a zip file containing CSV and audio files.
+    Maintains the folder structure from file_path in the zip.
     
     Args:
         responses: List of Response objects
         csv_path: Path to CSV file
-        audio_files: Dictionary mapping response_id to audio file path
+        audio_files: Dictionary mapping response_id to relative audio file path (from temp_dir)
         output_path: Path where zip file should be created
+        temp_dir: Temporary directory where audio files are stored
     """
     with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
         # Add CSV file
         zipf.write(csv_path, 'survey_responses.csv')
         
-        # Add audio files
-        for response_id, audio_path in audio_files.items():
-            if os.path.exists(audio_path):
-                # Use just the filename in the zip
-                arcname = os.path.basename(audio_path)
-                zipf.write(audio_path, f"audio/{arcname}")
+        # Add audio files maintaining folder structure
+        for response_id, relative_path in audio_files.items():
+            # Construct full path to the file in temp_dir
+            full_audio_path = os.path.join(temp_dir, relative_path)
+            
+            if os.path.exists(full_audio_path):
+                # Maintain folder structure in zip: audio/question_id/filename
+                arcname = f"audio/{relative_path}"
+                zipf.write(full_audio_path, arcname)
+            else:
+                current_app.logger.warning(f"Audio file not found: {full_audio_path}")
     
     current_app.logger.info(f"Created zip file {output_path} with {len(audio_files)} audio files")
 
