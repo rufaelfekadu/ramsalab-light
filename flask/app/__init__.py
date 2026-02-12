@@ -1,7 +1,6 @@
 import os
 import logging
 from flask import Flask
-from flask_cors import CORS
 from config import Config
 from flask_wtf import CSRFProtect
 from flask_login import LoginManager
@@ -46,23 +45,6 @@ def create_app():
 
     # Init security (CSRF protection still needed for forms)
     csrf.init_app(app)
-
-    # Init CORS - allow requests from frontend
-    # Get allowed origins from environment or use defaults
-    allowed_origins = os.environ.get(
-        "CORS_ALLOWED_ORIGINS",
-        "http://localhost:3000,http://localhost:3001,https://annotate.ramsalab.ae"
-    ).split(",")
-    
-    CORS(app, resources={
-        r"/api/*": {
-            "origins": [origin.strip() for origin in allowed_origins],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization", "X-API-Key"],
-            "expose_headers": ["Content-Type"],
-            "supports_credentials": False
-        }
-    })
 
     # Init Flask-Login
     login_manager.init_app(app)
