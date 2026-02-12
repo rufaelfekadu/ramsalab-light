@@ -134,6 +134,9 @@ class Response(db.Model):
     # the DB column named 'metadata' to the attribute `response_metadata`.
     response_metadata = db.Column('metadata', db.JSON, nullable=True)
     
+    # Audino integration: store the linked task ID
+    audino_task_id = db.Column(db.Integer, nullable=True)
+    
     def __repr__(self):
         return f'<Response {self.id}: {self.response_type}>'
 

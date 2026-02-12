@@ -41,5 +41,12 @@ class Config:
     WHATSAPP_VERIFY_TOKEN = os.environ.get("WHATSAPP_VERIFY_TOKEN", "your_verify_token_here")
     WHATSAPP_WEBHOOK_ENDPOINT = os.environ.get("WHATSAPP_WEBHOOK_ENDPOINT", "https://mbzsurvey.dev/whatsapp-webhook-endpoint")
 
-    # API key for Audino integration
+    # Audino integration configuration
+    ANNOTATION_TASK_CREATION_ENABLED = os.environ.get("ANNOTATION_TASK_CREATION_ENABLED", "false").lower() == "true"
+    ANNOTATION_API_KEY = os.environ.get("ANNOTATION_API_KEY", "")
+    AUDINO_API_URL = os.environ.get("AUDINO_API_URL", "")
+    AUDINO_PROJECT_ID = os.environ.get("AUDINO_PROJECT_ID", "")
+    AUDINO_ASSIGNEE_ID = os.environ.get("AUDINO_ASSIGNEE_ID", "")
+    
+    # RamsaLab API key (used by Audino to fetch responses)
     RAMSALAB_API_KEY = os.environ.get("RAMSALAB_API_KEY", "")

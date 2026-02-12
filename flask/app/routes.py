@@ -22,6 +22,7 @@ from app.route_helpers import (
     generate_unique_deletion_token
 )
 from app.export_utils import generate_csv, collect_audio_files, create_export_zip
+from app.audino_client import AudinoClient
 
 bp = Blueprint("routes", __name__)
 
@@ -617,6 +618,72 @@ def submit_audio():
         db.session.commit()
         
         current_app.logger.info(f'Audio submitted by user {user.id} for question {question_id}, stored at {file_path}')
+
+        # Create task for Audino integration (if enabled)
+        if current_app.config.get("ANNOTATION_TASK_CREATION_ENABLED"):
+            try:
+                # Get the question object for metadata
+                question = Question.query.get(question_id)
+                if not question:
+                    current_app.logger.warning(f'Question {question_id} not found for Audino task creation')
+                else:
+                    # Initialize Audino client
+                    audino_api_url = current_app.config.get("AUDINO_API_URL", "").rstrip('/')
+                    audino_api_key = current_app.config.get("ANNOTATION_API_KEY", "")
+                    
+                    if not audino_api_url or not audino_api_key:
+                        current_app.logger.warning("Audino API URL or API key not configured")
+                    else:
+                        audino_client = AudinoClient(audino_api_url, audino_api_key)
+                        
+                        # Check if API is available
+                        if not audino_client.is_available():
+                            current_app.logger.warning("Audino API is not available")
+                        else:
+                            # Prepare task data
+                            task_name = f"Response_{response.id}"
+                            task_data = {
+                                "name": task_name,
+                                "subset": "train",
+                                "response_id": response.id,  # Link back to ramsalab response
+                                "response_demographics": {
+                                    "user_id": user.id,
+                                    "question_id": question_id,
+                                    "question_prompt": question.prompt,
+                                    "survey_id": int(survey_id) if survey_id else None,
+                                }
+                            }
+                            
+                            # Add optional fields if configured
+                            if current_app.config.get("AUDINO_PROJECT_ID"):
+                                task_data["project_id"] = int(current_app.config.get("AUDINO_PROJECT_ID"))
+                            
+                            if current_app.config.get("AUDINO_ASSIGNEE_ID"):
+                                task_data["assignee_id"] = int(current_app.config.get("AUDINO_ASSIGNEE_ID"))
+                            
+                            # Create task in Audino
+                            task_id = audino_client.create_task(task_data)
+                            
+                            if task_id:
+                                # Store the task ID in the response
+                                response.audino_task_id = task_id
+                                db.session.commit()
+                                current_app.logger.info(f'Successfully created Audino task {task_id} for response {response.id}')
+                                
+                                # Try to upload the audio file if it's a local path
+                                if not file_path.startswith('http'):
+                                    import os
+                                    if os.path.exists(file_path):
+                                        audino_client.upload_file(task_id, file_path, os.path.basename(file_path))
+                                    else:
+                                        current_app.logger.warning(f'Local file not found for upload: {file_path}')
+                            else:
+                                current_app.logger.error(f'Failed to create Audino task for response {response.id}')
+                                # Don't fail the submission, just log the error
+                                
+            except Exception as e:
+                current_app.logger.error(f'Error creating Audino task for response {response.id}: {e}', exc_info=True)
+                # Don't fail the submission if task creation fails
         
         # Extract filename for response (basename of path or URL)
         filename = os.path.basename(file_path) if not file_path.startswith('http') else os.path.basename(file_path.split('?')[0])
@@ -858,119 +925,126 @@ def dashboard_export():
 # API Routes for Audino Integration
 # ============================================================================
 
-@bp.route("/api/responses/for-task-creation", methods=["POST"])
-@csrf.exempt
-def get_responses_for_task_creation():
-    """API endpoint to fetch audio responses for task creation in Audino"""
-    try:
-        # Validate API key
-        api_key = request.headers.get("X-API-Key")
-        expected_api_key = current_app.config.get("RAMSALAB_API_KEY")
+# @bp.route("/api/responses/for-task-creation", methods=["POST"])
+# @csrf.exempt
+# def get_responses_for_task_creation():
+#     """API endpoint to fetch audio responses for task creation in Audino"""
+#     try:
+#         # Validate API key - support both X-API-Key header and Authorization header with Token format
+#         api_key = request.headers.get("X-API-Key")
         
-        if not expected_api_key:
-            current_app.logger.error("RAMSALAB_API_KEY not configured")
-            return jsonify({"error": "API key not configured on server"}), 500
+#         # If X-API-Key is not present, try Authorization header with Token format
+#         if not api_key:
+#             auth_header = request.headers.get("Authorization", "")
+#             if auth_header.startswith("Token "):
+#                 api_key = auth_header.replace("Token ", "", 1).strip()
         
-        if not api_key or api_key != expected_api_key:
-            current_app.logger.warning(f"Invalid API key attempt: {api_key[:10] if api_key else 'None'}...")
-            return jsonify({"error": "Invalid API key"}), 401
+#         expected_api_key = current_app.config.get("RAMSALAB_API_KEY")
         
-        # Get filter parameters from JSON body
-        data = request.get_json() or {}
-        question_ids = data.get("question_ids", [])
-        survey_ids = data.get("survey_ids", [])
-        user_ids = data.get("user_ids", [])
-        date_from = data.get("date_from")
-        date_to = data.get("date_to")
+#         if not expected_api_key:
+#             current_app.logger.error("RAMSALAB_API_KEY not configured")
+#             return jsonify({"error": "API key not configured on server"}), 500
         
-        # Convert to integers and validate
-        try:
-            if question_ids:
-                question_ids = [int(qid) for qid in question_ids if qid]
-            if survey_ids:
-                survey_ids = [int(sid) for sid in survey_ids if sid]
-            if user_ids:
-                user_ids = [int(uid) for uid in user_ids if uid]
-        except (ValueError, TypeError) as e:
-            current_app.logger.error(f"Invalid filter parameters: {e}")
-            return jsonify({"error": "Invalid filter parameters. IDs must be integers."}), 400
+#         if not api_key or api_key != expected_api_key:
+#             current_app.logger.warning(f"Invalid API key attempt: {api_key[:10] if api_key else 'None'}...")
+#             return jsonify({"error": "Invalid API key"}), 401
         
-        # Build query - only get audio responses
-        query = db.session.query(Response).join(Question).join(Survey).filter(
-            Response.response_type == "audio",
-            Response.file_path.isnot(None),
-            Response.file_path != ""
-        )
+#         # Get filter parameters from JSON body
+#         data = request.get_json() or {}
+#         question_ids = data.get("question_ids", [])
+#         survey_ids = data.get("survey_ids", [])
+#         user_ids = data.get("user_ids", [])
+#         date_from = data.get("date_from")
+#         date_to = data.get("date_to")
         
-        # Apply filters
-        if question_ids:
-            query = query.filter(Question.id.in_(question_ids))
+#         # Convert to integers and validate
+#         try:
+#             if question_ids:
+#                 question_ids = [int(qid) for qid in question_ids if qid]
+#             if survey_ids:
+#                 survey_ids = [int(sid) for sid in survey_ids if sid]
+#             if user_ids:
+#                 user_ids = [int(uid) for uid in user_ids if uid]
+#         except (ValueError, TypeError) as e:
+#             current_app.logger.error(f"Invalid filter parameters: {e}")
+#             return jsonify({"error": "Invalid filter parameters. IDs must be integers."}), 400
         
-        if survey_ids:
-            query = query.filter(Survey.id.in_(survey_ids))
+#         # Build query - only get audio responses
+#         query = db.session.query(Response).join(Question).join(Survey).filter(
+#             Response.response_type == "audio",
+#             Response.file_path.isnot(None),
+#             Response.file_path != ""
+#         )
         
-        if user_ids:
-            query = query.filter(Response.user_id.in_(user_ids))
+#         # Apply filters
+#         if question_ids:
+#             query = query.filter(Question.id.in_(question_ids))
         
-        # Apply date filters
-        if date_from:
-            try:
-                from datetime import datetime as dt
-                date_from_obj = dt.strptime(date_from, "%Y-%m-%d")
-                query = query.filter(Response.timestamp >= date_from_obj)
-            except ValueError as e:
-                current_app.logger.error(f"Invalid date_from format: {e}")
-                return jsonify({"error": f"Invalid date_from format. Use YYYY-MM-DD"}), 400
+#         if survey_ids:
+#             query = query.filter(Survey.id.in_(survey_ids))
         
-        if date_to:
-            try:
-                from datetime import datetime as dt, timedelta
-                date_to_obj = dt.strptime(date_to, "%Y-%m-%d")
-                # Add one day to include the entire end date
-                date_to_obj = date_to_obj + timedelta(days=1)
-                query = query.filter(Response.timestamp < date_to_obj)
-            except ValueError as e:
-                current_app.logger.error(f"Invalid date_to format: {e}")
-                return jsonify({"error": f"Invalid date_to format. Use YYYY-MM-DD"}), 400
+#         if user_ids:
+#             query = query.filter(Response.user_id.in_(user_ids))
         
-        # Get total count
-        total_count = query.count()
+#         # Apply date filters
+#         if date_from:
+#             try:
+#                 from datetime import datetime as dt
+#                 date_from_obj = dt.strptime(date_from, "%Y-%m-%d")
+#                 query = query.filter(Response.timestamp >= date_from_obj)
+#             except ValueError as e:
+#                 current_app.logger.error(f"Invalid date_from format: {e}")
+#                 return jsonify({"error": f"Invalid date_from format. Use YYYY-MM-DD"}), 400
         
-        # Get all matching responses
-        responses = query.order_by(Response.timestamp.desc()).all()
+#         if date_to:
+#             try:
+#                 from datetime import datetime as dt, timedelta
+#                 date_to_obj = dt.strptime(date_to, "%Y-%m-%d")
+#                 # Add one day to include the entire end date
+#                 date_to_obj = date_to_obj + timedelta(days=1)
+#                 query = query.filter(Response.timestamp < date_to_obj)
+#             except ValueError as e:
+#                 current_app.logger.error(f"Invalid date_to format: {e}")
+#                 return jsonify({"error": f"Invalid date_to format. Use YYYY-MM-DD"}), 400
         
-        # Format response data
-        response_data = []
-        for response in responses:
-            question = response.question if hasattr(response, "question") else None
-            survey = question.survey if question and hasattr(question, "survey") else None
+#         # Get total count
+#         total_count = query.count()
+        
+#         # Get all matching responses
+#         responses = query.order_by(Response.timestamp.desc()).all()
+        
+#         # Format response data
+#         response_data = []
+#         for response in responses:
+#             question = response.question if hasattr(response, "question") else None
+#             survey = question.survey if question and hasattr(question, "survey") else None
             
-            # Only include responses with valid file paths (S3 URLs or local paths)
-            file_path = response.file_path
-            if not file_path:
-                continue
+#             # Only include responses with valid file paths (S3 URLs or local paths)
+#             file_path = response.file_path
+#             if not file_path:
+#                 continue
             
-            response_data.append({
-                "id": response.id,
-                "question_id": response.question_id,
-                "question_prompt": question.prompt if question else "",
-                "survey_id": survey.id if survey else None,
-                "survey_name": survey.name if survey else "",
-                "user_id": response.user_id,
-                "file_path": file_path,  # S3 URL or local path
-                "timestamp": response.timestamp.isoformat() if response.timestamp else None,
-                "response_metadata": response.response_metadata or {},
-            })
+#             response_data.append({
+#                 "id": response.id,
+#                 "question_id": response.question_id,
+#                 "question_prompt": question.prompt if question else "",
+#                 "survey_id": survey.id if survey else None,
+#                 "survey_name": survey.name if survey else "",
+#                 "user_id": response.user_id,
+#                 "file_path": file_path,  # S3 URL or local path
+#                 "timestamp": response.timestamp.isoformat() if response.timestamp else None,
+#                 "response_metadata": response.response_metadata or {},
+#             })
         
-        current_app.logger.info(f"API: Fetched {len(response_data)} responses for task creation (total matching: {total_count})")
+#         current_app.logger.info(f"API: Fetched {len(response_data)} responses for task creation (total matching: {total_count})")
         
-        return jsonify({
-            "responses": response_data,
-            "total": len(response_data),
-        })
+#         return jsonify({
+#             "responses": response_data,
+#             "total": len(response_data),
+#         })
         
-    except Exception as e:
-        current_app.logger.error(f"Error in get_responses_for_task_creation: {e}", exc_info=True)
-        return jsonify({"error": "An error occurred while fetching responses"}), 500
+#     except Exception as e:
+#         current_app.logger.error(f"Error in get_responses_for_task_creation: {e}", exc_info=True)
+#         return jsonify({"error": "An error occurred while fetching responses"}), 500
 
 
